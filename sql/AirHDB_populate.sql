@@ -1,15 +1,18 @@
 COPY towns
-FROM 'D:\NUS\FILE\Y2S2\IT2002\Project\AirHDB/towns.csv' -- CHANGE PATH in Github
+-- FROM 'D:\NUS\FILE\Y2S2\IT2002\Project\AirHDB/towns.csv' -- CHANGE PATH in Github
+FROM 'cliftonfelix/AirHDB/sql/Data/towns.csv'
 DELIMITER ','
 CSV HEADER;
 
 COPY mrt_stations
-FROM 'D:\NUS\FILE\Y2S2\IT2002\Project\AirHDB/mrt_stations.csv' -- CHANGE PATH in Github
+-- FROM 'D:\NUS\FILE\Y2S2\IT2002\Project\AirHDB/mrt_stations.csv' -- CHANGE PATH in Github
+FROM 'cliftonfelix/AirHDB/sql/Data/mrt_stations.csv'
 DELIMITER ','
 CSV HEADER;
 
 COPY hdb_types_info
-FROM 'D:\NUS\FILE\Y2S2\IT2002\Project\AirHDB/hdb_types_info.csv' -- CHANGE PATH in Github
+-- FROM 'D:\NUS\FILE\Y2S2\IT2002\Project\AirHDB/hdb_types_info.csv' -- CHANGE PATH in Github
+FROM 'cliftonfelix/AirHDB/sql/Data/hdb_types_info.csv'
 DELIMITER ','
 CSV HEADER;
 
