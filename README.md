@@ -48,8 +48,13 @@ This page will be displayed after the users click the book button in Listings Pa
 **Data Source**
 
 https://data.gov.sg/dataset/hdb-property-information (some columns in hdb_units)
+
 https://mockaroo.com (some columns in hdb_units, bookings, users)
+
 https://www.kaggle.com/yxlee245/singapore-train-station-coordinates (mrt_stations)
+
 https://en.wikipedia.org/wiki/Planning_Areas_of_Singapore (towns)
+
 https://www.hdb.gov.sg/residential/buying-a-flat/new/types-of-flats (hdb_types_info and CHECK constraints for hdb_type and size in hdb_units)
+
 https://www.hdb.gov.sg/cs/infoweb/about-us/news-and-publications/press-releases/revised-occupancy-cap-for-renting-out-hdb-flats#:~:text=From%201%20May%202018%2C%20the,persons%20and%204%20persons%20respectively. (hdb_types_info)
