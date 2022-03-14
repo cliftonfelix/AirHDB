@@ -7,16 +7,6 @@ An accommodation sharing platform for HDB units renting in Singapore. HDB owners
 
 When opening the app, users will be directed to the login page where they can register and login. Logging in with an administrator account will be directed to the Admin Page, while logging in with the normal account will be directed to the Listings Page. 
 
-
-**Data Source**
-
-https://data.gov.sg/dataset/hdb-property-information (some columns in hdb_units)
-https://mockaroo.com (some columns in hdb_units, bookings, users)
-https://www.kaggle.com/yxlee245/singapore-train-station-coordinates (mrt_stations)
-https://en.wikipedia.org/wiki/Planning_Areas_of_Singapore (towns)
-https://www.hdb.gov.sg/residential/buying-a-flat/new/types-of-flats (hdb_types_info and CHECK constraints for hdb_type and size in hdb_units)
-https://www.hdb.gov.sg/cs/infoweb/about-us/news-and-publications/press-releases/revised-occupancy-cap-for-renting-out-hdb-flats#:~:text=From%201%20May%202018%2C%20the,persons%20and%204%20persons%20respectively. (hdb_types_info)
-
 **Pages**
 
 **User Login/Register Page**
@@ -54,3 +44,12 @@ Delete page is only accessible by the administrator. A delete to the hdb_units e
 **Book Page**
 
 This page will be displayed after the users click the book button in Listings Page. The users will be prompted to input their credit card type and credit card number in this page. Successful bookings will be added to the bookings table.
+
+**Data Source**
+
+https://data.gov.sg/dataset/hdb-property-information (some columns in hdb_units)
+https://mockaroo.com (some columns in hdb_units, bookings, users)
+https://www.kaggle.com/yxlee245/singapore-train-station-coordinates (mrt_stations)
+https://en.wikipedia.org/wiki/Planning_Areas_of_Singapore (towns)
+https://www.hdb.gov.sg/residential/buying-a-flat/new/types-of-flats (hdb_types_info and CHECK constraints for hdb_type and size in hdb_units)
+https://www.hdb.gov.sg/cs/infoweb/about-us/news-and-publications/press-releases/revised-occupancy-cap-for-renting-out-hdb-flats#:~:text=From%201%20May%202018%2C%20the,persons%20and%204%20persons%20respectively. (hdb_types_info)
