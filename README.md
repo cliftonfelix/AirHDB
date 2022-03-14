@@ -2,6 +2,7 @@
 AirHDB IT2002 Project
 
 **Description**
+
 An accommodation sharing platform for HDB units renting in Singapore. HDB owners and real estate agents can submit any post request to the administrator. Administrator can view, edit, add, and delete the HDB unit listing on the Admin Page. Users can look through the HDB units on the Listings Page. On this page, users can search for the available HDB units to rent based on the dates, number of guests, and some other filters. They can also book the units. When booking the units, users need to input their credit card type and number. Successful booking will be added to the database.
 
 When opening the app, users will be directed to the login page where they can register and login. Logging in with an administrator account will be directed to the Admin Page, while logging in with the normal account will be directed to the Listings Page. 
