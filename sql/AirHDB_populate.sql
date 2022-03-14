@@ -1,24 +1,15 @@
 -- COPY towns
 -- FROM 'D:\NUS\FILE\Y2S2\IT2002\Project\AirHDB/towns.csv' -- CHANGE PATH in Github
 -- Heroku
-\COPY towns
-FROM 'cliftonfelix/AirHDB/sql/Data/towns.csv'
-DELIMITER ','
-CSV HEADER;
+\COPY towns FROM 'cliftonfelix/AirHDB/sql/Data/towns.csv' DELIMITER ',' CSV HEADER;
 
 -- COPY mrt_stations
 -- FROM 'D:\NUS\FILE\Y2S2\IT2002\Project\AirHDB/mrt_stations.csv' -- CHANGE PATH in Github
-\COPY mrt_stations
-FROM 'cliftonfelix/AirHDB/sql/Data/mrt_stations.csv'
-DELIMITER ','
-CSV HEADER;
+\COPY mrt_stations FROM 'cliftonfelix/AirHDB/sql/Data/mrt_stations.csv' DELIMITER ',' CSV HEADER;
 
 -- COPY hdb_types_info
 -- FROM 'D:\NUS\FILE\Y2S2\IT2002\Project\AirHDB/hdb_types_info.csv' -- CHANGE PATH in Github
-\COPY hdb_types_info
-FROM 'cliftonfelix/AirHDB/sql/Data/hdb_types_info.csv'
-DELIMITER ','
-CSV HEADER;
+\COPY hdb_types_info FROM 'cliftonfelix/AirHDB/sql/Data/hdb_types_info.csv' DELIMITER ',' CSV HEADER;
 
 INSERT INTO hdb_units VALUES ('test_name', '252, YISHUN RING ROAD', '#07-91', '3-Room', 63, 100, 'Yishun', 'No', 'Hari', '90233232', 
  							 1.434725, 103.841021); -- TESTING ONLY
