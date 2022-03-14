@@ -30,5 +30,5 @@ URI="postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
 # Run the scripts to insert data.
 psql ${URI} -f sql/AirHDB_schema.sql
 psql ${URI} -f sql/AirHDB_populate.sql
-psql ${URI} -f sql/AirHDB_view.sql
 psql ${URI} -f sql/AirHDB_function.sql
+psql ${URI} -f sql/AirHDB_view.sql
