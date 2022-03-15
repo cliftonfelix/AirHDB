@@ -29,11 +29,11 @@ URI="postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
 
 # Run the scripts to insert data.
 psql ${URI} -f sql/AirHDB_schema.sql
+psql ${URI} -f sql/AirHDB_function.sql
+psql ${URI} -f sql/AirHDB_trigger.sql
 psql ${URI} -f sql/AirHDB_populate_hdb_types_info.sql
 psql ${URI} -f sql/AirHDB_populate_mrt_stations.sql
 psql ${URI} -f sql/AirHDB_populate_towns.sql
 psql ${URI} -f sql/AirHDB_populate_hdb_units.sql
 psql ${URI} -f sql/AirHDB_populate_users.sql
 psql ${URI} -f sql/AirHDB_populate_bookings.sql
-psql ${URI} -f sql/AirHDB_function.sql
-psql ${URI} -f sql/AirHDB_trigger.sql
