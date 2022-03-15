@@ -1,8 +1,3 @@
-INSERT INTO hdb_units VALUES ('252, YISHUN RING ROAD', '#07-91', '3-Room', 63, 100, 'Yishun', 'No', 'Hari', '90233232', 
- 							 1.434725, 103.841021); -- TESTING ONLY
-INSERT INTO hdb_units VALUES ('872A, TAMPINES ST 86', '#07-91', '3-Room', 63, 100, 'Tampines', 'No', 'Hari', '90233232', 
- 							 1.355485, 103.930827); -- TESTING ONLY
-
 INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES ('252, YISHUN RING RD','#09-529','2-Room/2-Room Flexi',36,81,'Yishun',0,'Woodie',95558401,1.4347246,103.8410206);
 INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES ('872A, TAMPINES ST 86','#04-123','3-Room',62,4,'Tampines',0,'Gallard',85555760,1.355485,103.9308266);
 INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES ('530A, PASIR RIS DR 1','#13-069','4-Room',90,53,'Pasir Ris',0,'Gwenni',85556404,1.3709883,103.9497037);
