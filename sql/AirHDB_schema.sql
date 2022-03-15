@@ -25,7 +25,6 @@ CREATE TABLE IF NOT EXISTS hdb_types_info (
 );
 
 CREATE TABLE IF NOT EXISTS hdb_units (
-	hdb_name VARCHAR(256) NOT NULL,
 	hdb_address VARCHAR(256) NOT NULL,
 	hdb_unit_number VARCHAR(6) NOT NULL CHECK (hdb_unit_number LIKE '#%-%'), -- More constraint?
 	hdb_type VARCHAR(256) NOT NULL REFERENCES hdb_types_info(hdb_type),
