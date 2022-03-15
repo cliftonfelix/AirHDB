@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION get_distance(
 	mrt_long NUMERIC
 )
 RETURNS NUMERIC
-language plpgsql
+LANGUAGE plpgsql
 AS
 $$
 BEGIN
