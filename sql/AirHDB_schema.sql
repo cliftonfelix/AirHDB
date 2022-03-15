@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS hdb_units (
 		   (hdb_type = '3-Room' AND (size BETWEEN 60 AND 68)) OR
 		   (hdb_type = '4-Room' AND (size BETWEEN 85 AND 93)) OR
 		   (hdb_type = '5-Room' AND (size BETWEEN 107 AND 113)) OR
-		   (hdb_type = '3Gen' AND (size BETWEEN 115 AND 118))) -- https://www.hdb.gov.sg/residential/buying-a-flat/new/types-of-flats
+		   (hdb_type = '3-Gen' AND (size BETWEEN 115 AND 118))) -- https://www.hdb.gov.sg/residential/buying-a-flat/new/types-of-flats
 );
 
 CREATE TABLE IF NOT EXISTS users (
