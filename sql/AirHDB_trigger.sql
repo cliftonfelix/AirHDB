@@ -1,4 +1,4 @@
-DROP TRIGGER IF EXISTS insert_nearest_mrt;
+DROP TRIGGER IF EXISTS insert_nearest_mrt ON hdb_units;
 
 CREATE TRIGGER insert_nearest_mrt
 BEFORE INSERT OR UPDATE ON hdb_units
