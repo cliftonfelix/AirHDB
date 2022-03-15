@@ -2,4 +2,4 @@ INSERT INTO hdb_types_info(hdb_type,number_of_bedrooms,number_of_bathrooms,max_o
 INSERT INTO hdb_types_info(hdb_type,number_of_bedrooms,number_of_bathrooms,max_occupants) VALUES ('3-Room',2,2,6);
 INSERT INTO hdb_types_info(hdb_type,number_of_bedrooms,number_of_bathrooms,max_occupants) VALUES ('4-Room',3,2,6);
 INSERT INTO hdb_types_info(hdb_type,number_of_bedrooms,number_of_bathrooms,max_occupants) VALUES ('5-Room',3,2,6);
-INSERT INTO hdb_types_info(hdb_type,number_of_bedrooms,number_of_bathrooms,max_occupants) VALUES ('3Gen',4,3,6);
+INSERT INTO hdb_types_info(hdb_type,number_of_bedrooms,number_of_bathrooms,max_occupants) VALUES ('3-Gen',4,3,6);
