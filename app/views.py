@@ -6,9 +6,9 @@ def index(request):
     """Shows the main page"""
     
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM hdb_listings")
-        listings = cursor.fetchall()
+        cursor.execute("SELECT * FROM hdb_units")
+        units = cursor.fetchall()
         
-    result_dict = {'records': listings}
+    result_dict = {'records': units}
 
     return render(request, 'app/index.html', result_dict)
