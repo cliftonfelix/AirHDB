@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS hdb_types_info (
 
 CREATE TABLE IF NOT EXISTS hdb_units (
 	hdb_address VARCHAR(256) NOT NULL,
-	hdb_unit_number VARCHAR(6) NOT NULL CHECK (hdb_unit_number LIKE '#%-%'), -- More constraint?
+	hdb_unit_number VARCHAR(256) NOT NULL CHECK (hdb_unit_number LIKE '#%-%'), -- More constraint?
 	hdb_type VARCHAR(256) NOT NULL REFERENCES hdb_types_info(hdb_type),
 	size INT NOT NULL,
 	price_per_day NUMERIC NOT NULL CHECK (price_per_day >= 0),
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS bookings (
 	hdb_address VARCHAR(256) NOT NULL,
-	hdb_unit_number VARCHAR(6) NOT NULL,
+	hdb_unit_number VARCHAR(256) NOT NULL,
 	booked_by VARCHAR(256) NOT NULL CHECK (booked_by LIKE '%_@_%._%') REFERENCES users(email_address),
 	start_date DATE NOT NULL CHECK (start_date >= '2022-04-11'), -- Initial start date 11 April
 	end_date DATE NOT NULL, -- End date is like the checkout date. A new booking can start on the end date.
