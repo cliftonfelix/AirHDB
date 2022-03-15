@@ -1,3 +1,0 @@
-CREATE OR REPLACE TRIGGER insert_nearest_mrt
-BEFORE INSERT OR UPDATE ON hdb_units
-FOR EACH ROW EXECUTE PROCEDURE find_nearest_mrt();
