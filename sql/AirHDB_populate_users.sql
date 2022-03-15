@@ -1,5 +1,9 @@
-INSERT INTO users VALUES ('Admin', 'admin@airhdb.com', 'AirHDB_admin', '92450330', 'Yes'); -- TESTING ONLY
-INSERT INTO users VALUES ('Bryan Tan', 'btan@u.nus.edu', '12345678', '82342321'); -- TESTING ONLY
+INSERT INTO users(name,email_address,password,mobile_number,is_admin) VALUES ('Admin', 'admin@airhdb.com', 'AirHDB_admin', '92450330', 'Yes');
+INSERT INTO users(name,email_address,password,mobile_number,is_admin) VALUES ('Jason','jason@airhdb.com','ymdmA6VH8',85553641, 'Yes');
+INSERT INTO users(name,email_address,password,mobile_number,is_admin) VALUES ('Clifton','clifton@airhdb.com','WwyGhtZ1Amp',85553414, 'Yes');
+INSERT INTO users(name,email_address,password,mobile_number,is_admin) VALUES ('Hari','hari@airhdb.com','rHBE9alMRmM',95552443, 'Yes');
+INSERT INTO users(name,email_address,password,mobile_number,is_admin) VALUES ('Bryan','bryan@airhdb.com','rREPPKQit',95552738, 'Yes');
+INSERT INTO users(name,email_address,password,mobile_number) VALUES ('Bryan Tan', 'btan@u.nus.edu', '12345678', '82342321');
 INSERT INTO users(name,email_address,password,mobile_number) VALUES ('Inigo','ituffrey0@altervista.org','cqOQprQqBf1L',95558401);
 INSERT INTO users(name,email_address,password,mobile_number) VALUES ('Meredith','mgwyther1@tripod.com','xr9R7bJCX',85555760);
 INSERT INTO users(name,email_address,password,mobile_number) VALUES ('Vida','vmanthroppe2@upenn.edu','bGGq1vM',85556404);
@@ -96,7 +100,3 @@ INSERT INTO users(name,email_address,password,mobile_number) VALUES ('Stan','swh
 INSERT INTO users(name,email_address,password,mobile_number) VALUES ('Annetta','ajosey2l@vinaora.com','5ZkPZGku',95555535);
 INSERT INTO users(name,email_address,password,mobile_number) VALUES ('Thomasina','tcluff2m@sakura.ne.jp','nmzg8jd41U',95557569);
 INSERT INTO users(name,email_address,password,mobile_number) VALUES ('Genvieve','gkevis2n@tuttocitta.it','Xo8DQZD9tnjQ',95557452);
-INSERT INTO users VALUES ('Jason','jason@airhdb.com','ymdmA6VH8',85553641, 'Yes');
-INSERT INTO users VALUES ('Clifton','clifton@airhdb.com','WwyGhtZ1Amp',85553414, 'Yes');
-INSERT INTO users VALUES ('Hari','hari@airhdb.com','rHBE9alMRmM',95552443, 'Yes');
-INSERT INTO users VALUES ('Bryan','bryan@airhdb.com','rREPPKQit',95552738, 'Yes');
