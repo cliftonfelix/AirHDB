@@ -17,18 +17,27 @@ def listings(request):
     return render(request, 'app/index.html', result_dict)
 
 def login_page(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM users")
+        users = cursor.fetchall()
+       
+    for user in users:
+        user = User.objects.create_user(user[1], password = user[2])
+        user.save()
+        
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        try:
-            user = User.objects.get(username = username)
-        except:
-            messages.error(request, 'User does not exist!')
+#         try:
+#             user = User.objects.get(username = username)
+#         except:
+#             messages.error(request, 'User does not exist!')
         
-        user = authenticate(request, username = username)
+    
+        user = authenticate(request, username = username, password = password)
         if user is not None:
             login(request, user)
-            return redirect('index')
+            return redirect('listings')
 
     context = {}
     return render(request, 'app/login.html', context)
