@@ -22,7 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', app.views.login_page, name='login'),
     
-    path('listing/', app.views.listing, name = 'listing')
+    path('listings/', app.views.listings, name = 'listings')
 #     path('add', app.views.add, name='add'),
 #     path('view/<str:id>', app.views.view, name='view'),
 #     path('edit/<str:id>', app.views.edit, name='edit'),
