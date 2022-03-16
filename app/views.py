@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 # Create your views here.
-def index(request):
+def listings(request):
     """Shows the main page"""
     
     with connection.cursor() as cursor:
@@ -16,7 +16,7 @@ def index(request):
 
     return render(request, 'app/index.html', result_dict)
 
-def login_page(request):
+def index(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
