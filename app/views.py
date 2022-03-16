@@ -17,13 +17,13 @@ def listings(request):
     return render(request, 'app/index.html', result_dict)
 
 def login_page(request):
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM users")
-        users = cursor.fetchall()
+#     with connection.cursor() as cursor:
+#         cursor.execute("SELECT * FROM users")
+#         users = cursor.fetchall()
        
-    for user in users:
-        user_temp = User.objects.create_user(user[2], password = user[1])
-        user_temp.save()
+#     for user in users:
+#         user_temp = User.objects.create_user(user[2], password = user[1])
+#         user_temp.save()
         
     if request.method == 'POST':
         username = request.POST.get('username')
