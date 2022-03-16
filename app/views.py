@@ -22,8 +22,8 @@ def login_page(request):
         users = cursor.fetchall()
        
     for user in users:
-        user = User.objects.create_user(user[1], password = user[2])
-        user.save()
+        user_temp = User.objects.create_user(user[1], password = user[2])
+        user_temp.save()
         
     if request.method == 'POST':
         username = request.POST.get('username')
