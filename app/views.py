@@ -45,28 +45,29 @@ def register_page(request):
         email = request.POST.get('email').lower()
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
+        
+        invalid = False
+        if name == '' or number == '' or email == '' or password == '' or confirm_password == '':
+            messages.error(request, 'Please fill in all fields!')
+            invalid = True
+        if not (number >= 30000000 and number <= 39999999) and not (number >= 60000000 and number <= 69999999) \
+        and not (number >= 80000000 and number <= 89999999) and not (number >= 90000000 and number <= 98999999):
+            messages.error(request, 'Please enter a valid Singapore number!')
+            invalid = True
+        if re.search("\S+@\D+\.\D+", email) == None:
+            messages.error(request, 'Please enter a valid email address!')
+            invalid = True
+        if password != confirm_password:
+            messages.error(request, 'Passwords do not match!')
+            invalid = True
+        if invalid:
+            return render(request, 'app/register.html')
+        
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
             row = cursor.fetchone()
-            
-            invalid = False
-            if name == '' or number == '' or email == '' or password == '' or confirm_password == '':
-                messages.error(request, 'Please fill in all fields!')
-                invalid = True
-            if not (number >= 30000000 and number <= 39999999) and not (number >= 60000000 and number <= 69999999) \
-            and not (number >= 80000000 and number <= 89999999) and not (number >= 90000000 and number <= 98999999):
-                messages.error(request, 'Please enter a valid Singapore number!')
-                invalid = True
-            if re.search("\S+@\D+\.\D+", email) == None:
-                messages.error(request, 'Please enter a valid email address!')
-                invalid = True
-            if password != confirm_password:
-                messages.error(request, 'Passwords do not match!')
-                invalid = True
-            if invalid:
-                return render(request, 'app/register.html')
-            
             if row == None:
+                cursor.execute("INSERT INTO users VALUES (%s, %s, %s, %s, 'No')", [name, email, password, email])
                 user = User.objects.create_user(email, password = password)
                 user.save()
                 return redirect('login')
