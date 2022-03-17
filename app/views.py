@@ -49,7 +49,7 @@ def register_page(request):
             user.username = user.username.lower()
             user.save()
             login(request, user)
-            return redirect('home')
+            return redirect('listings')
         else:
             messages.error(request, 'An error occured during registration')
         """
