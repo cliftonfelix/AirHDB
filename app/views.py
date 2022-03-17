@@ -23,7 +23,7 @@ def login_page(request):
         if user is not None: #check if user is admin or not from users table
             login(request, user)
             return redirect('listings')
-
+    context = {}
     messages.error(request, 'Wrong password entered!')
     return render(request, 'app/login.html', context)
 
