@@ -10,14 +10,6 @@ from django.contrib import messages
 def login_page(request):
     if request.user.is_authenticated:
         return redirect('listings')
-    User.objects.all().delete() 
-    with connection.cursor() as cursor: 
-        cursor.execute("SELECT * FROM users")
-        users = cursor.fetchall()
-       
-    for user in users:
-        user_temp = User.objects.create_user(user[1], password = user[2])
-        user_temp.save()
     
     if request.method == 'POST':
         email = request.POST.get('email').lower()
