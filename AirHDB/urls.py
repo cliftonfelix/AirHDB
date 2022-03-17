@@ -8,6 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', app.views.login_page, name='login'),
     
+    path('logout/', views.logout_page, name = "logout"),
     path('register/', app.views.register, name = 'register'),
     path('listings/', app.views.listings, name = 'listings')
     
