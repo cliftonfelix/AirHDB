@@ -67,7 +67,7 @@ def register_page(request):
             cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
             row = cursor.fetchone()
             if row == None:
-                cursor.execute("INSERT INTO users VALUES (%s, %s, %s, %d, 'No')", [name, email, password, number])
+                cursor.execute("INSERT INTO users VALUES (%s, %s, %s, %s, 'No')", [name, email, password, number])
                 user = User.objects.create_user(email, password = password)
                 user.save()
                 return redirect('login')
