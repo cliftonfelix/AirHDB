@@ -10,23 +10,24 @@ from django.contrib import messages
 def login_page(request):
     if request.user.is_authenticated:
         return redirect('listings')
-#     with connection.cursor() as cursor:
-#         cursor.execute("SELECT * FROM users")
-#         users = cursor.fetchall()
+    User.objects.all.delete() 
+    with connection.cursor() as cursor: 
+        cursor.execute("SELECT * FROM users")
+        users = cursor.fetchall()
        
-#     for user in users:
-#         user_temp = User.objects.create_user(user[2], password = user[1])
-#         user_temp.save()
-        
+    for user in users:
+        user_temp = User.objects.create_user(user[1], password = user[2])
+        user_temp.save()
+    
     if request.method == 'POST':
-        username = request.POST.get('username').lower()
+        email = request.POST.get('email').lower()
         password = request.POST.get('password')
         try: 
-            user = User.objects.get(username = username)
+            user = User.objects.get(username = email)
         except:
             messages.error(request, 'User does not exist!')
      
-        user = authenticate(request, username = username, password = password)
+        user = authenticate(request, username = email, password = password)
         if user is not None:
             login(request, user)
             return redirect('listings')
@@ -36,8 +37,7 @@ def login_page(request):
 
 def logout_page(request):
     logout(request)
-    context = {}
-    return render(request, 'app/login.html', context)
+    redirect('login')
 
 def register_page(request):
     form = UserCreationForm()
