@@ -17,14 +17,14 @@ def login_page(request):
         try: 
             user = User.objects.get(username = email)
         except:
-            messages.error(request, 'User does not exist!')
+            messages.error(request, 'Invalid Username!')
      
         user = authenticate(request, username = email, password = password)
         if user is not None: #check if user is admin or not from users table
             login(request, user)
             return redirect('listings')
 
-    context = {} #message wrong password
+    messages.error(request, 'Wrong password entered!')
     return render(request, 'app/login.html', context)
 
 def logout_page(request):
