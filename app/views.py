@@ -47,7 +47,7 @@ def register_page(request):
 
                 ## No user with same email
             if row == None:
-                cursor.execute("INSERT INTO users VALUES (%s, %s, %s, %s, "no"), [name, email, password, number])
+                cursor.execute("INSERT INTO users VALUES (%s, %s, %s, %s, %s), [name, email, password, number, ,'no'])
                 user = User.objects.create_user(email, password = password)
                 user.save()
                 login(request, user)
