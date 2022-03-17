@@ -36,6 +36,7 @@ def register_page(request):
     if request.method == 'POST':
         # Ensure password matches confirmation
         name = request.POST.get('name')
+        number =  request.POST.get('number')
         email = request.POST.get('email').lower()
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
