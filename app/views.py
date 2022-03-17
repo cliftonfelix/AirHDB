@@ -42,7 +42,7 @@ def register_page(request):
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
             row = cursor.fetchone()
-            if password != confirmation:
+            if password != confirm_password:
                 messages.error(request, 'Passwords do not match!')
 
                 ## No user with same email
