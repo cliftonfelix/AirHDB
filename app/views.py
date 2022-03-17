@@ -34,7 +34,7 @@ def login_page(request):
     context = {}
     return render(request, 'app/login.html', context)
 
-def logout_user(request):
+def logout_page(request):
     logout(request)
     context = {}
     return render(request, 'app/login.html', context)
