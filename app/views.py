@@ -10,7 +10,7 @@ from django.contrib import messages
 def login_page(request):
     if request.user.is_authenticated:
         return redirect('listings')
-    User.objects.all.delete() 
+    User.objects.all().delete() 
     with connection.cursor() as cursor: 
         cursor.execute("SELECT * FROM users")
         users = cursor.fetchall()
