@@ -1,13 +1,15 @@
-{% if messages %}
+<body>
+    {% if messages %}
     <ul class="messages">
         {% for message in messages %}
         <li>{{ message }}</li>
         {% endfor %}
     </ul>
     {% endif %}
-<div>
 
-    </body>
+
+</body>
+<div>
     
     <form method = "POST" action = "">
         {% csrf_token %}
@@ -23,4 +25,4 @@
 
     </form>
 </div>
-{% end block%}
+
