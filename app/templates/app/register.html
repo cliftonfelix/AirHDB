@@ -14,6 +14,8 @@
         {% csrf_token %}
         <label>Name:</label>
         <input type = "text" name = "name" placeholder = "Enter Name"/>
+        <label>Phone Number:</label>
+        <input type = "number" name = "number" placeholder = "Enter Phone Number"/>
         <label>Email:</label>
         <input type = "text" name = "email" placeholder = "Enter Email"/>
         <label>Password:</label>
@@ -23,7 +25,7 @@
         <input type = "submit" value = "Register"/>
         
         <p>Already have an account?</p>
-        <a href = "{% url 'register' %}">Sign up</a>
+        <a href = "{% url 'register' %}">Sign in</a>
 
     </form>
 </div>
