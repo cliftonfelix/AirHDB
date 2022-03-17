@@ -10,7 +10,8 @@ urlpatterns = [
     
     path('logout/', app.views.logout_page, name = "logout"),
     path('register/', app.views.register_page, name = 'register'),
-    path('listings/', app.views.listings, name = 'listings')
+    path('listings/', app.views.listings, name = 'listings'),
+    path('adm/', app.views.admin, name = 'admin')
     
 #     path('add', app.views.add, name='add'),
 #     path('view/<str:id>', app.views.view, name='view'),
