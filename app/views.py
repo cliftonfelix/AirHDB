@@ -29,7 +29,7 @@ def login_page(request):
 
 def logout_page(request):
     logout(request)
-    redirect('login')
+    return redirect('login')
 
 def register_page(request):
     form = UserCreationForm()
