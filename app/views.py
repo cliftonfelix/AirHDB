@@ -42,7 +42,7 @@ def register_page(request):
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
             row = cursor.fetchone()
-            if name == '' or number == '' or email = '' or password = '' or confirm_password = '':
+            if name == '' or number == '' or email == '' or password == '' or confirm_password == '':
                 messages.error(request, 'Please fill in all fields!')
                 return render(request, 'app/register.html')
             if password != confirm_password:
