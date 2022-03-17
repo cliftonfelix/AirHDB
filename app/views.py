@@ -57,7 +57,7 @@ def register_page(request):
             and not (number >= 80000000 and number <= 89999999) and not (number >= 90000000 and number <= 98999999):
                 messages.error(request, 'Please enter a valid Singapore number!')
                 invalid = True
-            if re.search(".@.\.", email) == None:
+            if re.search("\S+@\D+\.\D+", email) == None:
                 messages.error(request, 'Please enter a valid email address!')
                 invalid = True
             if password != confirm_password:
