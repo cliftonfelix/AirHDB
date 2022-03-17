@@ -18,11 +18,17 @@ def login_page(request):
             user = User.objects.get(username = email)
         except:
             messages.error(request, 'Invalid Username!')
-     
+        
         user = authenticate(request, username = email, password = password)
         if user is not None:
-            login(request, user)
-            return redirect('listings')
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
+                row = cursor.fetchone()
+                login(request, user)
+                if row[4] == 'Yes':
+                    return redirect('admin')
+                elif row[4] == 'No':
+                    return redirect('listings')
         else:
             messages.error(request, 'Wrong password entered!')
     return render(request, 'app/login.html')
@@ -55,7 +61,6 @@ def register_page(request):
                     messages.error(request, 'Invalid email or phone number!')
                 user = User.objects.create_user(email, password = password)
                 user.save()
-                login(request, user)
                 return redirect('login')
             else:
                 messages.error(request, 'The email has been used by another user!')
