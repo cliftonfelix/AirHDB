@@ -77,6 +77,10 @@ def listings(request):
     result_dict = {'records': units}
 
     return render(request, 'app/index.html', result_dict)
+
+@login_required(login_url = 'login')
+def admin(request):
+    return render(request, 'app/admin.html')
        
 
 
