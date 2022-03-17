@@ -64,7 +64,7 @@ def register_page(request):
             """
     return render(request, 'app/register.html', {'form': form})
     
-@login_required(Login_url = 'login')
+@login_required(login_url = 'login')
 def listings(request):
     """Shows the main page"""
     
