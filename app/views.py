@@ -8,7 +8,7 @@ from django.contrib import messages
 
 # Create your views here.
 def login_page(request):
-    if request.user_is_authentictaed:
+    if request.user_is_authenticated:
         return redirect('listings')
 #     with connection.cursor() as cursor:
 #         cursor.execute("SELECT * FROM users")
