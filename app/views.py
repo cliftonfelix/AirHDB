@@ -25,7 +25,6 @@ def login_page(request):
             return redirect('listings')
         else:
             messages.error(request, 'Wrong password entered!')
-            
     return render(request, 'app/login.html')
 
 def logout_page(request):
@@ -43,16 +42,21 @@ def register_page(request):
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
             row = cursor.fetchone()
+            if name == '' or number == '' or email = '' or password = '' or confirm_password = '':
+                messages.error(request, 'Please fill in all fields!')
+                return render(request, 'app/register.html')
             if password != confirm_password:
                 messages.error(request, 'Passwords do not match!')
-
-                ## No user with same email
+                return render(request, 'app/register.html')
             if row == None:
-                cursor.execute("INSERT INTO users VALUES (%s, %s, %s, %s, %s)", [name, email, password, number, 'no'])
+                try:
+                    cursor.execute("INSERT INTO users VALUES (%s, %s, %s, %s, %s)", [name, email, password, number, 'No'])
+                except:
+                    messages.error(request, 'Invalid email or phone number!')
                 user = User.objects.create_user(email, password = password)
                 user.save()
                 login(request, user)
-                return redirect('listings')
+                return redirect('login')
             else:
                 messages.error(request, 'The email has been used by another user!')
     return render(request, 'app/register.html')
