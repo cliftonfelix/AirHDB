@@ -8,7 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', app.views.login_page, name='login'),
     
-    path('register/', app.views.register, name = 'register')
+    path('register/', app.views.register, name = 'register'),
     path('listings/', app.views.listings, name = 'listings')
     
 #     path('add', app.views.add, name='add'),
