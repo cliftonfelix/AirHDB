@@ -17,7 +17,7 @@ def login_page(request):
         try: 
             user = User.objects.get(username = email)
         except:
-            messages.error(request, 'Invalid Username!')
+            messages.error(request, 'Invalid email address!')
             return render(request, 'app/login.html')  
         user = authenticate(request, username = email, password = password)
         if user is not None:
@@ -53,8 +53,8 @@ def register_page(request):
             if name == '' or number == '' or email == '' or password == '' or confirm_password == '':
                 messages.error(request, 'Please fill in all fields!')
                 invalid = True
-            if not (number >= 30000000 and number <= 39999999) or not (number >= 60000000 and number <= 69999999) \
-            or not (number >= 80000000 and number <= 89999999) or not (number >= 90000000 and number <= 98999999):
+            if not (number >= 30000000 and number <= 39999999) and not (number >= 60000000 and number <= 69999999) \
+            and not (number >= 80000000 and number <= 89999999) and not (number >= 90000000 and number <= 98999999):
                 messages.error(request, 'Please enter a valid Singapore number!')
                 invalid = True
             if re.search(".@.\.", email) == None:
