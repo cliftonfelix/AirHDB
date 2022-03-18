@@ -1,3 +1,4 @@
+DROP VIEW IF EXISTS hdb_listings;
 DROP TABLE IF EXISTS bookings;
 DROP TABLE IF EXISTS hdb_units;
 DROP TABLE IF EXISTS users;
@@ -24,8 +25,9 @@ CREATE TABLE IF NOT EXISTS hdb_types_info (
 );
 
 CREATE TABLE IF NOT EXISTS hdb_units (
+	hdb_id SERIAL NOT NULL PRIMARY KEY,
 	hdb_address VARCHAR(256) NOT NULL,
-	hdb_unit_number VARCHAR(256) NOT NULL CHECK (hdb_unit_number LIKE '#%-%'), -- More constraint?
+	hdb_unit_number VARCHAR(256) NOT NULL CHECK (hdb_unit_number LIKE '#_%-_%'), -- More constraint?
 	hdb_type VARCHAR(256) NOT NULL REFERENCES hdb_types_info(hdb_type),
 	size INT NOT NULL,
 	price_per_day NUMERIC NOT NULL CHECK (price_per_day >= 0),
@@ -40,7 +42,9 @@ CREATE TABLE IF NOT EXISTS hdb_units (
 	hdb_lat NUMERIC NOT NULL CHECK (hdb_lat BETWEEN 1.158 AND 1.472), -- Can we find a tighter constraint for Singapore latitude?
 	hdb_long NUMERIC NOT NULL CHECK (hdb_long BETWEEN 103.6 AND 104.1), -- Can we find a tighter constraint for Singapore longitude?
 	nearest_mrt VARCHAR(256) NOT NULL,
-	PRIMARY KEY (hdb_address, hdb_unit_number), -- Other alternatives?
+	can_book VARCHAR(256) NOT NULL DEFAULT 'Yes' CHECK(can_book = 'Yes' OR
+													   can_book = 'No'),
+	UNIQUE (hdb_address, hdb_unit_number), -- Other alternatives?
 	CHECK ((hdb_type = '2-Room/2-Room Flexi' AND ((size BETWEEN 35 AND 38) OR (size BETWEEN 45 AND 47))) OR
 		   (hdb_type = '3-Room' AND (size BETWEEN 60 AND 68)) OR
 		   (hdb_type = '4-Room' AND (size BETWEEN 85 AND 93)) OR
@@ -51,7 +55,6 @@ CREATE TABLE IF NOT EXISTS hdb_units (
 CREATE TABLE IF NOT EXISTS users (
 	name VARCHAR(256) NOT NULL,
 	email_address VARCHAR(256) PRIMARY KEY CHECK (email_address LIKE '%_@_%._%'),
-	password VARCHAR(256) NOT NULL,
 	mobile_number INT NOT NULL CHECK ((mobile_number BETWEEN 30000000 AND 39999999) OR
 									  (mobile_number BETWEEN 60000000 AND 69999999) OR
 									  (mobile_number BETWEEN 80000000 AND 89999999) OR
@@ -61,16 +64,14 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS bookings (
-	hdb_address VARCHAR(256) NOT NULL,
-	hdb_unit_number VARCHAR(256) NOT NULL,
+	booking_id SERIAL NOT NULL PRIMARY KEY,
+	hdb_id INT NOT NULL REFERENCES hdb_units(hdb_id),
 	booked_by VARCHAR(256) NOT NULL CHECK (booked_by LIKE '%_@_%._%') REFERENCES users(email_address),
 	start_date DATE NOT NULL CHECK (start_date >= '2022-04-11'), -- Initial start date 11 April
 	end_date DATE NOT NULL, -- End date is like the checkout date. A new booking can start on the end date.
 	credit_card_type VARCHAR(256) NOT NULL,
 	credit_card_number VARCHAR(16) NOT NULL,
 	total_price NUMERIC NOT NULL,
-	PRIMARY KEY (hdb_address, hdb_unit_number, booked_by, start_date, end_date),
-	FOREIGN KEY (hdb_address, hdb_unit_number) REFERENCES hdb_units(hdb_address, hdb_unit_number),
 	CHECK (end_date > start_date),
 	CHECK((credit_card_type = 'visa' 
 		   AND LEFT(credit_card_number, 1) = '4'

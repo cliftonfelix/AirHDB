@@ -33,3 +33,37 @@ BEGIN
 	RETURN NEW;
 END;
 $$;
+
+CREATE OR REPLACE FUNCTION change_total_price()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS 
+$$
+BEGIN
+	NEW.total_price := 
+	(SELECT (NEW.end_date - NEW.start_date) * (SELECT hu1.price_per_day
+											   FROM hdb_units hu1
+											   WHERE hu1.hdb_id = NEW.hdb_id));
+	RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION check_dates_availability()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS 
+$$
+BEGIN
+	IF EXISTS (SELECT *
+			   FROM bookings b1
+			   WHERE NEW.booking_id <> b1.booking_id AND
+			   		 NEW.hdb_id = b1.hdb_id AND
+			   		 (NEW.start_date BETWEEN b1.start_date AND b1.end_date - 1 OR
+			   		 NEW.end_date - 1 BETWEEN b1.start_date AND b1.end_date - 1))
+		THEN RAISE EXCEPTION 'Booking Dates Not Available';
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NEW;
+END;
+$$;
