@@ -58,8 +58,10 @@ BEGIN
 			   FROM bookings b1
 			   WHERE NEW.booking_id <> b1.booking_id AND
 			   		 NEW.hdb_id = b1.hdb_id AND
-			   		 (NEW.start_date BETWEEN b1.start_date AND b1.end_date - 1 OR
-			   		 NEW.end_date - 1 BETWEEN b1.start_date AND b1.end_date - 1))
+			   		 ((NEW.start_date BETWEEN b1.start_date AND b1.end_date - 1 OR
+			   		 NEW.end_date - 1 BETWEEN b1.start_date AND b1.end_date - 1) OR
+			   		 (b1.start_date BETWEEN NEW.start_date AND NEW.end_date - 1 OR
+			   		 b1.end_date - 1 BETWEEN NEW.start_date AND NEW.end_date - 1)))
 		THEN RAISE EXCEPTION 'Booking Dates Not Available';
 	ELSE
 		RETURN NEW;
