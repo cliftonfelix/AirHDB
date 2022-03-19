@@ -10,12 +10,13 @@ import re
 # Create your views here.
 def login_page(request):
     if request.user.is_authenticated:
-        cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
-        row = cursor.fetchone()
-        if row[3] == 'Yes':
-            return redirect('admin')
-        elif row[3] == 'No':
-            return redirect('listings')
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
+            row = cursor.fetchone()
+            if row[3] == 'Yes':
+                return redirect('admin')
+            elif row[3] == 'No':
+                return redirect('listings')
         
     if request.method == 'POST':
         email = request.POST.get('email').lower()
