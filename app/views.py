@@ -9,8 +9,13 @@ import re
 
 # Create your views here.
 def login_page(request):
-    if request.user.is_authenticated: #check if user is admin or not from users table
-        return redirect('listings')
+    if request.user.is_authenticated:
+        cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
+        row = cursor.fetchone()
+        if row[3] == 'Yes':
+            return redirect('admin')
+        elif row[3] == 'No':
+            return redirect('listings')
     if request.method == 'POST':
         email = request.POST.get('email').lower()
         password = request.POST.get('password')
@@ -25,9 +30,9 @@ def login_page(request):
                 cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
                 row = cursor.fetchone()
                 login(request, user)
-                if row[4] == 'Yes':
+                if row[3] == 'Yes':
                     return redirect('admin')
-                elif row[4] == 'No':
+                elif row[3] == 'No':
                     return redirect('listings')
         else:
             messages.error(request, 'Wrong password entered!')
@@ -45,34 +50,34 @@ def register_page(request):
         email = request.POST.get('email').lower()
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
-        
-        invalid = False
-        if name == '' or number == '' or email == '' or password == '' or confirm_password == '':
-            messages.error(request, 'Please fill in all fields!')
-            invalid = True
-        if not (number >= 30000000 and number <= 39999999) and not (number >= 60000000 and number <= 69999999) \
-        and not (number >= 80000000 and number <= 89999999) and not (number >= 90000000 and number <= 98999999):
-            messages.error(request, 'Please enter a valid Singapore number!')
-            invalid = True
-        if re.search("\S+@\D+\.\D+", email) == None:
-            messages.error(request, 'Please enter a valid email address!')
-            invalid = True
+  
         if password != confirm_password:
             messages.error(request, 'Passwords do not match!')
-            invalid = True
-        if invalid:
             return render(request, 'app/register.html')
-        
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
             row = cursor.fetchone()
             if row == None:
-                cursor.execute("INSERT INTO users VALUES (%s, %s, %s, %s, 'No')", [name, email, password, number])
+                try: 
+                    cursor.execute("INSERT INTO users VALUES (%s, %s, %s)", [name, email, number])
+                except Exception as e:
+                    string = str(e)
+                    if 'relation "users" violates not-null constraint' in string:
+                        message = 'Please fill in all fields!'
+                        messages.error(request, message)
+                    if 'new row for relation "users" violates check constraint "users_email_address_check"' in string:
+                        message = 'Please enter a valid email address!'
+                        messages.error(request, message)
+                    if 'new row for relation "users" violates check constraint "users_mobile_number_check"' in string:
+                        message = 'Please enter a valid Singapore number!'
+                        messages.error(request, message)
+                    return render(request, 'app/register.html')
                 user = User.objects.create_user(email, password = password)
                 user.save()
                 return redirect('login')
             else:
-                messages.error(request, 'The email has been used by another user!')
+                messages.error(request, 'The email has already been used by another user!')
+                return render(request, 'app/register.html')
     return render(request, 'app/register.html')
     
 @login_required(login_url = 'login')
