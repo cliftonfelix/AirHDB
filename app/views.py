@@ -16,6 +16,7 @@ def login_page(request):
             return redirect('admin')
         elif row[3] == 'No':
             return redirect('listings')
+        
     if request.method == 'POST':
         email = request.POST.get('email').lower()
         password = request.POST.get('password')
@@ -36,6 +37,7 @@ def login_page(request):
                     return redirect('listings')
         else:
             messages.error(request, 'Wrong password entered!')
+            return render(request, 'app/login.html')
     return render(request, 'app/login.html')
 
 def logout_page(request):
@@ -46,38 +48,35 @@ def register_page(request):
     if request.method == 'POST':
         # Ensure password matches confirmation
         name = request.POST.get('name')
-        number = int(request.POST.get('number'))
+        number = request.POST.get('number')
         email = request.POST.get('email').lower()
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
-  
+        
         if password != confirm_password:
             messages.error(request, 'Passwords do not match!')
             return render(request, 'app/register.html')
+        
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
-            row = cursor.fetchone()
-            if row == None:
-                try: 
-                    cursor.execute("INSERT INTO users VALUES (%s, %s, %s)", [name, email, number])
-                except Exception as e:
-                    string = str(e)
-                    if 'relation "users" violates not-null constraint' in string:
-                        message = 'Please fill in all fields!'
-                        messages.error(request, message)
-                    if 'new row for relation "users" violates check constraint "users_email_address_check"' in string:
-                        message = 'Please enter a valid email address!'
-                        messages.error(request, message)
-                    if 'new row for relation "users" violates check constraint "users_mobile_number_check"' in string:
-                        message = 'Please enter a valid Singapore number!'
-                        messages.error(request, message)
-                    return render(request, 'app/register.html')
-                user = User.objects.create_user(email, password = password)
-                user.save()
-                return redirect('login')
-            else:
-                messages.error(request, 'The email has already been used by another user!')
+            try: 
+                cursor.execute("INSERT INTO users VALUES (%s, %s, %s)", [name, email, number])
+            except Exception as e:
+                string = str(e)
+                message = ""
+                if 'relation "users" violates not-null constraint' in string:
+                    message = 'Please fill in all fields!'
+                elif 'duplicate key value violates unique constraint "users_pkey"' in string:  
+                    message = 'The email has already been used by another user!'
+                elif 'new row for relation "users" violates check constraint "users_email_address_check"' in string:
+                    message = 'Please enter a valid email address!'
+                elif 'new row for relation "users" violates check constraint "users_mobile_number_check"' in string:
+                    message = 'Please enter a valid Singapore number!'
+                messages.error(request, message)
                 return render(request, 'app/register.html')
+            
+            user = User.objects.create_user(email, password = password)
+            user.save()
+            return redirect('login')
     return render(request, 'app/register.html')
     
 @login_required(login_url = 'login')
