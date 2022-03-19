@@ -1,13 +1,24 @@
-{% block content %}
+<body>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+</body>
 <div>
     <form method = "POST" action = "">
         {% csrf_token %}
-        <label>Username:</label>
-        <input type = "text" name = "username" placeholder = "Enter Username"/>
+        <label>Email:</label>
+        <input type = "text" name = "email" placeholder = "Enter Email" required=""/>
         <label>Password:</label>
-        <input type = "password" name = "password" placeholder = "Enter Password"/>
+        <input type = "password" name = "password" placeholder = "Enter Password" required=""/>
         <input type = "submit" value = "Login"/>
+        
+        <p>Haven't signed up yet?</p>
+        <a href = "{% url 'register' %}">Sign up</a>
 
     </form>
 </div>
-{% endblock %}
