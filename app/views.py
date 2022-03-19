@@ -199,7 +199,9 @@ def editbookings(request, id):
                 elif 'violates check constraint "bookings_check"' in message:
                     status = 'Please input a valid start and end date, the start date should be before end date'
                 elif 'duplicate key value violates unique constraint "bookings_pkey"' in message:
-                    status = 'There are exists a booking in these dates please choose another start and end date'
+                    status = 'There exists a booking in these dates please choose another start and end date'
+                elif 'Booking Dates Not Available' in message:
+                    status = 'There exists a booking in these dates please choose another start and end date'
                 else:
                     status = message
 
