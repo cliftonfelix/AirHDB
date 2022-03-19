@@ -74,7 +74,7 @@ def register_page(request):
             
             user = User.objects.create_user(email, password = password)
             user.save()
-            message.success(request, 'Account has been successfully registered!')
+            messages.success(request, 'Account has been successfully registered!')
             return redirect('login')
     return render(request, 'app/register.html')
     
