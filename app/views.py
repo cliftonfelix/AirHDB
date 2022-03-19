@@ -64,9 +64,7 @@ def register_page(request):
             except Exception as e:
                 string = str(e)
                 message = ""
-                if 'relation "users" violates not-null constraint' in string:
-                    message = 'Please fill in all fields!'
-                elif 'duplicate key value violates unique constraint "users_pkey"' in string:  
+                if 'duplicate key value violates unique constraint "users_pkey"' in string:  
                     message = 'The email has already been used by another user!'
                 elif 'new row for relation "users" violates check constraint "users_email_address_check"' in string:
                     message = 'Please enter a valid email address!'
