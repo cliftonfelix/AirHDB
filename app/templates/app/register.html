@@ -13,15 +13,15 @@
     <form method = "POST" action = "">
         {% csrf_token %}
         <label>Name:</label>
-        <input type = "text" name = "name" placeholder = "Enter Name"/>
+        <input type = "text" name = "name" placeholder = "Enter Name" required=""/>
         <label>Phone Number:</label>
-        <input type = "number" name = "number" placeholder = "Enter Phone Number"/>
+        <input type = "number" name = "number" placeholder = "Enter Phone Number" required=""/>
         <label>Email:</label>
-        <input type = "text" name = "email" placeholder = "Enter Email"/>
+        <input type = "text" name = "email" placeholder = "Enter Email" required=""/>
         <label>Password:</label>
-        <input type = "password" name = "password" placeholder = "Enter Password"/>
+        <input type = "password" name = "password" placeholder = "Enter Password" required=""/>
         <label>Confirm Password:</label>
-        <input type = "password" name = "confirm_password" placeholder = "Re-enter Password"/>
+        <input type = "password" name = "confirm_password" placeholder = "Re-enter Password" required=""/>
         <input type = "submit" value = "Register"/>
         
         <p>Already have an account?</p>
