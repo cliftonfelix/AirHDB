@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +8,9 @@
     <title>AirHDB</title>
 </head>
 <body>
-    {% include 'navbar.html' %}
+    <img src="{% static 'app/images/AirHDB_logo2.png' %}" width="10%"   alt="AirHDB logo"/><br/>
+    <a href = "{% url 'logout' %}">Log Out</a>
+    <hr>
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
