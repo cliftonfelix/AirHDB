@@ -10,6 +10,7 @@ import re
 # Create your views here.
 def login_page(request):
     if request.user.is_authenticated:
+        email = user.username
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
             row = cursor.fetchone()
