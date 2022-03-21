@@ -10,35 +10,84 @@
           <label for="id_start_date" class="control-label requiredField">Start Date<span class="asteriskField">*</span> </label> 
             <div class="controls"> <input type="date" id="id_start_date" name="start_date" required=""> </div> 
         </div> 
+        
         <div id="div_id_end_date" class="control-group"> 
           <label for="id_end_date" class="control-label requiredField">End Date<span class="asteriskField">*</span> </label> 
             <div class="controls"> <input type="date" id="id_end_date" name="end_date" required=""> </div> 
         </div> 
+        
         <div id="div_id_num_guests" class="control-group"> 
-          <label for="id_num_guests" class="control-label requiredField">Number of Guests</label> 
-            <div class="controls"> <input type="number" name="num_guests" id="id_num_guests" min="1"> </div>
+          <label for="id_num_guests" class="control-label requiredField">Number of Guests (1 - 6)</label> 
+            <div class="controls"> <input type="number" name="num_guests" id="id_num_guests" min="1", max="6"> </div>
         </div> 
+        
         <div id="div_id_price_per_day" class="control-group"> 
-          <label for="id_price_per_day" class="control-label requiredField">Price Per Day</label> 
+          <label for="id_price_per_day" class="control-label requiredField">Price Per Day</label> </div> 
           <label for="id_min_price_per_day" class = "control-label requiredField">Min</label>
-            <div class="controls"> <input type="number" name="min_price_per_day" id="id_min_price_per_day" min="1" value="1"> </div>
-          <label for="id_max_price_per_day" class = "control-label requiredField">Min</label>
-            <div class="controls"> <input type="number" name="max_price_per_day" id="id_max_price_per_day" max="6" value="6"> </div>
+            <div class="controls"> <input type="number" name="min_price_per_day" id="id_min_price_per_day" min="0"> </div>
+          <label for="id_max_price_per_day" class = "control-label requiredField">Max</label>
+            <div class="controls"> <input type="number" name="max_price_per_day" id="id_max_price_per_day" min="0"> </div>
+        
+        <div id="div_id_regions" class="control-group"> 
+          <label for="id_regions" class="control-label requiredField">Region (multi-select with ctrl)</label> 
+            <div class="controls"><select name="regions" id="id_regions" multiple>
+              {% for town in towns %}
+              <option value="{{town.1}}">{{town.1}}</option>
+              {% end for %}
+                
+              </select> </div>
+        </div>
+        
+        <div id="div_id_towns" class="control-group"> 
+          <label for="id_towns" class="control-label requiredField">Town (multi-select with ctrl)</label> 
+            <div class="controls"><select name="towns" id="id_towns" multiple>
+              {% for town in towns %}
+              <option value="{{town.0}}">{{town.0}}</option>
+              {% end for %}
+                
+              </select> </div>
+        </div>
+        
+        <div id="div_id_size" class="control-group"> 
+          <label for="id_size" class="control-label requiredField">Size</label> </div> 
+          <label for="id_min_size" class = "control-label requiredField">Min</label>
+            <div class="controls"> <input type="number" name="min_size" id="id_min_size" min="1" max="118" value="1"> </div>
+          <label for="id_max_size" class = "control-label requiredField">Max</label>
+            <div class="controls"> <input type="number" name="max_size" id="id_max_size" min="1" max="118" value="118"> </div>
+        
+        <div id="div_id_num_bedrooms" class="control-group"> 
+          <label for="id_num_bedrooms" class="control-label requiredField">Number of Bedrooms (1 - 4)</label> 
+            <div class="controls"> <input type="number" name="num_bedrooms" id="id_num_bedrooms" min="1" max="4"> </div>
         </div> 
         
-<!--         
-        <label>Phone Number:</label>
-        <input type = "number" name = "number" placeholder = "Enter Phone Number" required=""/>
-        <label>Email:</label>
-        <input type = "text" name = "email" placeholder = "Enter Email" required=""/>
-        <label>Password:</label>
-        <input type = "password" name = "password" placeholder = "Enter Password" required=""/>
-        <label>Confirm Password:</label>
-        <input type = "password" name = "confirm_password" placeholder = "Re-enter Password" required=""/>
-        <input type = "submit" value = "Register"/>
+        <div id="div_id_num_bathrooms" class="control-group"> 
+          <label for="id_num_bathrooms" class="control-label requiredField">Number of Bedrooms (1 - 3)</label> 
+            <div class="controls"> <input type="number" name="num_bathrooms" id="id_num_bathrooms" min="1" max="3"> </div>
+        </div> 
         
-        <p>Already have an account?</p>
-        <a href = "{% url 'login' %}">Sign in</a> -->
+        <div id="div_id_nearest_mrt" class="control-group"> 
+          <label for="id_nearest_mrt" class="control-label requiredField">Nearest MRT (multi-select with ctrl)</label> 
+            <div class="controls"><select name="nearest_mrt" id="id_nearest_mrt" multiple>
+              {% for station in mrt_stations %}
+              <option value="{{station.0}}">{{station.0}}</option>
+              {% end for %}
+                
+              </select> </div>
+        </div>
+        
+        <div id="div_id_nearest_mrt_dist" class="control-group"> 
+          <label for="id_nearest_mrt_dist" class="control-label requiredField">Nearest MRT (multi-select with ctrl)</label> 
+            <div class="controls"><select name="nearest_mrt_dist" id="id_nearest_mrt_dist" multiple>
+                <option value="< 100 m">< 100 m</option>
+                <option value="100 - 250 m">100 - 250 m</option>
+                <option value="250 m - 1 km">250 m - 1 km</option>
+                <option value="1 - 2 km">1 - 2 km</option>
+                <option value="> 2 km">> 2 km</option>
+                
+              </select> </div>
+        </div>
+        
+        <button type="submit">Submit</button>
 
       </form>
     </div>
