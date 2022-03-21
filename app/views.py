@@ -96,10 +96,28 @@ def listings(request):
     result_dict = {'towns': towns, 'regions': regions, 'mrt_stations': mrt_stations, 'hdb_types': hdb_types}
         
     if request.method == "POST":
-        #get responses
+        
+        result = ""
+        sqlquery = "SELECT * FROM hdb_listings WHERE "
+        
         start_date = request.POST.get('start_date')
+        if start_date is None:
+            continue
+        else:
+            result += + +str(start_date)
+            
         end_date = request.POST.get('end_date')
+        if end_date is None:
+            continue
+        else:
+            sqlquery + " INTERSECT SELECT * FROM hdb_units WHERE " + str(end_date)
+            
         min_price_per_day = request.POST.get('min_price_per_day')
+        if min_price_per_day is None:
+            continue 
+        else :
+            sqlquery + " INTERSECT SELECT * FROM hdb_units WHERE " + str(end_date)
+        
         max_price_per_day = request.POST.get('max_price_per_day')
         region = request.POST.getlist('region')
         towns = request.POST.getlist('towns')
@@ -110,10 +128,7 @@ def listings(request):
         num_bathrooms = request.POST.get('num_bathrooms')
         nearest_mrt = request.POST.getlist('nearest_mrt')
         nearest_mrt_dist = request.POST.getlist('nearest_mrt_dist')
-        
-        #set filters
-        
-        
+
         return render(request, 'app/listings.html', result_dict)
     
     with connection.cursor() as cursor:
