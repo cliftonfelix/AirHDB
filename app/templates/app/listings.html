@@ -7,13 +7,13 @@
       <form method = "POST">
         {% csrf_token %}
         <div id="div_id_start_date" class="control-group"> 
-          <label for="id_start_date" class="control-label requiredField">Start Date<span class="asteriskField">*</span> </label> 
+          <label for="id_start_date" class="control-label requiredField">Start Date</label> 
             <div class="controls"> <input type="date" id="id_start_date" name="start_date" required=""> </div> 
         </div> 
         
         <div id="div_id_end_date" class="control-group"> 
-          <label for="id_end_date" class="control-label requiredField">End Date<span class="asteriskField">*</span> </label> 
-            <div class="controls"> <input type="date" id="id_end_date" name="end_date" required=""> </div> 
+          <label for="id_end_date" class="control-label requiredField">End Date</label> 
+            <div class="controls"> <input type="date" id="id_end_date" name="end_date"> </div> 
         </div> 
         
         <div id="div_id_num_guests" class="control-group"> 
@@ -33,7 +33,7 @@
             <div class="controls"><select name="regions" id="id_regions" multiple>
               {% for town in towns %}
               <option value="{{town.1}}">{{town.1}}</option>
-              {% end for %}
+              {% endfor %}
                 
               </select> </div>
         </div>
@@ -43,7 +43,17 @@
             <div class="controls"><select name="towns" id="id_towns" multiple>
               {% for town in towns %}
               <option value="{{town.0}}">{{town.0}}</option>
-              {% end for %}
+              {% endfor %}
+                
+              </select> </div>
+        </div>
+        
+        <div id="div_id_hdb_types" class="control-group"> 
+          <label for="id_hdb_types" class="control-label requiredField">Town (multi-select with ctrl)</label> 
+            <div class="controls"><select name="hdb_types" id="id_hdb_types" multiple>
+              {% for type in hdb_types_info %}
+              <option value="{{type.0}}">{{type.0}}</option>
+              {% endfor %}
                 
               </select> </div>
         </div>
@@ -70,7 +80,7 @@
             <div class="controls"><select name="nearest_mrt" id="id_nearest_mrt" multiple>
               {% for station in mrt_stations %}
               <option value="{{station.0}}">{{station.0}}</option>
-              {% end for %}
+              {% endfor %}
                 
               </select> </div>
         </div>
@@ -87,7 +97,7 @@
               </select> </div>
         </div>
         
-        <button type="submit">Submit</button>
+        <button type="submit">Apply Filter</button>
 
       </form>
     </div>
