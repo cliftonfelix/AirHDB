@@ -3,6 +3,47 @@
 {% block content %}
 {% load static %}
   <body>
+    <div>
+      <form method = "POST">
+        {% csrf_token %}
+        <div id="div_id_start_date" class="control-group"> 
+          <label for="id_start_date" class="control-label requiredField">Start Date<span class="asteriskField">*</span> </label> 
+            <div class="controls"> <input type="date" id="id_start_date" name="start_date" required=""> </div> 
+        </div> 
+        <div id="div_id_end_date" class="control-group"> 
+          <label for="id_end_date" class="control-label requiredField">End Date<span class="asteriskField">*</span> </label> 
+            <div class="controls"> <input type="date" id="id_end_date" name="end_date" required=""> </div> 
+        </div> 
+        <div id="div_id_num_guests" class="control-group"> 
+          <label for="id_num_guests" class="control-label requiredField">Number of Guests</label> 
+            <div class="controls"> <input type="number" name="num_guests" id="id_num_guests" min="1"> </div>
+        </div> 
+        <div id="div_id_price_per_day" class="control-group"> 
+          <label for="id_price_per_day" class="control-label requiredField">Price Per Day</label> 
+          <label for="id_min_price_per_day" class = "control-label requiredField">Min</label>
+            <div class="controls"> <input type="number" name="min_price_per_day" id="id_min_price_per_day" min="1" value="1"> </div>
+          <label for="id_max_price_per_day" class = "control-label requiredField">Min</label>
+            <div class="controls"> <input type="number" name="max_price_per_day" id="id_max_price_per_day" max="6" value="6"> </div>
+        </div> 
+        
+<!--         
+        <label>Phone Number:</label>
+        <input type = "number" name = "number" placeholder = "Enter Phone Number" required=""/>
+        <label>Email:</label>
+        <input type = "text" name = "email" placeholder = "Enter Email" required=""/>
+        <label>Password:</label>
+        <input type = "password" name = "password" placeholder = "Enter Password" required=""/>
+        <label>Confirm Password:</label>
+        <input type = "password" name = "confirm_password" placeholder = "Re-enter Password" required=""/>
+        <input type = "submit" value = "Register"/>
+        
+        <p>Already have an account?</p>
+        <a href = "{% url 'login' %}">Sign in</a> -->
+
+      </form>
+    </div>
+    
+    
     <table border = 1>
       <thead>
         <th>HDB ID</th>
@@ -18,9 +59,9 @@
         <th>HDB Latitude</th>
         <th>HDB Longitude</th>
         <th>Nearest MRT Station</th>
-        <th>Nearest MRT Distance</th>
+        <th>Nearest MRT Distance (in km)</th>
       </thead>
-      {% for listing in listings_records %}
+      {% for listing in listings %}
       <tr>
         <td> {{ listing.0 }} </td>
         <td> {{ listing.1 }} </td>
