@@ -86,7 +86,7 @@ def listings(request):
         cursor.execute("SELECT * FROM hdb_listings")
         listings = cursor.fetchall()
         
-    result_dict = {'records': listings}
+    result_dict = {'listings_records': listings}
 
     return render(request, 'app/listings.html', result_dict)
 
