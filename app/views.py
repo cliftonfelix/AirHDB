@@ -96,8 +96,24 @@ def listings(request):
     result_dict = {'towns': towns, 'regions': regions, 'mrt_stations': mrt_stations, 'hdb_types': hdb_types}
         
     if request.method == "POST":
-        result_dict['listings'] = listings
-        #todo for filters
+        #get responses
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        min_price_per_day = request.POST.get('min_price_per_day')
+        max_price_per_day = request.POST.get('max_price_per_day')
+        region = request.POST.getlist('region')
+        towns = request.POST.getlist('towns')
+        hdb_types = request.POST.getlist('hdb_types')  
+        min_size = request.POST.get('min_size')
+        max_size = request.POST.get('max_size')
+        num_bedrooms = request.POST.get('num_bedrooms')
+        num_bathrooms = request.POST.get('num_bathrooms')
+        nearest_mrt = request.POST.getlist('nearest_mrt')
+        nearest_mrt_dist = request.POST.getlist('nearest_mrt_dist')
+        
+        #set filters
+        
+        
         return render(request, 'app/listings.html', result_dict)
     
     with connection.cursor() as cursor:
