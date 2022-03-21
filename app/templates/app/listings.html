@@ -3,9 +3,6 @@
 {% block content %}
 {% load static %}
   <body>
-    <h2>Hi Hari, Bryan, Jason!</h2>
-    <h2>This page is from index.html. So, index.html later on should be the sign in page :)</h2>
-    <h2>Goodluck</h2>
     <table border = 1>
       <thead>
         <th>HDB ID</th>
@@ -23,7 +20,7 @@
         <th>Nearest MRT Station</th>
         <th>Nearest MRT Distance</th>
       </thead>
-      {% for listing in records %}
+      {% for listing in listings_records %}
       <tr>
         <td> {{ listing.0 }} </td>
         <td> {{ listing.1 }} </td>
