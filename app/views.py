@@ -80,13 +80,28 @@ def register_page(request):
     
 @login_required(login_url = 'login')
 def listings(request):
-    """Shows the main page"""
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM towns")
+        towns_regions = cursor.fetchall()
+        
+        cursor.execute("SELECT * FROM mrt_stations")
+        mrt_stations = cursor.fetchall()
+        
+        cursor.execute("SELECT * FROM hdb_types_info")
+        hdb_types_info = cursor.fetchall()
+        
+    result_dict = {'towns_regions': towns_regions, 'mrt_stations': mrt_stations, 'hdb_types_info' = hdb_types_info}
+        
+    if request.method == "POST":
+        result_dict['listings'] = listings
+        #todo for filters
+        return render(request, 'app/listings.html', result_dict)
     
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM hdb_listings")
         listings = cursor.fetchall()
         
-    result_dict = {'listings_records': listings}
+    result_dict['listings'] = listings
 
     return render(request, 'app/listings.html', result_dict)
 
