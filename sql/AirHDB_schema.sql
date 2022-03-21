@@ -41,7 +41,8 @@ CREATE TABLE IF NOT EXISTS hdb_units (
 											  (contact_person_mobile BETWEEN 90000000 AND 98999999)), -- https://en.wikipedia.org/wiki/Telephone_numbers_in_Singapore
 	hdb_lat NUMERIC NOT NULL CHECK (hdb_lat BETWEEN 1.158 AND 1.472), -- Can we find a tighter constraint for Singapore latitude?
 	hdb_long NUMERIC NOT NULL CHECK (hdb_long BETWEEN 103.6 AND 104.1), -- Can we find a tighter constraint for Singapore longitude?
-	nearest_mrt VARCHAR(256) NOT NULL,
+	nearest_mrt VARCHAR(256) NOT NULL REFERENCES mrt_stations(mrt_name),
+	nearest_mrt_distance NUMERIC NOT NULL,
 	can_book VARCHAR(256) NOT NULL DEFAULT 'Yes' CHECK(can_book = 'Yes' OR
 													   can_book = 'No'),
 	UNIQUE (hdb_address, hdb_unit_number), -- Other alternatives?
