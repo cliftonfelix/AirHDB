@@ -72,3 +72,15 @@ BEGIN
 	RETURN NEW;
 END;
 $$;
+
+CREATE OR REPLACE FUNCTION update_all_nearest_mrts()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS 
+$$
+BEGIN
+	UPDATE hdb_units --it will trigger the insert_nearest_mrt to run
+	SET hdb_id = hdb_id;
+	RETURN NEW;
+END;
+$$;
