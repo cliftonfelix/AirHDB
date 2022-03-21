@@ -7,21 +7,21 @@ DROP TABLE IF EXISTS mrt_stations;
 DROP TABLE IF EXISTS hdb_types_info;
 
 CREATE TABLE IF NOT EXISTS towns (
-	town VARCHAR(256) PRIMARY KEY,
-	region VARCHAR(256)
+	town VARCHAR(256) NOT NULL PRIMARY KEY,
+	region VARCHAR(256) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS mrt_stations (
-	mrt_name VARCHAR(256) PRIMARY KEY,
-	mrt_lat NUMERIC,
-	mrt_long NUMERIC
+	mrt_name VARCHAR(256) NOT NULL PRIMARY KEY,
+	mrt_lat NUMERIC NOT NULL CHECK (mrt_lat BETWEEN 1.158 AND 1.472),
+	mrt_long NUMERIC NOT NULL CHECK (mrt_long BETWEEN 103.6 AND 104.1)
 );
 
 CREATE TABLE IF NOT EXISTS hdb_types_info (
 	hdb_type VARCHAR(256) PRIMARY KEY,
-	number_of_bedrooms INT,
-	number_of_bathrooms INT,
-	max_occupants INT
+	number_of_bedrooms INT NOT NULL CHECK (number_of_bedrooms > 0),
+	number_of_bathrooms INT NOT NULL CHECK (number_of_bathrooms > 0),
+	max_occupants INT NOT NULL CHECK (max_occupants > 0)
 );
 
 CREATE TABLE IF NOT EXISTS hdb_units (
