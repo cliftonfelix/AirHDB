@@ -81,16 +81,19 @@ def register_page(request):
 @login_required(login_url = 'login')
 def listings(request):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM towns")
+        cursor.execute("SELECT DISTINCT town FROM towns")
         towns = cursor.fetchall()
         
-        cursor.execute("SELECT * FROM mrt_stations")
+        cursor.execute("SELECT DISTINCT region FROM towns")
+        regions = cursor.fetchall()
+        
+        cursor.execute("SELECT DISTINCT mrt_name FROM mrt_stations")
         mrt_stations = cursor.fetchall()
         
-        cursor.execute("SELECT * FROM hdb_types_info")
-        hdb_types_info = cursor.fetchall()
+        cursor.execute("SELECT DISTINCT hdb_type FROM hdb_types_info")
+        hdb_types = cursor.fetchall()
         
-    result_dict = {'towns': towns, 'mrt_stations': mrt_stations, 'hdb_types_info': hdb_types_info}
+    result_dict = {'towns': towns, 'regions': regions, 'mrt_stations': mrt_stations, 'hdb_types': hdb_types}
         
     if request.method == "POST":
         result_dict['listings'] = listings
