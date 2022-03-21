@@ -155,3 +155,10 @@ INSERT INTO mrt_stations(mrt_name,mrt_lat,mrt_long) VALUES ('Samudera',1.415955,
 INSERT INTO mrt_stations(mrt_name,mrt_lat,mrt_long) VALUES ('Nibong',1.411865,103.900321);
 INSERT INTO mrt_stations(mrt_name,mrt_lat,mrt_long) VALUES ('Sumang',1.408501,103.898605);
 INSERT INTO mrt_stations(mrt_name,mrt_lat,mrt_long) VALUES ('Soo Teck',1.405436,103.897287);
+INSERT INTO mrt_stations(mrt_name,mrt_lat,mrt_long) VALUES ('Upper Thomson',1.353961,103.833816);
+INSERT INTO mrt_stations(mrt_name,mrt_lat,mrt_long) VALUES ('Bright Hill',1.363191,103.833229);
+INSERT INTO mrt_stations(mrt_name,mrt_lat,mrt_long) VALUES ('Mayflower',1.372836,103.836908);
+INSERT INTO mrt_stations(mrt_name,mrt_lat,mrt_long) VALUES ('Lentor',1.384395,103.836806);
+INSERT INTO mrt_stations(mrt_name,mrt_lat,mrt_long) VALUES ('Springleaf',1.397394,103.818490);
+INSERT INTO mrt_stations(mrt_name,mrt_lat,mrt_long) VALUES ('Woodlands South',1.427347,103.793147);
+INSERT INTO mrt_stations(mrt_name,mrt_lat,mrt_long) VALUES ('Woodlands North',1.447870,103.785413);
