@@ -83,12 +83,12 @@ def listings(request):
     """Shows the main page"""
     
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM hdb_units")
-        units = cursor.fetchall()
+        cursor.execute("SELECT * FROM hdb_listings")
+        listings = cursor.fetchall()
         
-    result_dict = {'records': units}
+    result_dict = {'records': listings}
 
-    return render(request, 'app/index.html', result_dict)
+    return render(request, 'app/listings.html', result_dict)
 
 @login_required(login_url = 'login')
 def admin(request):
