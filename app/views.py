@@ -90,7 +90,7 @@ def listings(request):
         cursor.execute("SELECT * FROM hdb_types_info")
         hdb_types_info = cursor.fetchall()
         
-    result_dict = {'towns_regions': towns_regions, 'mrt_stations': mrt_stations, 'hdb_types_info' = hdb_types_info}
+    result_dict = {'towns_regions': towns_regions, 'mrt_stations': mrt_stations, 'hdb_types_info': hdb_types_info}
         
     if request.method == "POST":
         result_dict['listings'] = listings
