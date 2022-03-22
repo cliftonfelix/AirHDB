@@ -178,9 +178,7 @@ def listings(request):
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-			   WHERE hl1.town IN (SELECT t1.town
-                                              FROM towns t1
-					      WHERE t1.region = '{1}')""".format(sqlquery, region)
+			   WHERE hl1.region = '{1}'""".format(sqlquery, region)
 
             if temp:
                 if result:
