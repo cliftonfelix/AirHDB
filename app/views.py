@@ -105,6 +105,18 @@ def listings(request):
     result_dict = {'towns': towns, 'regions': regions, 'mrt_stations': mrt_stations, 'hdb_types': hdb_types}
     result_dict['start_date'] = ''
     result_dict['end_date'] = ''
+    result_dict['num_guests'] = ''
+    result_dict['min_price_per_day'] = ''
+    result_dict['max_price_per_day'] = ''
+    result_dict['regions'] = ''
+    result_dict['towns'] = ''
+    result_dict['hdb_types'] = ''
+    result_dict['min_size'] = ''
+    result_dict['max_size'] = ''
+    result_dict['num_bedrooms'] = ''
+    result_dict['num_bathrooms'] = ''
+    result_dict['nearest_mrts'] = ''
+    result_dict['nearest_mrt_dist'] = ''
 
     if request.method == "POST":
         result = ""
@@ -125,6 +137,17 @@ def listings(request):
 
             result_dict['start_date'] = start_date
             result_dict['end_date'] = end_date
+            
+        #NUMBER OF GUESTS FILTER
+        num_guests = request.POST.get('num_guests')
+        if num_guests:
+            temp = """({0} 
+                       WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
+                                              FROM hdb_types_info hti1
+                                              WHERE hti1.max_occupants >= {1})""".format(sql_query, num_guests)
+            if result:
+                result += " INTERSECT "
+			result += temp
 
         #MIN AND MAX PRICE FILTER
         min_price_per_day = request.POST.get('min_price_per_day')
@@ -146,7 +169,8 @@ def listings(request):
             if result:
                 result += " INTERSECT "
             result += temp
-
+            
+        #REGION FILTER
         with connection.cursor() as cursor:
             if result:
                 cursor.execute(result)
