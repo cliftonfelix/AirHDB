@@ -142,13 +142,14 @@ def listings(request):
         num_guests = request.POST.get('num_guests')
         if num_guests:
             result_dict['num_guests'] = num_guests
-            temp = """({0} 
+            temp = """{0} 
                        WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
                                               FROM hdb_types_info hti1
                                               WHERE hti1.max_occupants >= {1})""".format(sqlquery, num_guests)
-            if result:
-                result += " INTERSECT "
-            result += temp
+            if temp:
+                if result:
+                    result += " INTERSECT "
+                result += "({})".format(temp)
 
         #MIN AND MAX PRICE FILTER
         min_price_per_day = request.POST.get('min_price_per_day')
