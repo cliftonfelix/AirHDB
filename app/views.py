@@ -96,115 +96,150 @@ def listings(request):
     result_dict = {'towns': towns, 'regions': regions, 'mrt_stations': mrt_stations, 'hdb_types': hdb_types}
         
     if request.method == "POST":
-        
         result = ""
-        sqlquery = "SELECT * FROM hdb_listings hl"
+        sqlquery = "SELECT * FROM hdb_listings hl1"
         
         #START AND END DATE FILTER
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
-        if start_date is None and end_date is None:
+        if not start_date or not end_date:
             continue 
         else:
-            result +=  "(" + sqlquery + ",bookings b WHERE hl.hdb_id NOT IN b.hdb_id AND hl.start_date " + "<" + str(start_date) + " AND hl.end_date < " + str(end_date) +
-            " UNION " + sqlquery + ",bookings b WHERE hl.hdb_id NOT IN b.hdb_id AND hl.start_date " + ">" + str(start_date) + " AND hl.end_date > " + str(end_date) + ")"
+            result += """({0}
+                          WHERE NOT EXISTS (SELECT *
+                                            FROM bookings b1
+                                            WHERE hl1.hdb_id = b1.hdb_id AND
+			   		                              (({1} :: DATE BETWEEN b1.start_date AND b1.end_date - 1 OR
+			   		                              {2} :: DATE - 1 BETWEEN b1.start_date AND b1.end_date - 1) OR
+			   		                              (b1.start_date BETWEEN {1} :: DATE AND {2} :: DATE - 1 OR
+			   		                              b1.end_date - 1 BETWEEN {1} :: DATE AND {2} :: DATE - 1))))""".format(sqlquery, start_date, end_date)
         
         #MIN AND MAX PRICE FILTER    
         min_price_per_day = request.POST.get('min_price_per_day')        
         max_price_per_day = request.POST.get('max_price_per_day')
-        if min_price_per_day is None and max_price_per_day is None:
-            continue
-        elif min_price_per_day is None and max_price_per_day is not None:
-            result += " INTERSECT " + sqlquery + "WHERE hl.price_per_day <= " + str(max_price_per_day)
-        elif min_price_per_day is not None and max_price_per_day is None:
-            result += " INTERSECT" + sqlquery + "WHERE hl.price_per_day >= " + str(min_price_per_day)
-        else:
-            result += " INTERSECT " + sqlquery + "WHERE hl.price_per_day >= " + str(min_price_per_day) + " AND hl.price_per_day <= " + str(max_price_per_day)
-        #REGION FILTER
-        region = request.POST.getlist('region')
-        if len(region) == 0:
-            continue
-        else:
-            result += " INTERSECT ("
-            for i in range(len(region)-1):
-                result += sqlquery + ",towns t" + "WHERE" + "hl.town = t.town" + "AND t.region = " + region[i] + " UNION "
-             result += sqlquery + ",towns t" + "WHERE" + "hl.town = t.town" + "AND t.region = " + region[len(region)-1] + ")"     
+        temp = ""
         
-        towns = request.POST.getlist('towns')
-        if len(towns) == 0:
-            continue
-        else:
-            result += " INTERSECT ("
-            for i in range(len(towns)-1):
-                result += sqlquery + "WHERE" + "hl.town = " + towns[i] + " UNION "
-             result += sqlquery + "WHERE" + "hl.town = " + towns[len(towns)-1] + ")"
-        
-        hdb_types = request.POST.getlist('hdb_types')
-        if len(hdb_types) == 0:
-            continue
-        else:
-            result += " INTERSECT ("
-            for i in range(len(hdb_types)-1):
-                result += sql_query + "WHERE" + "hl.type = " + hdb_types[i] + " UNION "
-            result += sql_query + "WHERE" + "hl.type = " + hdb_types[len(hdb_types)-1] + ")"
-        
-        min_size = request.POST.get('min_size')       
-        max_size = request.POST.get('max_size')
-        if min_size is None and max_size is None:
-            continue
-        elif min_size is None and max_size is not None:
-            result += " INTERSECT " + sqlquery + "WHERE hl.size <= " + str(max_size)
-        elif min_price_per_day is not None and max_price_per_day is None:
-            result += " INTERSECT " + sqlquery + "WHERE hl.size >= " + str(min_size)
-        else:
-            result += " INTERSECT " + sqlquery + "WHERE hl.size>= " + str(min_size) + " AND hl.size <= " + str(max_size)
-       
-        num_bedrooms = request.POST.get('num_bedrooms')
-        result += " INTERSECT " + sqlquery + ", hdb_types_info hi " +"WHERE hl.hdb_type = hi.hdb_type AND " + "hi.number_of_bedrooms = " + str(num_bedrooms)
-        
-        num_bathrooms = request.POST.get('num_bathrooms')
-        result += " INTERSECT " + sqlquery + ", hdb_types_info hi " +"WHERE hl.hdb_type = hi.hdb_type AND " + "hi.number_of_bathrooms = " + str(num_bathrooms)
-        
-        nearest_mrt = request.POST.getlist('nearest_mrt')
-        if len(nearest_mrt) == 0:
-            continue
-        else:
-            result += " INTERSECT ("
-            for i in range(len(nearest_mrt)-1):
-                result += sql_query + "WHERE" + "hl.nearest_mrt = " + nearest_mrt[i] + " UNION "
-            result += sql_query + "WHERE" + "hl.nearest_mrt = " + nearest_mrt[len(nearest_mrt)-1] + ")"
-        
-        #need to get rid of the symbols that the options return and the m as well
-        nearest_mrt_dist = request.POST.getlist('nearest_mrt_dist')
-        if len(nearest_mrt_dist) == 0:
-            continue
-        else:
-            result += " INTERSECT ("
-            for i in range(len(nearest_mrt_dist)-1):
-                if len(nearest_mrt_dist) == 0:
-                    result += " INTERSECT " + sqlquery
-                elif nearest_mrt_dist[i] == "< 100 m":
-                    result += sql_query + "WHERE hl.nearest_mrt_dist < 0.1" + " UNION "
-                elif nearest_mrt_dist[i] == "100 - 250 m":
-                    result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
-                elif nearest_mrt_dist[i] == "250 m - 1 km":
-                    result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
-                elif nearest_mrt_dist[i] == "1 - 2 km":
-                    result += sql_query + "WHERE hl.nearest_mrt_dist > 1 AND hl.nearest_mrt_dist < 2" + " UNION "
-                else:
-                    result += sql_query + "WHERE hl.nearest_mrt_dist > 2" + " UNION "
-            if nearest_mrt_dist[len(nearest_mrt_dist)-1] == "< 100 m":
-                result += sql_query + "WHERE hl.nearest_mrt_dist < 0.1" + " UNION "
-            elif nearest_mrt_dist[len(nearest_mrt_dist)-1] == "100 - 250 m":
-                result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
-            elif nearest_mrt_dist[len(nearest_mrt_dist)-1] == "250 m - 1 km":
-                result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
-            elif nearest_mrt_dist[len(nearest_mrt_dist)-1] == "1 - 2 km":
-                result += sql_query + "WHERE hl.nearest_mrt_dist > 1 AND hl.nearest_mrt_dist < 2" + " UNION "
-            else:
-                result += sql_query + "WHERE hl.nearest_mrt_dist > 2" + ") "
-           
+        if not min_price_per_day:
+            temp = "({} WHERE hl.price_per_day >= {}".format(sqlquery, min_price_per_day)
+            
+        if not max_price_per_day:
+            if not temp:
+                temp = "({} WHERE hl.price_per_day <= {})".format(sqlquery, max_price_per_day)
+            if temp:
+                temp += " INTERSECT {} WHERE hl.price_per_day <= {})".format(sqlquery, max_price_per_day)
+                
+        if not temp:
+            if result:
+                result += " INTERSECT "
+            result += temp
+            
+#         if min_price_per_day is None and max_price_per_day is None:
+#             continue
+            
+#         elif min_price_per_day is None and max_price_per_day is not None:
+#             if result:
+#                 result += " INTERSECT "
+#             result += "({} WHERE hl.price_per_day <= {})".format(sqlquery, max_price_per_day)
+#         elif min_price_per_day is not None and max_price_per_day is None:
+#             if result:
+#                 result += " INTERSECT "
+#             result += "({} WHERE hl.price_per_day <= {})".format(sqlquery, min_price_per_day)
+#         else:
+#             result += " INTERSECT " + sqlquery + "WHERE hl.price_per_day >= " + str(min_price_per_day) + " AND hl.price_per_day <= " + str(max_price_per_day)
 
+#         #REGION FILTER
+#         region = request.POST.getlist('region')
+#         if len(region) == 0:
+#             continue
+#         else:
+#             result += " INTERSECT ("
+#             for i in range(len(region)-1):
+#                 result += sqlquery + ",towns t" + "WHERE" + "hl.town = t.town" + "AND t.region = " + region[i] + " UNION "
+#              result += sqlquery + ",towns t" + "WHERE" + "hl.town = t.town" + "AND t.region = " + region[len(region)-1] + ")"     
+        
+#         towns = request.POST.getlist('towns')
+#         if len(towns) == 0:
+#             continue
+#         else:
+#             result += " INTERSECT ("
+#             for i in range(len(towns)-1):
+#                 result += sqlquery + "WHERE" + "hl.town = " + towns[i] + " UNION "
+#              result += sqlquery + "WHERE" + "hl.town = " + towns[len(towns)-1] + ")"
+        
+#         hdb_types = request.POST.getlist('hdb_types')
+#         if len(hdb_types) == 0:
+#             continue
+#         else:
+#             result += " INTERSECT ("
+#             for i in range(len(hdb_types)-1):
+#                 result += sql_query + "WHERE" + "hl.type = " + hdb_types[i] + " UNION "
+#             result += sql_query + "WHERE" + "hl.type = " + hdb_types[len(hdb_types)-1] + ")"
+        
+#         min_size = request.POST.get('min_size')       
+#         max_size = request.POST.get('max_size')
+#         if min_size is None and max_size is None:
+#             continue
+#         elif min_size is None and max_size is not None:
+#             result += " INTERSECT " + sqlquery + "WHERE hl.size <= " + str(max_size)
+#         elif min_price_per_day is not None and max_price_per_day is None:
+#             result += " INTERSECT " + sqlquery + "WHERE hl.size >= " + str(min_size)
+#         else:
+#             result += " INTERSECT " + sqlquery + "WHERE hl.size>= " + str(min_size) + " AND hl.size <= " + str(max_size)
+       
+#         num_bedrooms = request.POST.get('num_bedrooms')
+#         result += " INTERSECT " + sqlquery + ", hdb_types_info hi " +"WHERE hl.hdb_type = hi.hdb_type AND " + "hi.number_of_bedrooms = " + str(num_bedrooms)
+        
+#         num_bathrooms = request.POST.get('num_bathrooms')
+#         result += " INTERSECT " + sqlquery + ", hdb_types_info hi " +"WHERE hl.hdb_type = hi.hdb_type AND " + "hi.number_of_bathrooms = " + str(num_bathrooms)
+        
+#         nearest_mrt = request.POST.getlist('nearest_mrt')
+#         if len(nearest_mrt) == 0:
+#             continue
+#         else:
+#             result += " INTERSECT ("
+#             for i in range(len(nearest_mrt)-1):
+#                 result += sql_query + "WHERE" + "hl.nearest_mrt = " + nearest_mrt[i] + " UNION "
+#             result += sql_query + "WHERE" + "hl.nearest_mrt = " + nearest_mrt[len(nearest_mrt)-1] + ")"
+        
+#         #need to get rid of the symbols that the options return and the m as well
+#         nearest_mrt_dist = request.POST.getlist('nearest_mrt_dist')
+#         if len(nearest_mrt_dist) == 0:
+#             continue
+#         else:
+#             result += " INTERSECT ("
+#             for i in range(len(nearest_mrt_dist)-1):
+#                 if len(nearest_mrt_dist) == 0:
+#                     result += " INTERSECT " + sqlquery
+#                 elif nearest_mrt_dist[i] == "< 100 m":
+#                     result += sql_query + "WHERE hl.nearest_mrt_dist < 0.1" + " UNION "
+#                 elif nearest_mrt_dist[i] == "100 - 250 m":
+#                     result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
+#                 elif nearest_mrt_dist[i] == "250 m - 1 km":
+#                     result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
+#                 elif nearest_mrt_dist[i] == "1 - 2 km":
+#                     result += sql_query + "WHERE hl.nearest_mrt_dist > 1 AND hl.nearest_mrt_dist < 2" + " UNION "
+#                 else:
+#                     result += sql_query + "WHERE hl.nearest_mrt_dist > 2" + " UNION "
+#             if nearest_mrt_dist[len(nearest_mrt_dist)-1] == "< 100 m":
+#                 result += sql_query + "WHERE hl.nearest_mrt_dist < 0.1" + " UNION "
+#             elif nearest_mrt_dist[len(nearest_mrt_dist)-1] == "100 - 250 m":
+#                 result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
+#             elif nearest_mrt_dist[len(nearest_mrt_dist)-1] == "250 m - 1 km":
+#                 result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
+#             elif nearest_mrt_dist[len(nearest_mrt_dist)-1] == "1 - 2 km":
+#                 result += sql_query + "WHERE hl.nearest_mrt_dist > 1 AND hl.nearest_mrt_dist < 2" + " UNION "
+#             else:
+#                 result += sql_query + "WHERE hl.nearest_mrt_dist > 2" + ") "
+           
+        with connection.cursor() as cursor:
+            if result:
+                cursor.execute(result)
+            else:
+                cursor.execute("SELECT * FROM hdb_listings")
+            listings = cursor.fetchall()
+        
+        result_dict['listings'] = listings
+        
         return render(request, 'app/listings.html', result_dict)
     
     with connection.cursor() as cursor:
