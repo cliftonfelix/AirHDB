@@ -108,15 +108,15 @@ def listings(request):
     result_dict['num_guests'] = ''
     result_dict['min_price_per_day'] = ''
     result_dict['max_price_per_day'] = ''
-    result_dict['regions'] = ''
-    result_dict['towns'] = ''
-    result_dict['hdb_types'] = ''
+    result_dict['regions'] = '' #TODO: Default value
+    result_dict['towns'] = '' #TODO: Default value
+    result_dict['hdb_types'] = '' #TODO: Default value
     result_dict['min_size'] = ''
     result_dict['max_size'] = ''
     result_dict['num_bedrooms'] = ''
     result_dict['num_bathrooms'] = ''
-    result_dict['nearest_mrts'] = ''
-    result_dict['nearest_mrt_dist'] = ''
+    result_dict['nearest_mrts'] = '' #TODO: Default value
+    result_dict['nearest_mrt_dist'] = '' #TODO: Default value
 
     if request.method == "POST":
         result = ""
@@ -126,6 +126,8 @@ def listings(request):
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
         if start_date and end_date: #TODO: if only start_date filled in then show end_date to be start + 1 and vice versa
+			result_dict['start_date'] = start_date
+        	result_dict['end_date'] = end_date
             result += """({0}
                           WHERE NOT EXISTS (SELECT *
                           FROM bookings b1
@@ -135,12 +137,11 @@ def listings(request):
                                 (b1.start_date BETWEEN '{1}' :: DATE AND '{2}' :: DATE - 1 OR
                                 b1.end_date - 1 BETWEEN '{1}' :: DATE AND '{2}' :: DATE - 1))))""".format(sqlquery, start_date, end_date)
 
-            result_dict['start_date'] = start_date
-            result_dict['end_date'] = end_date
             
         #NUMBER OF GUESTS FILTER
         num_guests = request.POST.get('num_guests')
         if num_guests:
+			result_dict['num_guests'] = num_guests
             temp = """({0} 
                        WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
                                               FROM hdb_types_info hti1
@@ -155,22 +156,165 @@ def listings(request):
         temp = ""
 
         if min_price_per_day:
-            temp = "({} WHERE hl1.price_per_day >= {}".format(sqlquery, min_price_per_day)
-            if not max_price_per_day:
-                temp += ")"
+			result_dict['min_price_per_day'] = min_price_per_day
+            temp = "{} WHERE hl1.price_per_day >= {}".format(sqlquery, min_price_per_day)
 
         if max_price_per_day:
+			result_dict['max_price_per_day'] = max_price_per_day
             if not temp:
-                temp = "({} WHERE hl1.price_per_day <= {})".format(sqlquery, max_price_per_day)
+                temp = "{} WHERE hl1.price_per_day <= {}".format(sqlquery, max_price_per_day)
             else:
-                temp += " INTERSECT {} WHERE hl1.price_per_day <= {})".format(sqlquery, max_price_per_day)
+                temp += " INTERSECT {} WHERE hl1.price_per_day <= {}".format(sqlquery, max_price_per_day)
 
         if temp:
             if result:
                 result += " INTERSECT "
-            result += temp
+            result += "({})".format(temp)
             
         #REGION FILTER
+		regions = request.POST.getlist('regions')
+		
+		if regions:
+			temp = ""
+			for region in regions:
+				if temp:
+					temp += " UNION "
+				temp += """{0} 
+						   WHERE hl1.town IN (SELECT t1.town
+						   					  FROM towns t1
+											  WHERE t1.region = '{1}')""".format(sqlsuery, region)
+			if temp:
+				if result:
+                	result += " INTERSECT "
+				result += "({})".format(temp)
+				
+		#TOWN FILTER
+		towns = request.POST.getlist('towns')
+		
+		if towns:
+			temp = ""
+			for town in towns:
+				if temp:
+					temp += " UNION "
+				temp += """{0} 
+						   WHERE hl1.town = '{1}')""".format(sqlsuery, town)
+			if temp:
+				if result:
+                	result += " INTERSECT "
+				result += "({})".format(temp)
+				
+		#HDB TYPE FILTER
+		hdb_types = request.POST.getlist('hdb_types')
+		
+		if hdb_types:
+			temp = ""
+			for type in hdb_types:
+				if temp:
+					temp += " UNION "
+				temp += """{0} 
+						   WHERE hl1.hdb_type = '{1}')""".format(sqlsuery, type)
+			if temp:
+				if result:
+                	result += " INTERSECT "
+				result += "({})".format(temp)
+				
+		#SIZE FILTER
+		min_size = request.POST.get('min_size')
+        max_size = request.POST.get('max_size')
+        temp = ""
+
+        if min_size:
+			result_dict['min_size'] = min_size
+            temp = "{} WHERE hl1.size >= {}".format(sqlquery, min_size)
+
+        if max_size:
+			result_dict['max_size'] = max_size
+            if not temp:
+                temp = "{} WHERE hl1.size <= {}".format(sqlquery, max_size)
+            else:
+                temp += " INTERSECT {} WHERE hl1.size <= {}".format(sqlquery, max_size)
+
+        if temp:
+            if result:
+                result += " INTERSECT "
+            result += "({})".format(temp)
+			
+		#NUM BEDROOMS FILTER
+		num_bedrooms = request.POST.get('num_bedrooms')
+        if num_bedrooms:
+			result_dict['num_bedrooms'] = num_bedrooms
+            temp = """({0} 
+                       WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
+                                              FROM hdb_types_info hti1
+                                              WHERE hti1.number_of_bedrooms = {1})""".format(sql_query, num_bedrooms)
+            if result:
+                result += " INTERSECT "
+			result += temp
+			
+		#NUM BATHROOMS FILTER
+		num_bathrooms = request.POST.get('num_bathrooms')
+        if num_bathrooms:
+			result_dict['num_bathrooms'] = num_bathrooms
+            temp = """({0} 
+                       WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
+                                              FROM hdb_types_info hti1
+                                              WHERE hti1.number_of_bathrooms = {1})""".format(sql_query, num_bathrooms)
+            if result:
+                result += " INTERSECT "
+			result += temp
+			
+		#NEAREST MRT FILTER
+		nearest_mrts = request.POST.getlist('nearest_mrts')
+		
+		if nearest_mrts:
+			temp = ""
+			for nearest_mrt in nearest_mrts:
+				if temp:
+					temp += " UNION "
+				temp += """{0} 
+						   WHERE hl1.nearest_mrt = '{1}')""".format(sqlsuery, nearest_mrt)
+			if temp:
+				if result:
+                	result += " INTERSECT "
+				result += "({})".format(temp)
+				
+		#NEAREST MRT DISTANCE FILTER
+		nearest_mrt_dists = request.POST.getlist('nearest_mrt_dists')
+		if nearest_mrt_dists:
+			temp = ""
+			if "< 100 m" in nearest_mrt_dists:
+				temp += """{0} 
+						   WHERE hl1.nearest_mrt_distance < 0.1)""".format(sqlsuery)
+				
+			if "100 - 250 m" in nearest_mrt_dists:
+				if temp:
+					temp += " UNION "
+				temp += """{0} 
+						   WHERE hl1.nearest_mrt_distance BETWEEN 0.1 AND 0.25)""".format(sqlsuery)
+				
+			if "250 m - 1 km" in nearest_mrt_dists:
+				if temp:
+					temp += " UNION "
+				temp += """{0} 
+						   WHERE hl1.nearest_mrt_distance BETWEEN 0.25 AND 1)""".format(sqlsuery)
+			
+			if "1 - 2 km" in nearest_mrt_dists:
+				if temp:
+					temp += " UNION "
+				temp += """{0} 
+						   WHERE hl1.nearest_mrt_distance BETWEEN 1 AND 2)""".format(sqlsuery)
+				
+			if "> 2 km" in nearest_mrt_dists:
+				if temp:
+					temp += " UNION "
+				temp += """{0} 
+						   WHERE hl1.nearest_mrt_distance > 2)""".format(sqlsuery)
+			
+			if temp:
+				if result:
+                	result += " INTERSECT "
+				result += "({})".format(temp)
+	
         with connection.cursor() as cursor:
             if result:
                 cursor.execute(result)
