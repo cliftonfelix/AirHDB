@@ -291,7 +291,7 @@ def listings(request):
                                                   FROM hdb_types_info hti1
                                                   WHERE hti1.number_of_bathrooms = 1)""".format(sqlquery)
 
-            if "2" in num_bedrooms:
+            if "2" in num_bathrooms:
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
@@ -299,7 +299,7 @@ def listings(request):
                                                   FROM hdb_types_info hti1
                                                   WHERE hti1.number_of_bathrooms = 2)""".format(sqlquery)
 				
-            if "3" in num_bedrooms:
+            if "3" in num_bathrooms:
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
