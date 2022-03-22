@@ -183,7 +183,7 @@ def listings(request):
                 temp += """{0} 
 			   WHERE hl1.town IN (SELECT t1.town
                                               FROM towns t1
-					      WHERE t1.region = '{1}')""".format(sqlsuery, region)
+					      WHERE t1.region = '{1}')""".format(sqlquery, region)
 
             if temp:
                 if result:
@@ -199,7 +199,7 @@ def listings(request):
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-			   WHERE hl1.town = '{1}')""".format(sqlsuery, town)
+			   WHERE hl1.town = '{1}')""".format(sqlquery, town)
 
             if temp:
                 if result:
@@ -215,7 +215,7 @@ def listings(request):
                 if temp:
                     temp += " UNION "
                     temp += """{0} 
-			       WHERE hl1.hdb_type = '{1}')""".format(sqlsuery, type)
+			       WHERE hl1.hdb_type = '{1}')""".format(sqlquery, type)
 
             if temp:
                 if result:
@@ -277,7 +277,7 @@ def listings(request):
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-			   WHERE hl1.nearest_mrt = '{1}')""".format(sqlsuery, nearest_mrt)
+			   WHERE hl1.nearest_mrt = '{1}')""".format(sqlquery, nearest_mrt)
 
             if temp:
                 if result:
@@ -290,31 +290,31 @@ def listings(request):
             temp = ""
             if "< 100 m" in nearest_mrt_dists:
                 temp += """{0} 
-			   WHERE hl1.nearest_mrt_distance < 0.1)""".format(sqlsuery)
+			   WHERE hl1.nearest_mrt_distance < 0.1)""".format(sqlquery)
 
             if "100 - 250 m" in nearest_mrt_dists:
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-			   WHERE hl1.nearest_mrt_distance BETWEEN 0.1 AND 0.25)""".format(sqlsuery)
+			   WHERE hl1.nearest_mrt_distance BETWEEN 0.1 AND 0.25)""".format(sqlquery)
 				
             if "250 m - 1 km" in nearest_mrt_dists:
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-                           WHERE hl1.nearest_mrt_distance BETWEEN 0.25 AND 1)""".format(sqlsuery)
+                           WHERE hl1.nearest_mrt_distance BETWEEN 0.25 AND 1)""".format(sqlquery)
 
             if "1 - 2 km" in nearest_mrt_dists:
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-                           WHERE hl1.nearest_mrt_distance BETWEEN 1 AND 2)""".format(sqlsuery)
+                           WHERE hl1.nearest_mrt_distance BETWEEN 1 AND 2)""".format(sqlquery)
 
             if "> 2 km" in nearest_mrt_dists:
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-			   WHERE hl1.nearest_mrt_distance > 2)""".format(sqlsuery)
+			   WHERE hl1.nearest_mrt_distance > 2)""".format(sqlquery)
 
             if temp:
                 if result:
