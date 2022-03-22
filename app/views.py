@@ -8,36 +8,36 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 def login_page(request):
     if request.user.is_authenticated:
-        email = request.user.username
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
-            row = cursor.fetchone()
-            if row[3] == 'Yes':
-                return redirect('admin')
-            elif row[3] == 'No':
-                return redirect('listings')
-        
+	email = request.user.username
+	with connection.cursor() as cursor:
+	    cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
+	    row = cursor.fetchone()
+	    if row[3] == 'Yes':
+		return redirect('admin')
+	    elif row[3] == 'No':
+		return redirect('listings')
+	
     if request.method == 'POST':
-        email = request.POST.get('email').lower()
-        password = request.POST.get('password')
-        try: 
-            user = User.objects.get(username = email)
-        except:
-            messages.error(request, 'Invalid email address!')
-            return render(request, 'app/login.html')  
-        user = authenticate(request, username = email, password = password)
-        if user is not None:
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
-                row = cursor.fetchone()
-                login(request, user)
-                if row[3] == 'Yes':
-                    return redirect('admin')
-                elif row[3] == 'No':
-                    return redirect('listings')
-        else:
-            messages.error(request, 'Wrong password entered!')
-            return render(request, 'app/login.html')
+	email = request.POST.get('email').lower()
+	password = request.POST.get('password')
+	try: 
+	    user = User.objects.get(username = email)
+	except:
+	    messages.error(request, 'Invalid email address!')
+	    return render(request, 'app/login.html')  
+	user = authenticate(request, username = email, password = password)
+	if user is not None:
+	    with connection.cursor() as cursor:
+		cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
+		row = cursor.fetchone()
+		login(request, user)
+		if row[3] == 'Yes':
+		    return redirect('admin')
+		elif row[3] == 'No':
+		    return redirect('listings')
+	else:
+	    messages.error(request, 'Wrong password entered!')
+	    return render(request, 'app/login.html')
     return render(request, 'app/login.html')
 
 def logout_page(request):
@@ -46,208 +46,208 @@ def logout_page(request):
 
 def register_page(request):
     if request.method == 'POST':
-        # Ensure password matches confirmation
-        name = request.POST.get('name')
-        number = request.POST.get('number')
-        email = request.POST.get('email').lower()
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
-        
-        if password != confirm_password:
-            messages.error(request, 'Passwords do not match!')
-            return render(request, 'app/register.html')
-        
-        with connection.cursor() as cursor:
-            try: 
-                cursor.execute("INSERT INTO users VALUES (%s, %s, %s)", [name, email, number])
-            except Exception as e:
-                string = str(e)
-                message = ""
-                if 'duplicate key value violates unique constraint "users_pkey"' in string:  
-                    message = 'The email has already been used by another user!'
-                elif 'new row for relation "users" violates check constraint "users_email_address_check"' in string:
-                    message = 'Please enter a valid email address!'
-                elif 'new row for relation "users" violates check constraint "users_mobile_number_check"' in string:
-                    message = 'Please enter a valid Singapore number!'
-                messages.error(request, message)
-                return render(request, 'app/register.html')
-            
-            user = User.objects.create_user(email, password = password)
-            user.save()
-            messages.success(request, 'Account has been successfully registered!')
-            return redirect('login')
+	# Ensure password matches confirmation
+	name = request.POST.get('name')
+	number = request.POST.get('number')
+	email = request.POST.get('email').lower()
+	password = request.POST.get('password')
+	confirm_password = request.POST.get('confirm_password')
+	
+	if password != confirm_password:
+	    messages.error(request, 'Passwords do not match!')
+	    return render(request, 'app/register.html')
+	
+	with connection.cursor() as cursor:
+	    try: 
+		cursor.execute("INSERT INTO users VALUES (%s, %s, %s)", [name, email, number])
+	    except Exception as e:
+		string = str(e)
+		message = ""
+		if 'duplicate key value violates unique constraint "users_pkey"' in string:  
+		    message = 'The email has already been used by another user!'
+		elif 'new row for relation "users" violates check constraint "users_email_address_check"' in string:
+		    message = 'Please enter a valid email address!'
+		elif 'new row for relation "users" violates check constraint "users_mobile_number_check"' in string:
+		    message = 'Please enter a valid Singapore number!'
+		messages.error(request, message)
+		return render(request, 'app/register.html')
+	    
+	    user = User.objects.create_user(email, password = password)
+	    user.save()
+	    messages.success(request, 'Account has been successfully registered!')
+	    return redirect('login')
     return render(request, 'app/register.html')
     
 @login_required(login_url = 'login')
 def listings(request):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT DISTINCT town FROM towns ORDER BY town")
-        towns = cursor.fetchall()
-        
-        cursor.execute("SELECT DISTINCT region FROM towns ORDER BY region")
-        regions = cursor.fetchall()
-        
-        cursor.execute("SELECT DISTINCT mrt_name FROM mrt_stations ORDER BY mrt_name")
-        mrt_stations = cursor.fetchall()
-        
-        cursor.execute("SELECT DISTINCT hdb_type FROM hdb_types_info ORDER BY hdb_type")
-        hdb_types = cursor.fetchall()
+	cursor.execute("SELECT DISTINCT town FROM towns ORDER BY town")
+	towns = cursor.fetchall()
+	
+	cursor.execute("SELECT DISTINCT region FROM towns ORDER BY region")
+	regions = cursor.fetchall()
+	
+	cursor.execute("SELECT DISTINCT mrt_name FROM mrt_stations ORDER BY mrt_name")
+	mrt_stations = cursor.fetchall()
+	
+	cursor.execute("SELECT DISTINCT hdb_type FROM hdb_types_info ORDER BY hdb_type")
+	hdb_types = cursor.fetchall()
 
     result_dict = {'towns': towns, 'regions': regions, 'mrt_stations': mrt_stations, 'hdb_types': hdb_types}
-	result_dict['start_date'] = ''
-	result_dict['end_date'] = ''
-        
+    result_dict['start_date'] = ''
+    result_dict['end_date'] = ''
+	
     if request.method == "POST":
-        result = ""
-        sqlquery = "SELECT * FROM hdb_listings hl1"
-        
-        #START AND END DATE FILTER
-        start_date = request.POST.get('start_date')
-        end_date = request.POST.get('end_date')
-        if start_date is not None and end_date is not None: #TODO: if only start_date filled in then show end_date to be start + 1 and vice versa
-            result += """({0}
-                          WHERE NOT EXISTS (SELECT *
-                                            FROM bookings b1
-                                            WHERE hl1.hdb_id = b1.hdb_id AND
-			   		                              (('{1}' :: DATE BETWEEN b1.start_date AND b1.end_date - 1 OR
-			   		                              '{2}' :: DATE - 1 BETWEEN b1.start_date AND b1.end_date - 1) OR
-			   		                              (b1.start_date BETWEEN '{1}' :: DATE AND '{2}' :: DATE - 1 OR
-			   		                              b1.end_date - 1 BETWEEN '{1}' :: DATE AND '{2}' :: DATE - 1))))""".format(sqlquery, start_date, end_date)
+	result = ""
+	sqlquery = "SELECT * FROM hdb_listings hl1"
+	
+	#START AND END DATE FILTER
+	start_date = request.POST.get('start_date')
+	end_date = request.POST.get('end_date')
+	if start_date is not None and end_date is not None: #TODO: if only start_date filled in then show end_date to be start + 1 and vice versa
+	    result += """({0}
+			  WHERE NOT EXISTS (SELECT *
+					    FROM bookings b1
+					    WHERE hl1.hdb_id = b1.hdb_id AND
+			   					      (('{1}' :: DATE BETWEEN b1.start_date AND b1.end_date - 1 OR
+			   					      '{2}' :: DATE - 1 BETWEEN b1.start_date AND b1.end_date - 1) OR
+			   					      (b1.start_date BETWEEN '{1}' :: DATE AND '{2}' :: DATE - 1 OR
+			   					      b1.end_date - 1 BETWEEN '{1}' :: DATE AND '{2}' :: DATE - 1))))""".format(sqlquery, start_date, end_date)
 	result_dict['start_date'] = start_date
 	result_dict['end_date'] = end_date
 	
-        #MIN AND MAX PRICE FILTER    
-        min_price_per_day = request.POST.get('min_price_per_day')        
-        max_price_per_day = request.POST.get('max_price_per_day')
-        temp = ""
-        
-        if min_price_per_day is not None:
-            temp = "({} WHERE hl.price_per_day >= {}".format(sqlquery, min_price_per_day)
-            
-        if max_price_per_day is not None:
-            if not temp:
-                temp = "({} WHERE hl.price_per_day <= {})".format(sqlquery, max_price_per_day)
-            if temp:
-                temp += " INTERSECT {} WHERE hl.price_per_day <= {})".format(sqlquery, max_price_per_day)
-                
-        if not temp:
-            if result:
-                result += " INTERSECT "
-            result += temp
-            
-#         if min_price_per_day is None and max_price_per_day is None:
-#             continue
-            
-#         elif min_price_per_day is None and max_price_per_day is not None:
-#             if result:
-#                 result += " INTERSECT "
-#             result += "({} WHERE hl.price_per_day <= {})".format(sqlquery, max_price_per_day)
-#         elif min_price_per_day is not None and max_price_per_day is None:
-#             if result:
-#                 result += " INTERSECT "
-#             result += "({} WHERE hl.price_per_day <= {})".format(sqlquery, min_price_per_day)
-#         else:
-#             result += " INTERSECT " + sqlquery + "WHERE hl.price_per_day >= " + str(min_price_per_day) + " AND hl.price_per_day <= " + str(max_price_per_day)
+	#MIN AND MAX PRICE FILTER    
+	min_price_per_day = request.POST.get('min_price_per_day')	
+	max_price_per_day = request.POST.get('max_price_per_day')
+	temp = ""
+	
+	if min_price_per_day is not None:
+	    temp = "({} WHERE hl.price_per_day >= {}".format(sqlquery, min_price_per_day)
+	    
+	if max_price_per_day is not None:
+	    if not temp:
+		temp = "({} WHERE hl.price_per_day <= {})".format(sqlquery, max_price_per_day)
+	    if temp:
+		temp += " INTERSECT {} WHERE hl.price_per_day <= {})".format(sqlquery, max_price_per_day)
+		
+	if not temp:
+	    if result:
+		result += " INTERSECT "
+	    result += temp
+	    
+#	 if min_price_per_day is None and max_price_per_day is None:
+#	     continue
+	    
+#	 elif min_price_per_day is None and max_price_per_day is not None:
+#	     if result:
+#		 result += " INTERSECT "
+#	     result += "({} WHERE hl.price_per_day <= {})".format(sqlquery, max_price_per_day)
+#	 elif min_price_per_day is not None and max_price_per_day is None:
+#	     if result:
+#		 result += " INTERSECT "
+#	     result += "({} WHERE hl.price_per_day <= {})".format(sqlquery, min_price_per_day)
+#	 else:
+#	     result += " INTERSECT " + sqlquery + "WHERE hl.price_per_day >= " + str(min_price_per_day) + " AND hl.price_per_day <= " + str(max_price_per_day)
 
-#         #REGION FILTER
-#         region = request.POST.getlist('region')
-#         if len(region) == 0:
-#             continue
-#         else:
-#             result += " INTERSECT ("
-#             for i in range(len(region)-1):
-#                 result += sqlquery + ",towns t" + "WHERE" + "hl.town = t.town" + "AND t.region = " + region[i] + " UNION "
-#              result += sqlquery + ",towns t" + "WHERE" + "hl.town = t.town" + "AND t.region = " + region[len(region)-1] + ")"     
-        
-#         towns = request.POST.getlist('towns')
-#         if len(towns) == 0:
-#             continue
-#         else:
-#             result += " INTERSECT ("
-#             for i in range(len(towns)-1):
-#                 result += sqlquery + "WHERE" + "hl.town = " + towns[i] + " UNION "
-#              result += sqlquery + "WHERE" + "hl.town = " + towns[len(towns)-1] + ")"
-        
-#         hdb_types = request.POST.getlist('hdb_types')
-#         if len(hdb_types) == 0:
-#             continue
-#         else:
-#             result += " INTERSECT ("
-#             for i in range(len(hdb_types)-1):
-#                 result += sql_query + "WHERE" + "hl.type = " + hdb_types[i] + " UNION "
-#             result += sql_query + "WHERE" + "hl.type = " + hdb_types[len(hdb_types)-1] + ")"
-        
-#         min_size = request.POST.get('min_size')       
-#         max_size = request.POST.get('max_size')
-#         if min_size is None and max_size is None:
-#             continue
-#         elif min_size is None and max_size is not None:
-#             result += " INTERSECT " + sqlquery + "WHERE hl.size <= " + str(max_size)
-#         elif min_price_per_day is not None and max_price_per_day is None:
-#             result += " INTERSECT " + sqlquery + "WHERE hl.size >= " + str(min_size)
-#         else:
-#             result += " INTERSECT " + sqlquery + "WHERE hl.size>= " + str(min_size) + " AND hl.size <= " + str(max_size)
+#	 #REGION FILTER
+#	 region = request.POST.getlist('region')
+#	 if len(region) == 0:
+#	     continue
+#	 else:
+#	     result += " INTERSECT ("
+#	     for i in range(len(region)-1):
+#		 result += sqlquery + ",towns t" + "WHERE" + "hl.town = t.town" + "AND t.region = " + region[i] + " UNION "
+#	      result += sqlquery + ",towns t" + "WHERE" + "hl.town = t.town" + "AND t.region = " + region[len(region)-1] + ")"     
+	
+#	 towns = request.POST.getlist('towns')
+#	 if len(towns) == 0:
+#	     continue
+#	 else:
+#	     result += " INTERSECT ("
+#	     for i in range(len(towns)-1):
+#		 result += sqlquery + "WHERE" + "hl.town = " + towns[i] + " UNION "
+#	      result += sqlquery + "WHERE" + "hl.town = " + towns[len(towns)-1] + ")"
+	
+#	 hdb_types = request.POST.getlist('hdb_types')
+#	 if len(hdb_types) == 0:
+#	     continue
+#	 else:
+#	     result += " INTERSECT ("
+#	     for i in range(len(hdb_types)-1):
+#		 result += sql_query + "WHERE" + "hl.type = " + hdb_types[i] + " UNION "
+#	     result += sql_query + "WHERE" + "hl.type = " + hdb_types[len(hdb_types)-1] + ")"
+	
+#	 min_size = request.POST.get('min_size')       
+#	 max_size = request.POST.get('max_size')
+#	 if min_size is None and max_size is None:
+#	     continue
+#	 elif min_size is None and max_size is not None:
+#	     result += " INTERSECT " + sqlquery + "WHERE hl.size <= " + str(max_size)
+#	 elif min_price_per_day is not None and max_price_per_day is None:
+#	     result += " INTERSECT " + sqlquery + "WHERE hl.size >= " + str(min_size)
+#	 else:
+#	     result += " INTERSECT " + sqlquery + "WHERE hl.size>= " + str(min_size) + " AND hl.size <= " + str(max_size)
        
-#         num_bedrooms = request.POST.get('num_bedrooms')
-#         result += " INTERSECT " + sqlquery + ", hdb_types_info hi " +"WHERE hl.hdb_type = hi.hdb_type AND " + "hi.number_of_bedrooms = " + str(num_bedrooms)
-        
-#         num_bathrooms = request.POST.get('num_bathrooms')
-#         result += " INTERSECT " + sqlquery + ", hdb_types_info hi " +"WHERE hl.hdb_type = hi.hdb_type AND " + "hi.number_of_bathrooms = " + str(num_bathrooms)
-        
-#         nearest_mrt = request.POST.getlist('nearest_mrt')
-#         if len(nearest_mrt) == 0:
-#             continue
-#         else:
-#             result += " INTERSECT ("
-#             for i in range(len(nearest_mrt)-1):
-#                 result += sql_query + "WHERE" + "hl.nearest_mrt = " + nearest_mrt[i] + " UNION "
-#             result += sql_query + "WHERE" + "hl.nearest_mrt = " + nearest_mrt[len(nearest_mrt)-1] + ")"
-        
-#         #need to get rid of the symbols that the options return and the m as well
-#         nearest_mrt_dist = request.POST.getlist('nearest_mrt_dist')
-#         if len(nearest_mrt_dist) == 0:
-#             continue
-#         else:
-#             result += " INTERSECT ("
-#             for i in range(len(nearest_mrt_dist)-1):
-#                 if len(nearest_mrt_dist) == 0:
-#                     result += " INTERSECT " + sqlquery
-#                 elif nearest_mrt_dist[i] == "< 100 m":
-#                     result += sql_query + "WHERE hl.nearest_mrt_dist < 0.1" + " UNION "
-#                 elif nearest_mrt_dist[i] == "100 - 250 m":
-#                     result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
-#                 elif nearest_mrt_dist[i] == "250 m - 1 km":
-#                     result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
-#                 elif nearest_mrt_dist[i] == "1 - 2 km":
-#                     result += sql_query + "WHERE hl.nearest_mrt_dist > 1 AND hl.nearest_mrt_dist < 2" + " UNION "
-#                 else:
-#                     result += sql_query + "WHERE hl.nearest_mrt_dist > 2" + " UNION "
-#             if nearest_mrt_dist[len(nearest_mrt_dist)-1] == "< 100 m":
-#                 result += sql_query + "WHERE hl.nearest_mrt_dist < 0.1" + " UNION "
-#             elif nearest_mrt_dist[len(nearest_mrt_dist)-1] == "100 - 250 m":
-#                 result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
-#             elif nearest_mrt_dist[len(nearest_mrt_dist)-1] == "250 m - 1 km":
-#                 result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
-#             elif nearest_mrt_dist[len(nearest_mrt_dist)-1] == "1 - 2 km":
-#                 result += sql_query + "WHERE hl.nearest_mrt_dist > 1 AND hl.nearest_mrt_dist < 2" + " UNION "
-#             else:
-#                 result += sql_query + "WHERE hl.nearest_mrt_dist > 2" + ") "
-           
-        with connection.cursor() as cursor:
+#	 num_bedrooms = request.POST.get('num_bedrooms')
+#	 result += " INTERSECT " + sqlquery + ", hdb_types_info hi " +"WHERE hl.hdb_type = hi.hdb_type AND " + "hi.number_of_bedrooms = " + str(num_bedrooms)
+	
+#	 num_bathrooms = request.POST.get('num_bathrooms')
+#	 result += " INTERSECT " + sqlquery + ", hdb_types_info hi " +"WHERE hl.hdb_type = hi.hdb_type AND " + "hi.number_of_bathrooms = " + str(num_bathrooms)
+	
+#	 nearest_mrt = request.POST.getlist('nearest_mrt')
+#	 if len(nearest_mrt) == 0:
+#	     continue
+#	 else:
+#	     result += " INTERSECT ("
+#	     for i in range(len(nearest_mrt)-1):
+#		 result += sql_query + "WHERE" + "hl.nearest_mrt = " + nearest_mrt[i] + " UNION "
+#	     result += sql_query + "WHERE" + "hl.nearest_mrt = " + nearest_mrt[len(nearest_mrt)-1] + ")"
+	
+#	 #need to get rid of the symbols that the options return and the m as well
+#	 nearest_mrt_dist = request.POST.getlist('nearest_mrt_dist')
+#	 if len(nearest_mrt_dist) == 0:
+#	     continue
+#	 else:
+#	     result += " INTERSECT ("
+#	     for i in range(len(nearest_mrt_dist)-1):
+#		 if len(nearest_mrt_dist) == 0:
+#		     result += " INTERSECT " + sqlquery
+#		 elif nearest_mrt_dist[i] == "< 100 m":
+#		     result += sql_query + "WHERE hl.nearest_mrt_dist < 0.1" + " UNION "
+#		 elif nearest_mrt_dist[i] == "100 - 250 m":
+#		     result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
+#		 elif nearest_mrt_dist[i] == "250 m - 1 km":
+#		     result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
+#		 elif nearest_mrt_dist[i] == "1 - 2 km":
+#		     result += sql_query + "WHERE hl.nearest_mrt_dist > 1 AND hl.nearest_mrt_dist < 2" + " UNION "
+#		 else:
+#		     result += sql_query + "WHERE hl.nearest_mrt_dist > 2" + " UNION "
+#	     if nearest_mrt_dist[len(nearest_mrt_dist)-1] == "< 100 m":
+#		 result += sql_query + "WHERE hl.nearest_mrt_dist < 0.1" + " UNION "
+#	     elif nearest_mrt_dist[len(nearest_mrt_dist)-1] == "100 - 250 m":
+#		 result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
+#	     elif nearest_mrt_dist[len(nearest_mrt_dist)-1] == "250 m - 1 km":
+#		 result += sql_query + "WHERE hl.nearest_mrt_dist > 0.1 AND hl.nearest_mrt_dist < 0.25" + " UNION "
+#	     elif nearest_mrt_dist[len(nearest_mrt_dist)-1] == "1 - 2 km":
+#		 result += sql_query + "WHERE hl.nearest_mrt_dist > 1 AND hl.nearest_mrt_dist < 2" + " UNION "
+#	     else:
+#		 result += sql_query + "WHERE hl.nearest_mrt_dist > 2" + ") "
+	   
+	with connection.cursor() as cursor:
             if result:
-                cursor.execute(result)
-            else:
-                cursor.execute("SELECT * FROM hdb_listings")
-            listings = cursor.fetchall()
-        
-        result_dict['listings'] = listings
-        
-        return render(request, 'app/listings.html', result_dict)
+		cursor.execute(result)
+	    else:
+		cursor.execute("SELECT * FROM hdb_listings")
+	    listings = cursor.fetchall()
+	
+	result_dict['listings'] = listings
+	
+	return render(request, 'app/listings.html', result_dict)
     
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM hdb_listings")
-        listings = cursor.fetchall()
-        
+	cursor.execute("SELECT * FROM hdb_listings")
+	listings = cursor.fetchall()
+	
     result_dict['listings'] = listings
 
     return render(request, 'app/listings.html', result_dict)
