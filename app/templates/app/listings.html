@@ -8,12 +8,12 @@
         {% csrf_token %}
         <div id="div_id_start_date" class="control-group"> 
           <label for="id_start_date" class="control-label requiredField">Start Date</label> 
-            <div class="controls"> <input type="date" id="id_start_date" name="start_date" value=start_date> </div> 
+            <div class="controls"> <input type="date" id="id_start_date" name="start_date" value={{start_date}}> </div> 
         </div> 
         
         <div id="div_id_end_date" class="control-group"> 
           <label for="id_end_date" class="control-label requiredField">End Date</label> 
-            <div class="controls"> <input type="date" id="id_end_date" name="end_date" value=end_date> </div> 
+            <div class="controls"> <input type="date" id="id_end_date" name="end_date" value={{end_date.0}}> </div> 
         </div> 
         
         <div id="div_id_num_guests" class="control-group"> 
