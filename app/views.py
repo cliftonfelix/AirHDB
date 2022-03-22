@@ -113,7 +113,7 @@ def listings(request):
         #START AND END DATE FILTER
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
-        if start_date is not None and end_date is not None: #TODO: if only start_date filled in then show end_date to be start + 1 and vice versa
+        if start_date and end_date: #TODO: if only start_date filled in then show end_date to be start + 1 and vice versa
             result += """({0}
                           WHERE NOT EXISTS (SELECT *
                           FROM bookings b1
@@ -131,10 +131,10 @@ def listings(request):
         max_price_per_day = request.POST.get('max_price_per_day')
         temp = ""
 
-        if min_price_per_day is not None:
+        if min_price_per_day:
             temp = "({} WHERE hl.price_per_day >= {}".format(sqlquery, min_price_per_day)
 
-        if max_price_per_day is not None:
+        if max_price_per_day:
             if not temp:
                 temp = "({} WHERE hl.price_per_day <= {})".format(sqlquery, max_price_per_day)
             else:
