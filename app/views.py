@@ -143,7 +143,7 @@ def listings(request):
         if num_guests:
             result_dict['num_guests'] = num_guests
             temp = """{0} 
-                       WHERE hl1.max_occupants >= {1})""".format(sqlquery, num_guests)
+                       WHERE hl1.max_occupants >= {1}""".format(sqlquery, num_guests)
             if result:
                 result += " INTERSECT "
             result += "({})".format(temp)
@@ -246,25 +246,25 @@ def listings(request):
             temp = ""
             if "1" in num_bedrooms:
                 temp += """{0} 
-                           WHERE hl1.number_of_bedrooms = 1)""".format(sqlquery)
+                           WHERE hl1.number_of_bedrooms = 1""".format(sqlquery)
 
             if "2" in num_bedrooms:
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-                           WHERE hl1.number_of_bedrooms = 2)""".format(sqlquery)
+                           WHERE hl1.number_of_bedrooms = 2""".format(sqlquery)
 				
             if "3" in num_bedrooms:
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-                           WHERE hl1.number_of_bedrooms = 3)""".format(sqlquery)
+                           WHERE hl1.number_of_bedrooms = 3""".format(sqlquery)
 
             if "4" in num_bedrooms:
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-                           WHERE hl1.number_of_bedrooms = 4)""".format(sqlquery)
+                           WHERE hl1.number_of_bedrooms = 4""".format(sqlquery)
 
             if temp:
                 if result:
@@ -277,19 +277,19 @@ def listings(request):
             temp = ""
             if "1" in num_bathrooms:
                 temp += """{0} 
-                           WHERE hl1.number_of_bathrooms = 1)""".format(sqlquery)
+                           WHERE hl1.number_of_bathrooms = 1""".format(sqlquery)
 
             if "2" in num_bathrooms:
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-                           WHERE hl1.number_of_bathrooms = 2)""".format(sqlquery)
+                           WHERE hl1.number_of_bathrooms = 2""".format(sqlquery)
 				
             if "3" in num_bathrooms:
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-                           WHERE hl1.number_of_bathrooms = 3)""".format(sqlquery)
+                           WHERE hl1.number_of_bathrooms = 3""".format(sqlquery)
 
             if temp:
                 if result:
