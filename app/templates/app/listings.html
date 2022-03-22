@@ -120,8 +120,9 @@
         <th>HDB Address</th>
         <th>HDB Unit Number</th>
         <th>HDB Type</th>
-        <th>Size</th>
         <th>Rent Price per Day</th>
+        <th>Size</th>
+        <th>Region</th>
         <th>Town</th>
         <th>Num Bedrooms</th>
         <th>Num Bathrooms</th>
@@ -136,13 +137,14 @@
       </thead>
       {% for listing in listings %}
       <tr>
-        <td> {{ listing.1 }} </td>
         <td> {{ listing.2 }} </td>
         <td> {{ listing.3 }} </td>
-        <td> {{ listing.0 }} </td>
         <td> {{ listing.4 }} </td>
-        <td> {{ listing.5 }} </td>
+        <td> {{ listing.1 }} </td>
         <td> {{ listing.6 }} </td>
+        <td> {{ listing.5 }} </td>
+        <td> {{ listing.18 }} </td>
+        <td> {{ listing.0 }} </td>
         <td> {{ listing.15 }} </td>
         <td> {{ listing.16 }} </td>
         <td> {{ listing.17 }} </td>
