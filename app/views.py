@@ -133,15 +133,14 @@ def listings(request):
 
         if min_price_per_day:
             temp = "({} WHERE hl.price_per_day >= {}".format(sqlquery, min_price_per_day)
+            if not max_price_per_day:
+                temp += ")"
 
         if max_price_per_day:
             if not temp:
                 temp = "({} WHERE hl.price_per_day <= {})".format(sqlquery, max_price_per_day)
             else:
                 temp += " INTERSECT {} WHERE hl.price_per_day <= {})".format(sqlquery, max_price_per_day)
-
-        else:
-            temp += ")"
 
         if temp:
             if result:
