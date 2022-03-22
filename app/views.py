@@ -199,7 +199,7 @@ def listings(request):
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-			   WHERE hl1.town = '{1}')""".format(sqlquery, town)
+			   WHERE hl1.town = '{1}'""".format(sqlquery, town)
 
             if temp:
                 if result:
