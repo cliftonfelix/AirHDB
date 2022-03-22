@@ -214,8 +214,8 @@ def listings(request):
             for type in hdb_types:
                 if temp:
                     temp += " UNION "
-                    temp += """{0} 
-			       WHERE hl1.hdb_type = '{1}')""".format(sqlquery, type)
+                temp += """{0} 
+			   WHERE hl1.hdb_type = '{1}')""".format(sqlquery, type)
 
             if temp:
                 if result:
