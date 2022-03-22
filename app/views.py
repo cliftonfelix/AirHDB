@@ -93,10 +93,9 @@ def listings(request):
         cursor.execute("SELECT DISTINCT hdb_type FROM hdb_types_info ORDER BY hdb_type")
         hdb_types = cursor.fetchall()
         
-    result_dict = {'towns': towns, 'regions': regions, 'mrt_stations': mrt_stations, 'hdb_types': hdb_types}
-
-    result_dict['start_date'] = ''
-    result_dict['end_date'] = ''
+	result_dict = {'towns': towns, 'regions': regions, 'mrt_stations': mrt_stations, 'hdb_types': hdb_types}
+	result_dict['start_date'] = ''
+	result_dict['end_date'] = ''
         
     if request.method == "POST":
         result = ""
@@ -114,8 +113,8 @@ def listings(request):
 			   		                              '{2}' :: DATE - 1 BETWEEN b1.start_date AND b1.end_date - 1) OR
 			   		                              (b1.start_date BETWEEN '{1}' :: DATE AND '{2}' :: DATE - 1 OR
 			   		                              b1.end_date - 1 BETWEEN '{1}' :: DATE AND '{2}' :: DATE - 1))))""".format(sqlquery, start_date, end_date)
-        result_dict['start_date'] = start_date
-    	result_dict['end_date'] = end_date
+	result_dict['start_date'] = start_date
+	result_dict['end_date'] = end_date
 	
         #MIN AND MAX PRICE FILTER    
         min_price_per_day = request.POST.get('min_price_per_day')        
