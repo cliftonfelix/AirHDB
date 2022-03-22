@@ -102,9 +102,7 @@ def listings(request):
         #START AND END DATE FILTER
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
-        if not start_date or not end_date:
-            continue 
-        else:
+        if start_date and end_date: #TODO: if only start_date then show end_date to be start + 1 and vice versa
             result += """({0}
                           WHERE NOT EXISTS (SELECT *
                                             FROM bookings b1
