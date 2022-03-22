@@ -18,15 +18,15 @@
         
         <div id="div_id_num_guests" class="control-group"> 
           <label for="id_num_guests" class="control-label requiredField">Number of Guests (1 - 6)</label> 
-            <div class="controls"> <input type="number" name="num_guests" id="id_num_guests" min="1", max="6"> </div>
+            <div class="controls"> <input type="number" name="num_guests" id="id_num_guests" min="1", max="6" value={{num_guests}}> </div>
         </div> 
         
         <div id="div_id_price_per_day" class="control-group"> 
           <label for="id_price_per_day" class="control-label requiredField">Price Per Day</label> </div> 
           <label for="id_min_price_per_day" class = "control-label requiredField">Min</label>
-            <div class="controls"> <input type="number" name="min_price_per_day" id="id_min_price_per_day" min="0"> </div>
+            <div class="controls"> <input type="number" name="min_price_per_day" id="id_min_price_per_day" min="0" value={{min_price_per_day}}> </div>
           <label for="id_max_price_per_day" class = "control-label requiredField">Max</label>
-            <div class="controls"> <input type="number" name="max_price_per_day" id="id_max_price_per_day" min="0"> </div>
+            <div class="controls"> <input type="number" name="max_price_per_day" id="id_max_price_per_day" min="0" value={{max_price_per_day}}> </div>
         
         <div id="div_id_regions" class="control-group"> 
           <label for="id_regions" class="control-label requiredField">Region (multi-select with ctrl)</label> 
@@ -61,9 +61,9 @@
         <div id="div_id_size" class="control-group"> 
           <label for="id_size" class="control-label requiredField">Size (35 - 118 m^2)</label> </div> 
           <label for="id_min_size" class = "control-label requiredField">Min</label>
-            <div class="controls"> <input type="number" name="min_size" id="id_min_size" min="1" max="118"> </div>
+            <div class="controls"> <input type="number" name="min_size" id="id_min_size" min="1" max="118" value={{min_size}}> </div>
           <label for="id_max_size" class = "control-label requiredField">Max</label>
-            <div class="controls"> <input type="number" name="max_size" id="id_max_size" min="1" max="118"> </div>
+            <div class="controls"> <input type="number" name="max_size" id="id_max_size" min="1" max="118" value={{max_size}}> </div>
         
         <div id="div_id_num_bedrooms" class="control-group"> 
           <label for="id_num_bedrooms" class="control-label requiredField">Number of Bedrooms (multi select with ctrl)</label> 
