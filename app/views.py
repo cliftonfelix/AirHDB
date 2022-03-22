@@ -94,6 +94,9 @@ def listings(request):
         hdb_types = cursor.fetchall()
         
     result_dict = {'towns': towns, 'regions': regions, 'mrt_stations': mrt_stations, 'hdb_types': hdb_types}
+
+    result_dict['start_date'] = ''
+    result_dict['end_date'] = ''
         
     if request.method == "POST":
         result = ""
@@ -102,7 +105,7 @@ def listings(request):
         #START AND END DATE FILTER
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
-        if start_date and end_date: #TODO: if only start_date then show end_date to be start + 1 and vice versa
+        if start_date is not None and end_date is not None: #TODO: if only start_date filled in then show end_date to be start + 1 and vice versa
             result += """({0}
                           WHERE NOT EXISTS (SELECT *
                                             FROM bookings b1
@@ -111,16 +114,18 @@ def listings(request):
 			   		                              '{2}' :: DATE - 1 BETWEEN b1.start_date AND b1.end_date - 1) OR
 			   		                              (b1.start_date BETWEEN '{1}' :: DATE AND '{2}' :: DATE - 1 OR
 			   		                              b1.end_date - 1 BETWEEN '{1}' :: DATE AND '{2}' :: DATE - 1))))""".format(sqlquery, start_date, end_date)
-        
+        result_dict['start_date'] = start_date
+    	result_dict['end_date'] = end_date
+	
         #MIN AND MAX PRICE FILTER    
         min_price_per_day = request.POST.get('min_price_per_day')        
         max_price_per_day = request.POST.get('max_price_per_day')
         temp = ""
         
-        if not min_price_per_day:
+        if min_price_per_day is not None:
             temp = "({} WHERE hl.price_per_day >= {}".format(sqlquery, min_price_per_day)
             
-        if not max_price_per_day:
+        if max_price_per_day is not None:
             if not temp:
                 temp = "({} WHERE hl.price_per_day <= {})".format(sqlquery, max_price_per_day)
             if temp:
