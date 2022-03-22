@@ -75,9 +75,9 @@
             <div class="controls"> <input type="number" name="num_bathrooms" id="id_num_bathrooms" min="1" max="3"> </div>
         </div> 
         
-        <div id="div_id_nearest_mrt" class="control-group"> 
-          <label for="id_nearest_mrt" class="control-label requiredField">Nearest MRT (multi-select with ctrl)</label> 
-            <div class="controls"><select name="nearest_mrt" id="id_nearest_mrt" multiple>
+        <div id="div_id_nearest_mrts" class="control-group"> 
+          <label for="id_nearest_mrts" class="control-label requiredField">Nearest MRT (multi-select with ctrl)</label> 
+            <div class="controls"><select name="nearest_mrts" id="id_nearest_mrts" multiple>
               {% for station in mrt_stations %}
               <option value="{{station.0}}">{{station.0}}</option>
               {% endfor %}
@@ -85,9 +85,9 @@
               </select> </div>
         </div>
         
-        <div id="div_id_nearest_mrt_dist" class="control-group"> 
-          <label for="id_nearest_mrt_dist" class="control-label requiredField">Nearest MRT Distance(multi-select with ctrl)</label> 
-            <div class="controls"><select name="nearest_mrt_dist" id="id_nearest_mrt_dist" multiple>
+        <div id="div_id_nearest_mrt_dists" class="control-group"> 
+          <label for="id_nearest_mrt_dists" class="control-label requiredField">Nearest MRT Distance(multi-select with ctrl)</label> 
+            <div class="controls"><select name="nearest_mrt_dists" id="id_nearest_mrt_dists" multiple>
                 <option value="< 100 m">< 100 m</option>
                 <option value="100 - 250 m">100 - 250 m</option>
                 <option value="250 m - 1 km">250 m - 1 km</option>
