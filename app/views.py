@@ -190,7 +190,7 @@ def listings(request):
                     result += " INTERSECT "
                 result += "({})".format(temp)
 				
-	#TOWN FILTER
+		#TOWN FILTER
         towns = request.POST.getlist('towns')
 
         if towns:
@@ -206,7 +206,7 @@ def listings(request):
                     result += " INTERSECT "
                 result += "({})".format(temp)
 				
-	#HDB TYPE FILTER
+		#HDB TYPE FILTER
         hdb_types = request.POST.getlist('hdb_types')
 
         if hdb_types:
@@ -222,7 +222,7 @@ def listings(request):
                     result += " INTERSECT "
                 result += "({})".format(temp)
 				
-	#SIZE FILTER
+		#SIZE FILTER
         min_size = request.POST.get('min_size')
         max_size = request.POST.get('max_size')
         temp = ""
@@ -243,7 +243,7 @@ def listings(request):
                 result += " INTERSECT "
             result += "({})".format(temp)
 			
-	#NUM BEDROOMS FILTER
+		#NUM BEDROOMS FILTER
         num_bedrooms = request.POST.get('num_bedrooms')
         if num_bedrooms:
             result_dict['num_bedrooms'] = num_bedrooms
@@ -256,7 +256,7 @@ def listings(request):
                 result += " INTERSECT "
             result += temp
 			
-	#NUM BATHROOMS FILTER
+		#NUM BATHROOMS FILTER
         num_bathrooms = request.POST.get('num_bathrooms')
         if num_bathrooms:
             result_dict['num_bathrooms'] = num_bathrooms
@@ -268,7 +268,7 @@ def listings(request):
                 result += " INTERSECT "
             result += temp
 			
-	#NEAREST MRT FILTER
+		#NEAREST MRT FILTER
         nearest_mrts = request.POST.getlist('nearest_mrts')
 
         if nearest_mrts:
@@ -284,7 +284,7 @@ def listings(request):
                     result += " INTERSECT "
                 result += "({})".format(temp)
 				
-	#NEAREST MRT DISTANCE FILTER
+		#NEAREST MRT DISTANCE FILTER
         nearest_mrt_dists = request.POST.getlist('nearest_mrt_dists')
         if nearest_mrt_dists:
             temp = ""
@@ -314,7 +314,7 @@ def listings(request):
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-			   WHERE hl1.nearest_mrt_distance > 2)""".format(sqlsuery)
+			   			   WHERE hl1.nearest_mrt_distance > 2)""".format(sqlsuery)
 
             if temp:
                 if result:
@@ -323,6 +323,7 @@ def listings(request):
 	
         with connection.cursor() as cursor:
             if result:
+				result = "SELECT * FROM ({}) temp ORDER BY temp.hdb_id".format(result)
                 cursor.execute(result)
             else:
                 cursor.execute("SELECT * FROM hdb_listings")
