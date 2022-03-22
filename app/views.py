@@ -107,10 +107,10 @@ def listings(request):
                           WHERE NOT EXISTS (SELECT *
                                             FROM bookings b1
                                             WHERE hl1.hdb_id = b1.hdb_id AND
-			   		                              (({1} :: DATE BETWEEN b1.start_date AND b1.end_date - 1 OR
-			   		                              {2} :: DATE - 1 BETWEEN b1.start_date AND b1.end_date - 1) OR
-			   		                              (b1.start_date BETWEEN {1} :: DATE AND {2} :: DATE - 1 OR
-			   		                              b1.end_date - 1 BETWEEN {1} :: DATE AND {2} :: DATE - 1))))""".format(sqlquery, str(start_date), str(end_date))
+			   		                              (('{1}' :: DATE BETWEEN b1.start_date AND b1.end_date - 1 OR
+			   		                              '{2}' :: DATE - 1 BETWEEN b1.start_date AND b1.end_date - 1) OR
+			   		                              (b1.start_date BETWEEN '{1}' :: DATE AND '{2}' :: DATE - 1 OR
+			   		                              b1.end_date - 1 BETWEEN '{1}' :: DATE AND '{2}' :: DATE - 1))))""".format(sqlquery, start_date, end_date)
         
         #MIN AND MAX PRICE FILTER    
         min_price_per_day = request.POST.get('min_price_per_day')        
