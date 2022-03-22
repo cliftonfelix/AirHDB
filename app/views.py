@@ -113,8 +113,8 @@ def listings(request):
     result_dict['hdb_types_default'] = '' #TODO: Default value
     result_dict['min_size'] = ''
     result_dict['max_size'] = ''
-    result_dict['num_bedrooms'] = ''
-    result_dict['num_bathrooms'] = ''
+    result_dict['num_bedrooms'] = '' #TODO: Default value
+    result_dict['num_bathrooms'] = '' #TODO: Default value
     result_dict['nearest_mrts'] = '' #TODO: Default value
     result_dict['nearest_mrt_dist'] = '' #TODO: Default value
 
@@ -243,29 +243,74 @@ def listings(request):
             result += "({})".format(temp)
 			
 	#NUM BEDROOMS FILTER
-        num_bedrooms = request.POST.get('num_bedrooms')
+        num_bedrooms = request.POST.getlist('num_bedrooms')
         if num_bedrooms:
-            result_dict['num_bedrooms'] = num_bedrooms
-            temp = """{0} 
-                       WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
-                                              FROM hdb_types_info hti1
-                                              WHERE hti1.number_of_bedrooms = {1})""".format(sqlquery, num_bedrooms)
+            temp = ""
+            if "1" in num_bedrooms:
+                temp += """{0} 
+                           WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
+                                                  FROM hdb_types_info hti1
+                                                  WHERE hti1.number_of_bedrooms = 1)""".format(sqlquery)
 
-            if result:
-                result += " INTERSECT "
-            result += "({})".format(temp)
+            if "2" in num_bedrooms:
+                if temp:
+                    temp += " UNION "
+                temp += """{0} 
+                           WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
+                                                  FROM hdb_types_info hti1
+                                                  WHERE hti1.number_of_bedrooms = 2)""".format(sqlquery)
+				
+            if "3" in num_bedrooms:
+                if temp:
+                    temp += " UNION "
+                temp += """{0} 
+                           WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
+                                                  FROM hdb_types_info hti1
+                                                  WHERE hti1.number_of_bedrooms = 3)""".format(sqlquery)
+
+            if "4" in num_bedrooms:
+                if temp:
+                    temp += " UNION "
+                temp += """{0} 
+                           WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
+                                                  FROM hdb_types_info hti1
+                                                  WHERE hti1.number_of_bedrooms = 4)""".format(sqlquery)
+
+            if temp:
+                if result:
+                    result += " INTERSECT "
+                result += "({})".format(temp)
 			
 	#NUM BATHROOMS FILTER
-        num_bathrooms = request.POST.get('num_bathrooms')
+        num_bathrooms = request.POST.getlist('num_bathrooms')
         if num_bathrooms:
-            result_dict['num_bathrooms'] = num_bathrooms
-            temp = """{0} 
-                       WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
-                                              FROM hdb_types_info hti1
-                                              WHERE hti1.number_of_bathrooms = {1})""".format(sqlquery, num_bathrooms)
-            if result:
-                result += " INTERSECT "
-            result += "({})".format(temp)
+            temp = ""
+            if "1" in num_bathrooms:
+                temp += """{0} 
+                           WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
+                                                  FROM hdb_types_info hti1
+                                                  WHERE hti1.number_of_bathrooms = 1)""".format(sqlquery)
+
+            if "2" in num_bedrooms:
+                if temp:
+                    temp += " UNION "
+                temp += """{0} 
+                           WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
+                                                  FROM hdb_types_info hti1
+                                                  WHERE hti1.number_of_bathrooms = 2)""".format(sqlquery)
+				
+            if "3" in num_bedrooms:
+                if temp:
+                    temp += " UNION "
+                temp += """{0} 
+                           WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
+                                                  FROM hdb_types_info hti1
+                                                  WHERE hti1.number_of_bathrooms = 3)""".format(sqlquery)
+
+            if temp:
+                if result:
+                    result += " INTERSECT "
+                result += "({})".format(temp)
 			
 	#NEAREST MRT FILTER
         nearest_mrts = request.POST.getlist('nearest_mrts')
