@@ -145,7 +145,7 @@ def listings(request):
             temp = """({0} 
                        WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
                                               FROM hdb_types_info hti1
-                                              WHERE hti1.max_occupants >= {1})""".format(sql_query, num_guests)
+                                              WHERE hti1.max_occupants >= {1})""".format(sqlquery, num_guests)
             if result:
                 result += " INTERSECT "
             result += temp
@@ -249,7 +249,7 @@ def listings(request):
             temp = """({0} 
                        WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
                                               FROM hdb_types_info hti1
-                                              WHERE hti1.number_of_bedrooms = {1})""".format(sql_query, num_bedrooms)
+                                              WHERE hti1.number_of_bedrooms = {1})""".format(sqlquery, num_bedrooms)
 
             if result:
                 result += " INTERSECT "
@@ -262,7 +262,7 @@ def listings(request):
             temp = """({0} 
                        WHERE hl1.hdb_type IN (SELECT hti1.hdb_type
                                               FROM hdb_types_info hti1
-                                              WHERE hti1.number_of_bathrooms = {1})""".format(sql_query, num_bathrooms)
+                                              WHERE hti1.number_of_bathrooms = {1})""".format(sqlquery, num_bathrooms)
             if result:
                 result += " INTERSECT "
             result += temp
