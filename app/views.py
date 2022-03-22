@@ -92,10 +92,10 @@ def listings(request):
         
         cursor.execute("SELECT DISTINCT hdb_type FROM hdb_types_info ORDER BY hdb_type")
         hdb_types = cursor.fetchall()
-	
-    result_dict = {'towns': towns, 'regions': regions, 'mrt_stations': mrt_stations, 'hdb_types': hdb_types}
-    result_dict['start_date'] = ''
-    result_dict['end_date'] = ''
+		
+	result_dict = {'towns': towns, 'regions': regions, 'mrt_stations': mrt_stations, 'hdb_types': hdb_types}
+	result_dict['start_date'] = ''
+	result_dict['end_date'] = ''
         
     if request.method == "POST":
         result = ""
