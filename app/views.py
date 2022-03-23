@@ -263,6 +263,11 @@ def listings(request):
                     temp += " UNION "
                 temp += """{0} 
 			   WHERE hl1.number_of_bedrooms = {1}""".format(sqlquery, bedroom)
+
+            if temp:
+                if result:
+                    result += " INTERSECT "
+                result += "({})".format(temp)
 			
 	#NUM BATHROOMS FILTER
         num_bathrooms = request.POST.getlist('num_bathrooms')
@@ -278,6 +283,11 @@ def listings(request):
                     temp += " UNION "
                 temp += """{0} 
 			   WHERE hl1.number_of_bathrooms = {1}""".format(sqlquery, bathroom)
+
+            if temp:
+                if result:
+                    result += " INTERSECT "
+                result += "({})".format(temp)
 			
 	#NEAREST MRT FILTER
         nearest_mrts = request.POST.getlist('nearest_mrts')
