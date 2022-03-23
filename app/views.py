@@ -429,7 +429,7 @@ def change_password(request):
         user.save()
         messages.success(request, 'Profile has been successfully updated!')
         return redirect('profile')    
-    return render(request, 'app/change_profile.html')
+    return render(request, 'app/change_password.html')
 
 @login_required(login_url = 'login')
 def bookings(request):
