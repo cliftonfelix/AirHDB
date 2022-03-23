@@ -411,22 +411,19 @@ def change_profile(request):
 @login_required(login_url = 'login')
 def change_password(request):
     email = request.user.username
-    password = request.user.password
-
-
+    user = User.objects.get(username = email)
+	
     if request.method == 'POST':
         old_password = request.POST.get('old_password')
         new_password = request.POST.get('new_password')
         confirm_new_password = request.POST.get('confirm_new_password')
-	
-        if password != old_password:
+        if not user.check_password(old_password):
             messages.error(request, 'Old password entered is incorrect')
             return render(request, 'app/change_password.html')
         elif password != confirm_password:
             messages.error(request, 'Passwords do not match!')
             return render(request, 'app/change_password.html')
         
-        user = User.objects.get(username = email)
         user.set_password('new_password')
         user.save()
         messages.success(request, 'Profile has been successfully updated!')
