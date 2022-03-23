@@ -375,25 +375,25 @@ def admin(request):
 def change_profile(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
-	row = cursor.fetchone()
+        row = cursor.fetchone()
     
-    context = {old_name = row[0], email = row[1], old_number = row[2]}
+    context = {old_name: row[0], email: row[1], old_numbe: row[2]}
     if request.method == 'POST':
         name = request.POST.get('name')
         number = request.POST.get('number')
         email = request.user.username
 	
-	if name == old_name and number == old_number:
-	    messages.error(request, 'New profile is identical to the old one!') 
-	    return render(request, 'app/change_profile.html', context)
+        if name == old_name and number == old_number:
+            messages.error(request, 'New profile is identical to the old one!') 
+            return render(request, 'app/change_profile.html', context)
 	
-	try:
+        try:
             cursor.execute("UPDATE users SET name = %s, mobile_number = %s WHERE email_address = %s", [name, number, email])
         except Exception as e:
             string = str(e)
             message = ""
             if 'new row for relation "users" violates check constraint "users_mobile_number_check"' in string:
                 messages.error(request, 'Please enter a valid Singapore number!') 
-		return render(request, 'app/change_profile.html')
-	messages.success(request, 'Profile has been successfully updated!')
+                return render(request, 'app/change_profile.html')
+        messages.success(request, 'Profile has been successfully updated!')
     return render(request, 'app/change_profile.html', context)
