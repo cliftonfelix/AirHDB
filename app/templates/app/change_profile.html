@@ -3,25 +3,24 @@
 {% block content %}
 {% load static %}
 <body>
-    <h1>
+    <div>
         Current Profile<br>
-        <div>
-            <label>Name: {{old_name}}</label><br>
-            <label>Email Address: {{email}}</label><br>
-            <label>Phone Number: {{old_number}}</label><br>
-        </div>
-    </h1>
-    <h2>
-        New Profile<br>
-        <div>
-            <form method = "POST" action = "">
-                <label>New Name:</label>
-                <input type = "text" name = "name" placeholder = "Enter Name" required=""/>
-                <label>New Phone Number:</label>
-                <input type = "number" name = "number" placeholder = "Enter Phone Number" required=""/>
-                <input type = "submit" value = "Confirm changes"/>
-            </form>
-        </div>
-    </h2>
+        <label>Name: {{old_name}}</label><br>
+        <label>Email Address: {{email}}</label><br>
+        <label>Phone Number: {{old_number}}</label><br>
+    </div>
+
+    <br>
+    New Profile<br>
+    <div>        
+        <form method = "POST" action = "">
+            {% csrf_token %}
+            <label>New Name:</label>
+            <input type = "text" name = "name" placeholder = "Enter Name" required=""/>
+            <label>New Phone Number:</label>
+            <input type = "number" name = "number" placeholder = "Enter Phone Number" required=""/>
+            <input type = "submit" value = "Confirm changes"/>
+        </form>
+    </div>
 </body>
 {% endblock %}
