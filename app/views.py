@@ -6,7 +6,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.http import HttpResponse
+from django.contrib import messages
 import requests
+
 
 api_key = "AIzaSyCfbRJX3HAzw1mb4ZwHsQCOf4XES8h0eFU"
 
@@ -123,6 +125,7 @@ def editunits(request, id):
     # dictionary for initial data with
     # field names as keys
     context ={}
+    
 
     # fetch the object related to passed id
     with connection.cursor() as cursor:
@@ -134,8 +137,11 @@ def editunits(request, id):
 
     if request.POST:
         ##TODO: date validation
+        
+        
         with connection.cursor() as cursor:
             try:
+                
                 cursor.execute("UPDATE hdb_units SET contact_person_name = %s, contact_person_mobile = %s,can_book = %s WHERE hdb_id = %s"
                     , [request.POST['contact_person'], request.POST['contact_number'],request.POST['can_book'], id ])
                 status = 'Customer edited successfully!'
@@ -172,6 +178,8 @@ def editbookings(request, id):
     # dictionary for initial data with
     # field names as keys
     context ={}
+    context['startdate'] = ''
+    context['enddate'] = ''
 
     # fetch the object related to passed id
     with connection.cursor() as cursor:
@@ -184,6 +192,9 @@ def editbookings(request, id):
     if request.POST:
         ##TODO: date validation
         with connection.cursor() as cursor:
+            context['startdate'] = request.POST.get('start_date')
+            context['enddate'] = request.POST.get('end_date')
+
             try:
                 cursor.execute("UPDATE bookings SET start_date = %s, end_date = %s WHERE booking_id = %s"
                         , [request.POST['start_date'], request.POST['end_date'], id ])
@@ -215,6 +226,8 @@ def editbookings(request, id):
 
     context["obj"] = obj
     context["status"] = status
+    
+
  
     return render(request, "app/editbookings.html", context)
 
@@ -232,11 +245,34 @@ def addunits(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM towns")
         towns = cursor.fetchall()
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_types_info")
+        types = cursor.fetchall()
         
-    
+    context['hdb_types'] = types
     context['towns'] = towns
+    context['towns_default'] = ''
+    context['type'] = ''
+    context['address'] = ''
+    context['unit'] =''
+    context['size'] =''
+    context['price'] = ''
+    context['name'] = ''
+    context['number'] = ''
+    context['ans'] = ''
 
     if request.POST:
+        context['towns_default'] = request.POST.get('town')
+        context['address'] = request.POST.get('hdb_address').upper()
+        context['unit'] = request.POST.get('hdb_unit_number')
+        context['size'] = request.POST.get('size')
+        context['price'] = request.POST.get('price_per_day')
+        context['name'] = request.POST.get('contact_person_name')
+        context['number'] = request.POST.get('contact_person_mobile')
+        context['type'] = request.POST.get('hdb_type')
+        context['ans'] = request.POST.get('multistorey_carpark')
+        
+
         ## Check if customerid is already in the table
         with connection.cursor() as cursor:
 
@@ -250,20 +286,23 @@ def addunits(request):
                             , [request.POST['hdb_address'].upper(), request.POST['hdb_unit_number'], request.POST['hdb_type'],
                             request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'],
                             request.POST['contact_person_name'] ,request.POST['contact_person_mobile'] ,get_coordinates(request.POST['hdb_address'])[0],get_coordinates(request.POST['hdb_address'])[1]])
+                    
+                    messages.success(request, '%s %s has been successfully added!'% (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number']))
                     return redirect('adminunits')
+                   
                 except Exception as e:
                     message = str(e)
                     if 'violates check constraint "hdb_units_check"' in message:
                         if request.POST['hdb_type'] == "2-Room/2-Room Flexi":
-                            status = 'Please input a size between 35 and 38 or size between 45 and 47'
+                            status = 'The size of a 2-Room/2-Room Flexi should be between 35 and 38 or size between 45 and 47'
                         elif request.POST['hdb_type'] == '3-Room':
-                            status = 'Please input a size between 60 and 68'
+                            status = 'The size of a 3-Room should be between 60 and 68'
                         elif request.POST['hdb_type'] == '4-Room':
-                            status = 'Please input a size between 85 and 93'
+                            status = 'The size of a 4-Room should be between 85 and 93'
                         elif request.POST['hdb_type'] == '5-Room':
-                            status = 'Please input a size between 107 and 113'
+                            status = 'The size of a 5-Room should be between 107 and 113'
                         elif request.POST['hdb_type'] == '3-Gen':
-                            status = 'Please input a size between 115 and 118'
+                            status = 'The size of a 3-Gen should be between 115 and 118'
                     elif 'violates check constraint "hdb_units_contact_person_mobile_check"' in message:
                         status = 'Please input a valid Singapore Number'
 
@@ -273,6 +312,8 @@ def addunits(request):
                         status = 'Please input unit number in this format:"#_-_" '
                     elif message == 'list index out of range':
                         status = 'Please input a valid Singapore Address'
+                    elif 'violates unique constraint "hdb_units_hdb_address_hdb_unit_number_key"' in message:
+                        status = '%s %s already exists' % (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number'])
 
                     
                     else:
@@ -280,7 +321,7 @@ def addunits(request):
 
 
             else:
-                status = 'HDB with ID %s already exists' % (request.POST['hdb_address'])
+                status = '%s %s already exists' % (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number'])
 
 
     context['status'] = status

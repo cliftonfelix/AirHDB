@@ -1,6 +1,13 @@
 <h1>Admin Unit Page</h1>
 <p style="color:red">{{ status|safe }}</p>
 <br>
+{% if messages %}
+    
+        {% for message in messages %}
+        <p style="color:rgb(27, 216, 52)">{{ message|safe }}</p>
+        {% endfor %}
+    
+    {% endif %}
 
 <a href="{% url 'adminbookings' %}">Admin Bookings Page</a>
 <br>
