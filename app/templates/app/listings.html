@@ -43,6 +43,10 @@
               </select> </div>
         </div>
         
+        {% for region in regions %}
+          is_in(region.0, regions_default)
+        {% endfor %}
+        
         <div id="div_id_towns" class="control-group"> 
           <label for="id_towns" class="control-label requiredField">Town (multi-select with ctrl)</label> 
             <div class="controls"><select name="towns" id="id_towns" multiple>
