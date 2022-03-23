@@ -4,6 +4,11 @@
 {% load static %}
   <body>
     <div>
+      <script>
+        function is_in(x, arr) {
+          return arr.includes(x)
+        }
+      </script>
       <form method = "POST">
         {% csrf_token %}
         <div id="div_id_start_date" class="control-group"> 
@@ -32,7 +37,7 @@
           <label for="id_regions" class="control-label requiredField">Region (multi-select with ctrl)</label> 
             <div class="controls"><select name="regions" id="id_regions" multiple>
               {% for region in regions %}
-              <option value="{{region.0}}">{{region.0}}</option>
+              <option value="{{region.0}}" {% if is_in({{region.0}}, {{regions_default}}) %}selected{% endif %}>{{region.0}}</option>
               {% endfor %}
                 
               </select> </div>
