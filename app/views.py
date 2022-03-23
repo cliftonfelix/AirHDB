@@ -373,16 +373,16 @@ def admin(request):
 
 @login_required(login_url = 'login')
 def change_profile(request):
+    email = request.user.username
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
         row = cursor.fetchone()
     
-    context = {old_name: row[0], email: row[1], old_numbe: row[2]}
+    context = {old_name: row[0], email: row[1], old_number: row[2]}
     if request.method == 'POST':
         name = request.POST.get('name')
         number = request.POST.get('number')
-        email = request.user.username
-	
+        
         if name == old_name and number == old_number:
             messages.error(request, 'New profile is identical to the old one!') 
             return render(request, 'app/change_profile.html', context)
