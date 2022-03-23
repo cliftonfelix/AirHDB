@@ -409,6 +409,29 @@ def change_profile(request):
     return render(request, 'app/change_profile.html', context)
 
 @login_required(login_url = 'login')
+def change_password(request):
+    user = request.user
+    password = user.password
+
+    if request.method == 'POST':
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+	confirm_new_password = request.POST.get('confirm_new_password')
+	
+	if password != old_password:
+ 	    messages.error(request, 'Old password entered is incorrect')
+            return render(request, 'app/change_password.html')
+	elif password != confirm_password:
+            messages.error(request, 'Passwords do not match!')
+            return render(request, 'app/change_password.html')
+
+        user.set_password('new_password')
+	user.save()
+        messages.success(request, 'Profile has been successfully updated!')
+        return redirect('profile')    
+    return render(request, 'app/change_profile.html', context)
+
+@login_required(login_url = 'login')
 def bookings(request):
     email = request.user.username
     with connection.cursor() as cursor:
