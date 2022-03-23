@@ -72,10 +72,9 @@
         <div id="div_id_num_bedrooms" class="control-group"> 
           <label for="id_num_bedrooms" class="control-label requiredField">Number of Bedrooms (multi select with ctrl)</label> 
             <div class="controls"><select name="num_bedrooms" id="id_num_bedrooms" multiple>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
+              {% for bedroom in num_bedrooms %}
+              <option value="{{bedroom.0}}" {% if bedroom.1 == "Yes" %}selected{% endif %}>{{bedroom.0}}</option>
+              {% endfor %}
                 
               </select> </div>
         </div> 
@@ -83,9 +82,9 @@
         <div id="div_id_num_bathrooms" class="control-group"> 
           <label for="id_num_bathrooms" class="control-label requiredField">Number of Bathrooms (multi select with ctrl)</label> 
             <div class="controls"><select name="num_bathrooms" id="id_num_bathrooms" multiple>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
+              {% for bathroom in num_bathrooms %}
+              <option value="{{bathroom.0}}" {% if bathroom.1 == "Yes" %}selected{% endif %}>{{bathroom.0}}</option>
+              {% endfor %}
                 
               </select> </div>
         </div> 
@@ -103,11 +102,9 @@
         <div id="div_id_nearest_mrt_dists" class="control-group"> 
           <label for="id_nearest_mrt_dists" class="control-label requiredField">Nearest MRT Distance (multi-select with ctrl)</label> 
             <div class="controls"><select name="nearest_mrt_dists" id="id_nearest_mrt_dists" multiple>
-                <option value="< 100 m">< 100 m</option>
-                <option value="100 - 250 m">100 - 250 m</option>
-                <option value="250 m - 1 km">250 m - 1 km</option>
-                <option value="1 - 2 km">1 - 2 km</option>
-                <option value="> 2 km">> 2 km</option>
+              {% for dist in nearest_mrt_dist %}
+              <option value="{{dist.0}}" {% if dist.1 == "Yes" %}selected{% endif %}>{{dist.0}}</option>
+              {% endfor %}
                 
               </select> </div>
         </div>
