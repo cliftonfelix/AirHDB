@@ -108,15 +108,10 @@ def listings(request):
     result_dict['num_guests'] = ''
     result_dict['min_price_per_day'] = ''
     result_dict['max_price_per_day'] = ''
-##    result_dict['regions_default'] = ''
-##    result_dict['regions_default'] = [] #TODO: Default value
-##    result_dict['towns_default'] = '' #TODO: Default value
-##    result_dict['hdb_types_default'] = '' #TODO: Default value
     result_dict['min_size'] = ''
     result_dict['max_size'] = ''
     result_dict['num_bedrooms'] = '' #TODO: Default value
     result_dict['num_bathrooms'] = '' #TODO: Default value
-##    result_dict['nearest_mrts'] = '' #TODO: Default value
     result_dict['nearest_mrt_dist'] = '' #TODO: Default value
 
     if request.method == "POST":
@@ -179,8 +174,8 @@ def listings(request):
                 regions_temp = result_dict["regions"]
                 for i in range(len(regions_temp)):
                     if regions_temp[i][0] == region:
-                        result_dict["regions"][i] = (result_dict["regions"][i][0], 'Yes')
-##                result_dict['regions_default'] = region
+                        result_dict["regions"][i] = (region, 'Yes')
+                        
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
@@ -197,6 +192,11 @@ def listings(request):
         if towns:
             temp = ""
             for town in towns:
+                towns_temp = result_dict["towns"]
+                for i in range(len(towns_temp)):
+                    if towns_temp[i][0] == town:
+                        result_dict["towns"][i] = (town, 'Yes')
+                        
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
@@ -212,11 +212,16 @@ def listings(request):
 
         if hdb_types:
             temp = ""
-            for type in hdb_types:
+            for hdb_type in hdb_types:
+                hdb_types_temp = result_dict["hdb_types"]
+                for i in range(len(hdb_types_temp)):
+                    if hdb_types_temp[i][0] == hdb_type:
+                        result_dict["hdb_types"][i] = (hdb_type, 'Yes')
+                
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-			   WHERE hl1.hdb_type = '{1}'""".format(sqlquery, type)
+			   WHERE hl1.hdb_type = '{1}'""".format(sqlquery, hdb_type)
 
             if temp:
                 if result:
@@ -306,6 +311,11 @@ def listings(request):
         if nearest_mrts:
             temp = ""
             for nearest_mrt in nearest_mrts:
+                nearest_mrts_temp = result_dict["mrt_stations"]
+                for i in range(len(nearest_mrts_temp)):
+                    if nearest_mrts_temp[i][0] == nearest_mrt:
+                        result_dict["mrt_stations"][i] = (nearest_mrt, 'Yes')
+                        
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
