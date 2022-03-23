@@ -37,7 +37,7 @@
           <label for="id_regions" class="control-label requiredField">Region (multi-select with ctrl)</label> 
             <div class="controls"><select name="regions" id="id_regions" multiple>
               {% for region in regions %}
-              <option value="{{region.0}}" {% if is_in("{{region.0}}", {{regions_default}}) %}selected{% endif %}>{{region.0}}</option>
+              <option value="{{region.0}}" {% if is_in(region.0, regions_default) %}selected{% endif %}>{{region.0}}</option>
               {% endfor %}
                 
               </select> </div>
