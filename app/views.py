@@ -416,20 +416,20 @@ def change_password(request):
     if request.method == 'POST':
         old_password = request.POST.get('old_password')
         new_password = request.POST.get('new_password')
-	confirm_new_password = request.POST.get('confirm_new_password')
+        confirm_new_password = request.POST.get('confirm_new_password')
 	
-	if password != old_password:
- 	    messages.error(request, 'Old password entered is incorrect')
+        if password != old_password:
+            messages.error(request, 'Old password entered is incorrect')
             return render(request, 'app/change_password.html')
-	elif password != confirm_password:
+        elif password != confirm_password:
             messages.error(request, 'Passwords do not match!')
             return render(request, 'app/change_password.html')
-
+        
         user.set_password('new_password')
-	user.save()
+        user.save()
         messages.success(request, 'Profile has been successfully updated!')
         return redirect('profile')    
-    return render(request, 'app/change_profile.html', context)
+    return render(request, 'app/change_profile.html')
 
 @login_required(login_url = 'login')
 def bookings(request):
@@ -440,6 +440,3 @@ def bookings(request):
     context = {}
     context['bookings'] = bookings
     return render(request, 'app/bookings.html', context)
-    
-
-
