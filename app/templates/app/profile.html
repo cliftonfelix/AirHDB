@@ -1,0 +1,16 @@
+{% extends 'main.html' %}
+
+{% block content %}
+{% load static %}
+<body>
+    <h1>
+        Profile<br>
+        <div>
+            <label>Name: {{old_name}}</label><br>
+            <label>Email Address: {{email}}</label><br>
+            <label>Phone Number: {{old_number}}</label><br>
+        </div>
+    </h1>
+    <a href = "{% url 'change_profile' %}">Change profile</a>
+</body>
+{% endblock %}
