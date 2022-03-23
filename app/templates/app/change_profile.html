@@ -4,15 +4,15 @@
 {% load static %}
 <body>
     <div>
-        Current Profile<br>
+        <h1>Current Profile</h1><br>
         <label>Name: {{old_name}}</label><br>
         <label>Email Address: {{email}}</label><br>
         <label>Phone Number: {{old_number}}</label><br>
     </div>
 
     <br>
-    New Profile<br>
-    <div>        
+    <div>       
+        <h1>Current Profile</h1>
         <form method = "POST" action = "">
             {% csrf_token %}
             <label>New Name:</label>
