@@ -426,6 +426,7 @@ def change_password(request):
         
         user.set_password(new_password)
         user.save()
+	login(user)
         messages.success(request, 'Profile has been successfully updated!')
         return redirect('profile')    
     return render(request, 'app/change_password.html')
