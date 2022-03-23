@@ -56,7 +56,7 @@
           <label for="id_hdb_types" class="control-label requiredField">HDB Type (multi-select with ctrl)</label> 
             <div class="controls"><select name="hdb_types" id="id_hdb_types" multiple>
               {% for hdb_type in hdb_types %}
-              <option value="{{type.0}}" {% if hdb_type.1 == "Yes" %}selected{% endif %}>{{hdb_type.0}}</option>
+              <option value="{{hdb_type.0}}" {% if hdb_type.1 == "Yes" %}selected{% endif %}>{{hdb_type.0}}</option>
               {% endfor %}
                 
               </select> </div>
