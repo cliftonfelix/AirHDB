@@ -3,16 +3,22 @@
 {% block content %}
 {% load static %}
 <body>
-    <div>
-        Profile
-        <label>Name: {{old_name}}</label><br>
-        <label>Email Address: {{email}}</label><br>
-        <label>Phone Number: {{old_number}}</label><br>
-    </div>
-    <label>New Name:</label>
-    <input type = "text" name = "name" placeholder = "Enter Name" required=""/>
-    <label>New Phone Number:</label>
-    <input type = "number" name = "number" placeholder = "Enter Phone Number" required=""/>
-    <input type = "submit" value = "Confirm changes"/>
+    <h1>
+        Current Profile<br>
+        <div>
+            <label>Name: {{old_name}}</label><br>
+            <label>Email Address: {{email}}</label><br>
+            <label>Phone Number: {{old_number}}</label><br>
+        </div>
+    </h1>
+    <h2>
+        New Profile<br>
+        <div>
+            <label>New Name:</label>
+            <input type = "text" name = "name" placeholder = "Enter Name" required=""/>
+            <label>New Phone Number:</label>
+            <input type = "number" name = "number" placeholder = "Enter Phone Number" required=""/>
+            <input type = "submit" value = "Confirm changes"/>
+        </div>
 </body>
 {% endblock %}
