@@ -396,14 +396,15 @@ def change_profile(request):
             messages.error(request, 'New profile is identical to the old one!') 
             return render(request, 'app/change_profile.html', context)
 	
-        try:
-            cursor.execute("UPDATE users SET name = %s, mobile_number = %s WHERE email_address = %s", [name, number, email])
+        cursor.execute("UPDATE users SET name = %s, mobile_number = %s WHERE email_address = %s", [name, number, email])
+	"""
         except Exception as e:
             string = str(e)
             message = ""
             if 'new row for relation "users" violates check constraint "users_mobile_number_check"' in string:
                 messages.error(request, 'Please enter a valid Singapore number!') 
-                return render(request, 'app/change_profile.html')
+            return render(request, 'app/change_profile.html', context)
         messages.success(request, 'Profile has been successfully updated!')
+	"""
         return redirect('profile')
     return render(request, 'app/change_profile.html', context)
