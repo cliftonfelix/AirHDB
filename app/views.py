@@ -405,5 +405,5 @@ def change_profile(request):
                 messages.error(request, 'Please enter a valid Singapore number!') 
                 return render(request, 'app/change_profile.html')
         messages.success(request, 'Profile has been successfully updated!')
-	return redirect('profile')
+        return redirect('profile')
     return render(request, 'app/change_profile.html', context)
