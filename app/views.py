@@ -420,7 +420,7 @@ def change_password(request):
         if not user.check_password(old_password):
             messages.error(request, 'Old password entered is incorrect')
             return render(request, 'app/change_password.html')
-        elif password != confirm_password:
+        elif new_password != confirm_new_password:
             messages.error(request, 'Passwords do not match!')
             return render(request, 'app/change_password.html')
         
