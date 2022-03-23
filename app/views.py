@@ -397,6 +397,7 @@ def change_profile(request):
             return render(request, 'app/change_profile.html', context)
 	
         cursor.execute("UPDATE users SET name = %s, mobile_number = %s WHERE email_address = %s", [name, number, email])
+	return redirect('profile')
     """
         except Exception as e:
             string = str(e)
@@ -406,5 +407,5 @@ def change_profile(request):
             return render(request, 'app/change_profile.html', context)
         messages.success(request, 'Profile has been successfully updated!')
     """
-    return redirect('profile')
-    #return render(request, 'app/change_profile.html', context)
+    
+    return render(request, 'app/change_profile.html', context)
