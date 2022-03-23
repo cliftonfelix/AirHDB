@@ -8,25 +8,25 @@
         {% csrf_token %}
         <div id="div_id_start_date" class="control-group"> 
           <label for="id_start_date" class="control-label requiredField">Start Date</label> 
-            <div class="controls"> <input type="date" id="id_start_date" name="start_date"> </div> 
+            <div class="controls"> <input type="date" id="id_start_date" name="start_date" value={{start_date}}> </div> 
         </div> 
         
         <div id="div_id_end_date" class="control-group"> 
           <label for="id_end_date" class="control-label requiredField">End Date</label> 
-            <div class="controls"> <input type="date" id="id_end_date" name="end_date"> </div> 
+            <div class="controls"> <input type="date" id="id_end_date" name="end_date" value={{end_date}}> </div> 
         </div> 
         
         <div id="div_id_num_guests" class="control-group"> 
           <label for="id_num_guests" class="control-label requiredField">Number of Guests (1 - 6)</label> 
-            <div class="controls"> <input type="number" name="num_guests" id="id_num_guests" min="1", max="6"> </div>
+            <div class="controls"> <input type="number" name="num_guests" id="id_num_guests" min="1", max="6" value={{num_guests}}> </div>
         </div> 
         
         <div id="div_id_price_per_day" class="control-group"> 
           <label for="id_price_per_day" class="control-label requiredField">Price Per Day</label> </div> 
           <label for="id_min_price_per_day" class = "control-label requiredField">Min</label>
-            <div class="controls"> <input type="number" name="min_price_per_day" id="id_min_price_per_day" min="0"> </div>
+            <div class="controls"> <input type="number" name="min_price_per_day" id="id_min_price_per_day" min="0" value={{min_price_per_day}}> </div>
           <label for="id_max_price_per_day" class = "control-label requiredField">Max</label>
-            <div class="controls"> <input type="number" name="max_price_per_day" id="id_max_price_per_day" min="0"> </div>
+            <div class="controls"> <input type="number" name="max_price_per_day" id="id_max_price_per_day" min="0" value={{max_price_per_day}}> </div>
         
         <div id="div_id_regions" class="control-group"> 
           <label for="id_regions" class="control-label requiredField">Region (multi-select with ctrl)</label> 
@@ -49,7 +49,7 @@
         </div>
         
         <div id="div_id_hdb_types" class="control-group"> 
-          <label for="id_hdb_types" class="control-label requiredField">Town (multi-select with ctrl)</label> 
+          <label for="id_hdb_types" class="control-label requiredField">HDB Type (multi-select with ctrl)</label> 
             <div class="controls"><select name="hdb_types" id="id_hdb_types" multiple>
               {% for type in hdb_types %}
               <option value="{{type.0}}">{{type.0}}</option>
@@ -61,23 +61,34 @@
         <div id="div_id_size" class="control-group"> 
           <label for="id_size" class="control-label requiredField">Size (35 - 118 m^2)</label> </div> 
           <label for="id_min_size" class = "control-label requiredField">Min</label>
-            <div class="controls"> <input type="number" name="min_size" id="id_min_size" min="1" max="118"> </div>
+            <div class="controls"> <input type="number" name="min_size" id="id_min_size" min="1" max="118" value={{min_size}}> </div>
           <label for="id_max_size" class = "control-label requiredField">Max</label>
-            <div class="controls"> <input type="number" name="max_size" id="id_max_size" min="1" max="118"> </div>
+            <div class="controls"> <input type="number" name="max_size" id="id_max_size" min="1" max="118" value={{max_size}}> </div>
         
         <div id="div_id_num_bedrooms" class="control-group"> 
-          <label for="id_num_bedrooms" class="control-label requiredField">Number of Bedrooms (1 - 4)</label> 
-            <div class="controls"> <input type="number" name="num_bedrooms" id="id_num_bedrooms" min="1" max="4"> </div>
+          <label for="id_num_bedrooms" class="control-label requiredField">Number of Bedrooms (multi select with ctrl)</label> 
+            <div class="controls"><select name="num_bedrooms" id="id_num_bedrooms" multiple>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                
+              </select> </div>
         </div> 
         
         <div id="div_id_num_bathrooms" class="control-group"> 
-          <label for="id_num_bathrooms" class="control-label requiredField">Number of Bedrooms (1 - 3)</label> 
-            <div class="controls"> <input type="number" name="num_bathrooms" id="id_num_bathrooms" min="1" max="3"> </div>
+          <label for="id_num_bathrooms" class="control-label requiredField">Number of Bathrooms (multi select with ctrl)</label> 
+            <div class="controls"><select name="num_bathrooms" id="id_num_bathrooms" multiple>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                
+              </select> </div>
         </div> 
         
-        <div id="div_id_nearest_mrt" class="control-group"> 
-          <label for="id_nearest_mrt" class="control-label requiredField">Nearest MRT (multi-select with ctrl)</label> 
-            <div class="controls"><select name="nearest_mrt" id="id_nearest_mrt" multiple>
+        <div id="div_id_nearest_mrts" class="control-group"> 
+          <label for="id_nearest_mrts" class="control-label requiredField">Nearest MRT (multi-select with ctrl)</label> 
+            <div class="controls"><select name="nearest_mrts" id="id_nearest_mrts" multiple>
               {% for station in mrt_stations %}
               <option value="{{station.0}}">{{station.0}}</option>
               {% endfor %}
@@ -85,9 +96,9 @@
               </select> </div>
         </div>
         
-        <div id="div_id_nearest_mrt_dist" class="control-group"> 
-          <label for="id_nearest_mrt_dist" class="control-label requiredField">Nearest MRT (multi-select with ctrl)</label> 
-            <div class="controls"><select name="nearest_mrt_dist" id="id_nearest_mrt_dist" multiple>
+        <div id="div_id_nearest_mrt_dists" class="control-group"> 
+          <label for="id_nearest_mrt_dists" class="control-label requiredField">Nearest MRT Distance (multi-select with ctrl)</label> 
+            <div class="controls"><select name="nearest_mrt_dists" id="id_nearest_mrt_dists" multiple>
                 <option value="< 100 m">< 100 m</option>
                 <option value="100 - 250 m">100 - 250 m</option>
                 <option value="250 m - 1 km">250 m - 1 km</option>
@@ -109,9 +120,13 @@
         <th>HDB Address</th>
         <th>HDB Unit Number</th>
         <th>HDB Type</th>
-        <th>Size</th>
-        <th>Rent Price per Day</th>
+        <th>Region</th>
         <th>Town</th>
+        <th>Rent Price per Day</th>
+        <th>Size</th>
+        <th>Num Bedrooms</th>
+        <th>Num Bathrooms</th>
+        <th>Max Occupants</th>
         <th>Multistorey Carpark</th>
         <th>Contact Person Name</th>
         <th>Contact Person Mobile</th>
@@ -122,13 +137,17 @@
       </thead>
       {% for listing in listings %}
       <tr>
-        <td> {{ listing.0 }} </td>
-        <td> {{ listing.1 }} </td>
         <td> {{ listing.2 }} </td>
         <td> {{ listing.3 }} </td>
         <td> {{ listing.4 }} </td>
-        <td> {{ listing.5 }} </td>
+        <td> {{ listing.1 }} </td>
+        <td> {{ listing.18 }} </td>
+        <td> {{ listing.0 }} </td>
         <td> {{ listing.6 }} </td>
+        <td> {{ listing.5 }} </td>
+        <td> {{ listing.15 }} </td>
+        <td> {{ listing.16 }} </td>
+        <td> {{ listing.17 }} </td>
         <td> {{ listing.7 }} </td>
         <td> {{ listing.8 }} </td>
         <td> {{ listing.9 }} </td>
