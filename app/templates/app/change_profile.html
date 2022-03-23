@@ -3,22 +3,14 @@
 {% block content %}
 {% load static %}
 <body>
-    <div>
-        <h1>Current Profile</h1><br>
-        <label>Name: {{old_name}}</label><br>
-        <label>Email Address: {{email}}</label><br>
-        <label>Phone Number: {{old_number}}</label><br>
-    </div>
-
-    <br>
     <div>       
-        <h1>Current Profile</h1>
+        <h1>New Profile</h1>
         <form method = "POST" action = "">
             {% csrf_token %}
             <label>New Name:</label>
-            <input type = "text" name = "name" placeholder = "Enter Name" required=""/>
+            <input type = "text" name = "name" placeholder = "Enter Name" value = {{old_name}} required=""/>
             <label>New Phone Number:</label>
-            <input type = "number" name = "number" placeholder = "Enter Phone Number" required=""/>
+            <input type = "number" name = "number" placeholder = "Enter Phone Number" value = {{old_number}}required=""/>
             <input type = "submit" value = "Confirm changes"/>
         </form>
     </div>
