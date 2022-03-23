@@ -179,7 +179,7 @@ def listings(request):
                 regions_temp = result_dict["regions"]
                 for i in range(len(regions_temp)):
                     if regions_temp[i][0] == region:
-                        result_dict["regions"] = result_dict["regions"][:i] + ((result_dict["regions"][i][0], 'Yes'), ) + result_dict["regions"][i + 1: ]
+                        result_dict["regions"][i] = (result_dict["regions"][i][0], 'Yes')
 ##                result_dict['regions_default'] = region
                 if temp:
                     temp += " UNION "
