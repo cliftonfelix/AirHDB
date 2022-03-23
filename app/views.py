@@ -108,7 +108,7 @@ def listings(request):
     result_dict['num_guests'] = ''
     result_dict['min_price_per_day'] = ''
     result_dict['max_price_per_day'] = ''
-    result_dict['regions_default'] = '' #TODO: Default value
+    result_dict['regions_default'] = [] #TODO: Default value
     result_dict['towns_default'] = '' #TODO: Default value
     result_dict['hdb_types_default'] = '' #TODO: Default value
     result_dict['min_size'] = ''
@@ -175,6 +175,7 @@ def listings(request):
         if regions:
             temp = ""
             for region in regions:
+                result_dict['regions_default'] += [region]
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
