@@ -4,11 +4,6 @@
 {% load static %}
   <body>
     <div>
-      <script>
-        function is_in(x, arr) {
-          return arr.includes(x)
-        }
-      </script>
       <form method = "POST">
         {% csrf_token %}
         <div id="div_id_start_date" class="control-group"> 
@@ -51,7 +46,7 @@
           <label for="id_towns" class="control-label requiredField">Town (multi-select with ctrl)</label> 
             <div class="controls"><select name="towns" id="id_towns" multiple>
               {% for town in towns %}
-              <option value="{{town.0}}">{{town.0}}</option>
+              <option value="{{town.0}}" {% if town.1 == "Yes" %}selected{% endif %}>{{town.0}}</option>
               {% endfor %}
                 
               </select> </div>
@@ -60,8 +55,8 @@
         <div id="div_id_hdb_types" class="control-group"> 
           <label for="id_hdb_types" class="control-label requiredField">HDB Type (multi-select with ctrl)</label> 
             <div class="controls"><select name="hdb_types" id="id_hdb_types" multiple>
-              {% for type in hdb_types %}
-              <option value="{{type.0}}">{{type.0}}</option>
+              {% for hdb_type in hdb_types %}
+              <option value="{{type.0}}" {% if hdb_type.1 == "Yes" %}selected{% endif %}>{{hdb_type.0}}</option>
               {% endfor %}
                 
               </select> </div>
@@ -99,7 +94,7 @@
           <label for="id_nearest_mrts" class="control-label requiredField">Nearest MRT (multi-select with ctrl)</label> 
             <div class="controls"><select name="nearest_mrts" id="id_nearest_mrts" multiple>
               {% for station in mrt_stations %}
-              <option value="{{station.0}}">{{station.0}}</option>
+              <option value="{{station.0}}" {% if station.1 == "Yes" %}selected{% endif %}>{{station.0}}</option>
               {% endfor %}
                 
               </select> </div>
