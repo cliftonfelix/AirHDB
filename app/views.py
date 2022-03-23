@@ -407,3 +407,16 @@ def change_profile(request):
             messages.success(request, 'Profile has been successfully updated!')
             return redirect('profile')    
     return render(request, 'app/change_profile.html', context)
+
+@login_required(login_url = 'login')
+def bookings(request):
+    email = request.user.username
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM bookings WHERE booked_by = %s", [email])
+        bookings = cursor.fetchall()
+    context = {}
+    context['bookings'] = bookings
+    return render(request, 'app/bookings.html', context)
+    
+
+
