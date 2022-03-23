@@ -90,16 +90,16 @@ def register_page(request):
 @login_required(login_url = 'login')
 def listings(request):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT DISTINCT town FROM towns ORDER BY town")
+        cursor.execute("SELECT DISTINCT town, 'No' FROM towns ORDER BY town")
         towns = cursor.fetchall()
 
-        cursor.execute("SELECT DISTINCT region FROM towns ORDER BY region")
+        cursor.execute("SELECT DISTINCT region, 'No' FROM towns ORDER BY region")
         regions = cursor.fetchall()
 
-        cursor.execute("SELECT DISTINCT mrt_name FROM mrt_stations ORDER BY mrt_name")
+        cursor.execute("SELECT DISTINCT mrt_name, 'No' FROM mrt_stations ORDER BY mrt_name")
         mrt_stations = cursor.fetchall()
 
-        cursor.execute("SELECT DISTINCT hdb_type FROM hdb_types_info ORDER BY hdb_type")
+        cursor.execute("SELECT DISTINCT hdb_type, 'No' FROM hdb_types_info ORDER BY hdb_type")
         hdb_types = cursor.fetchall()
 
     result_dict = {'towns': towns, 'regions': regions, 'mrt_stations': mrt_stations, 'hdb_types': hdb_types}
@@ -109,14 +109,14 @@ def listings(request):
     result_dict['min_price_per_day'] = ''
     result_dict['max_price_per_day'] = ''
 ##    result_dict['regions_default'] = ''
-    result_dict['regions_default'] = [] #TODO: Default value
-    result_dict['towns_default'] = '' #TODO: Default value
-    result_dict['hdb_types_default'] = '' #TODO: Default value
+##    result_dict['regions_default'] = [] #TODO: Default value
+##    result_dict['towns_default'] = '' #TODO: Default value
+##    result_dict['hdb_types_default'] = '' #TODO: Default value
     result_dict['min_size'] = ''
     result_dict['max_size'] = ''
     result_dict['num_bedrooms'] = '' #TODO: Default value
     result_dict['num_bathrooms'] = '' #TODO: Default value
-    result_dict['nearest_mrts'] = '' #TODO: Default value
+##    result_dict['nearest_mrts'] = '' #TODO: Default value
     result_dict['nearest_mrt_dist'] = '' #TODO: Default value
 
     if request.method == "POST":
@@ -176,7 +176,10 @@ def listings(request):
         if regions:
             temp = ""
             for region in regions:
-                result_dict['regions_default'] += [region]
+                regions_temp = result_dict["regions"]
+                for i in range(len(regions_temp)):
+                    if regions_temp[i][0] == region:
+                        result_dict["regions"] = result_dict["regions"][:i] + ((result_dict["regions"][i][0], 'Yes'), ) + result_dict["regions"][i + 1: ]
 ##                result_dict['regions_default'] = region
                 if temp:
                     temp += " UNION "
