@@ -424,7 +424,7 @@ def change_password(request):
             messages.error(request, 'Passwords do not match!')
             return render(request, 'app/change_password.html')
         
-        user.set_password('new_password')
+        user.set_password(new_password)
         user.save()
         messages.success(request, 'Profile has been successfully updated!')
         return redirect('profile')    
