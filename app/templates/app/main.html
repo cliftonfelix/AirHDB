@@ -10,6 +10,7 @@
 <body>
     <img src="{% static 'app/images/AirHDB_logo2.png' %}" width="13%"   alt="AirHDB Logo"/><br/>
     <a href = "{% url 'logout' %}">Log Out</a>
+    <a href = "{% url 'profile' %}">Profile</a>
     <hr>
     {% if messages %}
     <ul class="messages">
