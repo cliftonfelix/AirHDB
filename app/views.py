@@ -262,7 +262,7 @@ def listings(request):
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-			   WHERE hl1.number_of_bedrooms = '{1}'""".format(sqlquery, bedroom)
+			   WHERE hl1.number_of_bedrooms = {1}""".format(sqlquery, bedroom)
 			
 	#NUM BATHROOMS FILTER
         num_bathrooms = request.POST.getlist('num_bathrooms')
@@ -277,7 +277,7 @@ def listings(request):
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-			   WHERE hl1.number_of_bathrooms = '{1}'""".format(sqlquery, bathroom)
+			   WHERE hl1.number_of_bathrooms = {1}""".format(sqlquery, bathroom)
 			
 	#NEAREST MRT FILTER
         nearest_mrts = request.POST.getlist('nearest_mrts')
@@ -305,33 +305,33 @@ def listings(request):
         if nearest_mrt_dists:
             temp = ""
             if "< 100 m" in nearest_mrt_dists:
-                result_dict['nearest_mrt_dist'][0] = [("< 100 m", "Yes")]
+                result_dict['nearest_mrt_dist'][0] = ("< 100 m", "Yes")
                 temp += """{0} 
 			   WHERE hl1.nearest_mrt_distance < 0.1""".format(sqlquery)
 
             if "100 - 250 m" in nearest_mrt_dists:
-                result_dict['nearest_mrt_dist'][1] = [("100 - 250 m", "Yes")]
+                result_dict['nearest_mrt_dist'][1] = ("100 - 250 m", "Yes")
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
 			   WHERE hl1.nearest_mrt_distance BETWEEN 0.1 AND 0.25""".format(sqlquery)
 				
             if "250 m - 1 km" in nearest_mrt_dists:
-                result_dict['nearest_mrt_dist'][2] = [("250 m - 1 km", "Yes")]
+                result_dict['nearest_mrt_dist'][2] = ("250 m - 1 km", "Yes")
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
                            WHERE hl1.nearest_mrt_distance BETWEEN 0.25 AND 1""".format(sqlquery)
 
             if "1 - 2 km" in nearest_mrt_dists:
-                result_dict['nearest_mrt_dist'][3] = [("1 - 2 km", "Yes")]
+                result_dict['nearest_mrt_dist'][3] = ("1 - 2 km", "Yes")
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
                            WHERE hl1.nearest_mrt_distance BETWEEN 1 AND 2""".format(sqlquery)
 
             if "> 2 km" in nearest_mrt_dists:
-                result_dict['nearest_mrt_dist'][4] = [("> 2 km", "Yes")]
+                result_dict['nearest_mrt_dist'][4] = ("> 2 km", "Yes")
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
