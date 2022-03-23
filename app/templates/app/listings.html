@@ -44,7 +44,7 @@
         </div>
         
         {% for region in regions %}
-        <script>is_in(region.0, regions_default)</script>
+        <script>document.write(is_in(region.0, regions_default));</script>
         {% endfor %}
         
         <div id="div_id_towns" class="control-group"> 
