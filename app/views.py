@@ -410,8 +410,9 @@ def change_profile(request):
 
 @login_required(login_url = 'login')
 def change_password(request):
-    user = request.user
-    password = user.password
+    email = request.user.username
+    password = request.user.password
+
 
     if request.method == 'POST':
         old_password = request.POST.get('old_password')
@@ -425,6 +426,7 @@ def change_password(request):
             messages.error(request, 'Passwords do not match!')
             return render(request, 'app/change_password.html')
         
+        user = User.objects.get(username = email)
         user.set_password('new_password')
         user.save()
         messages.success(request, 'Profile has been successfully updated!')
