@@ -392,7 +392,7 @@ def change_profile(request):
         name = request.POST.get('name')
         number = request.POST.get('number')
         
-        if name == old_name and number == old_number:
+        if name == row[0] and number == row[2]:
             messages.error(request, 'New profile is identical to the old one!') 
             return render(request, 'app/change_profile.html', context)
 	
