@@ -110,9 +110,9 @@ def listings(request):
     result_dict['max_price_per_day'] = ''
     result_dict['min_size'] = ''
     result_dict['max_size'] = ''
-    result_dict['num_bedrooms'] = '' #TODO: Default value
-    result_dict['num_bathrooms'] = '' #TODO: Default value
-    result_dict['nearest_mrt_dist'] = '' #TODO: Default value
+    result_dict['num_bedrooms'] = [('1', 'No'), ('2', 'No'), ('3', 'No'), ('4', 'No')]
+    result_dict['num_bathrooms'] = [('1', 'No'), ('2', 'No'), ('3', 'No')]
+    result_dict['nearest_mrt_dist'] = [("< 100 m", 'No'), ("100 - 250 m", 'No'), ("250 m - 1 km", 'No'), ("1 - 2 km", 'No'), ("> 2 km", 'No')]
 
     if request.method == "POST":
         result = ""
@@ -253,57 +253,31 @@ def listings(request):
         num_bedrooms = request.POST.getlist('num_bedrooms')
         if num_bedrooms:
             temp = ""
-            if "1" in num_bedrooms:
-                temp += """{0} 
-                           WHERE hl1.number_of_bedrooms = 1""".format(sqlquery)
-
-            if "2" in num_bedrooms:
+            for bedroom in num_bedrooms:
+                num_bedrooms_temp = result_dict["num_bedrooms"]
+                for i in range(len(num_bedrooms_temp)):
+                    if num_bedrooms_temp[i][0] == bedroom:
+                        result_dict["num_bedrooms"][i] = (bedroom, 'Yes')
+                
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-                           WHERE hl1.number_of_bedrooms = 2""".format(sqlquery)
-				
-            if "3" in num_bedrooms:
-                if temp:
-                    temp += " UNION "
-                temp += """{0} 
-                           WHERE hl1.number_of_bedrooms = 3""".format(sqlquery)
-
-            if "4" in num_bedrooms:
-                if temp:
-                    temp += " UNION "
-                temp += """{0} 
-                           WHERE hl1.number_of_bedrooms = 4""".format(sqlquery)
-
-            if temp:
-                if result:
-                    result += " INTERSECT "
-                result += "({})".format(temp)
+			   WHERE hl1.number_of_bedrooms = '{1}'""".format(sqlquery, bedroom)
 			
 	#NUM BATHROOMS FILTER
         num_bathrooms = request.POST.getlist('num_bathrooms')
         if num_bathrooms:
             temp = ""
-            if "1" in num_bathrooms:
-                temp += """{0} 
-                           WHERE hl1.number_of_bathrooms = 1""".format(sqlquery)
-
-            if "2" in num_bathrooms:
+            for bathroom in num_bathrooms:
+                num_bathrooms_temp = result_dict["num_bathrooms"]
+                for i in range(len(num_bathrooms_temp)):
+                    if num_bathrooms_temp[i][0] == bathroom:
+                        result_dict["num_bathrooms"][i] = (bathroom, 'Yes')
+                
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
-                           WHERE hl1.number_of_bathrooms = 2""".format(sqlquery)
-				
-            if "3" in num_bathrooms:
-                if temp:
-                    temp += " UNION "
-                temp += """{0} 
-                           WHERE hl1.number_of_bathrooms = 3""".format(sqlquery)
-
-            if temp:
-                if result:
-                    result += " INTERSECT "
-                result += "({})".format(temp)
+			   WHERE hl1.number_of_bathrooms = '{1}'""".format(sqlquery, bathroom)
 			
 	#NEAREST MRT FILTER
         nearest_mrts = request.POST.getlist('nearest_mrts')
@@ -331,28 +305,33 @@ def listings(request):
         if nearest_mrt_dists:
             temp = ""
             if "< 100 m" in nearest_mrt_dists:
+                result_dict['nearest_mrt_dist'][0] = [("< 100 m", "Yes")]
                 temp += """{0} 
 			   WHERE hl1.nearest_mrt_distance < 0.1""".format(sqlquery)
 
             if "100 - 250 m" in nearest_mrt_dists:
+                result_dict['nearest_mrt_dist'][1] = [("100 - 250 m", "Yes")]
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
 			   WHERE hl1.nearest_mrt_distance BETWEEN 0.1 AND 0.25""".format(sqlquery)
 				
             if "250 m - 1 km" in nearest_mrt_dists:
+                result_dict['nearest_mrt_dist'][2] = [("250 m - 1 km", "Yes")]
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
                            WHERE hl1.nearest_mrt_distance BETWEEN 0.25 AND 1""".format(sqlquery)
 
             if "1 - 2 km" in nearest_mrt_dists:
+                result_dict['nearest_mrt_dist'][3] = [("1 - 2 km", "Yes")]
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
                            WHERE hl1.nearest_mrt_distance BETWEEN 1 AND 2""".format(sqlquery)
 
             if "> 2 km" in nearest_mrt_dists:
+                result_dict['nearest_mrt_dist'][4] = [("> 2 km", "Yes")]
                 if temp:
                     temp += " UNION "
                 temp += """{0} 
