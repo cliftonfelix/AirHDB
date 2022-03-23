@@ -378,7 +378,7 @@ def change_profile(request):
         cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
         row = cursor.fetchone()
     
-    context = {old_name: row[0], email: row[1], old_number: row[2]}
+    context = {'old_name': row[0], 'email': row[1], 'old_number': row[2]}
     if request.method == 'POST':
         name = request.POST.get('name')
         number = request.POST.get('number')
