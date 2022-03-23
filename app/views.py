@@ -372,13 +372,22 @@ def admin(request):
     return render(request, 'app/admin.html')
 
 @login_required(login_url = 'login')
+def profile(request):
+    email = request.user.username
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
+        row = cursor.fetchone()
+    context = {'name': row[0], 'email': email, 'number': row[2]}
+    return render(request, 'app/profile.html', context)
+
+@login_required(login_url = 'login')
 def change_profile(request):
     email = request.user.username
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
         row = cursor.fetchone()
     
-    context = {'old_name': row[0], 'email': row[1], 'old_number': row[2]}
+    context = {'old_name': row[0], 'email': email, 'old_number': row[2]}
     if request.method == 'POST':
         name = request.POST.get('name')
         number = request.POST.get('number')
