@@ -1,3 +1,6 @@
+{% extends 'main.html' %}
+
+{% block content %}
 <h1>Admin Unit Page</h1>
 <p style="color:red">{{ status|safe }}</p>
 <br>
@@ -9,8 +12,6 @@
     
     {% endif %}
 
-<a href="{% url 'adminbookings' %}">Admin Bookings Page</a>
-<br>
 <a href="{% url 'adminaddunits' %}">Add New Unit</a>
 
 <form method="GET">
@@ -73,3 +74,4 @@
 
   </body>
 </html>
+{% endblock %}
