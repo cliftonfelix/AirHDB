@@ -63,17 +63,23 @@ def logout_page(request):
     return redirect('login')
 
 def register_page(request):
+    context = {'name': '', 'number': '', 'email': '', 'password': '', 'confirm_password': ''}
     if request.method == 'POST':
-        # Ensure password matches confirmation
+        
         name = request.POST.get('name')
         number = request.POST.get('number')
         email = request.POST.get('email').lower()
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
+        context['name'] = name
+        context['number'] = number
+        context['email'] = email
+        context['password'] = password
+        context['confirm_password'] = confirm_password
 
         if password != confirm_password:
             messages.error(request, 'Passwords do not match!')
-            return render(request, 'app/register.html')
+            return render(request, 'app/register.html', context)
 
         with connection.cursor() as cursor:
             try:
@@ -87,14 +93,16 @@ def register_page(request):
                     message = 'Please enter a valid email address!'
                 elif 'new row for relation "users" violates check constraint "users_mobile_number_check"' in string:
                     message = 'Please enter a valid Singapore number!'
+                elif 'out of range for type integer' in string:
+                    message = 'Please enter a valid Singapore number!'
                 messages.error(request, message)
-                return render(request, 'app/register.html')
+                return render(request, 'app/register.html', context)
 
             user = User.objects.create_user(email, password = password)
             user.save()
             messages.success(request, 'Account has been successfully registered!')
             return redirect('login')
-    return render(request, 'app/register.html')
+    return render(request, 'app/register.html', context)
     
 @login_required(login_url = 'login')
 def listings(request):
@@ -677,3 +685,96 @@ def addunits(request):
     context['status'] = status
  
     return render(request, "app/adminunitsadd.html", context)
+
+@login_required(login_url = 'login')
+def profile(request):
+    email = request.user.username
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
+        row = cursor.fetchone()
+    context = {'name': row[0], 'email': email, 'number': row[2]}
+    return render(request, 'app/profile.html', context)
+
+@login_required(login_url = 'login')
+def change_profile(request):
+    email = request.user.username
+    
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
+        row = cursor.fetchone()
+    context = {'old_name': row[0], 'old_number': row[2]}
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        number = request.POST.get('number')
+        context['old_name'] = name
+        context['old_number'] = number
+	
+        if name == row[0] and number == str(row[2]):
+            messages.error(request, 'New profile is identical to the old one!') 
+            return render(request, 'app/change_profile.html', context)
+	
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("UPDATE users SET name = %s, mobile_number = %s WHERE email_address = %s", [name, number, email])
+		
+            except Exception as e:
+                string = str(e)
+                message = ""
+		
+                if 'new row for relation "users" violates check constraint "users_mobile_number_check"' in string:
+                    message = 'Please enter a valid Singapore number!'
+		
+                elif 'out of range for type integer' in string:
+                    message = 'Please enter a valid Singapore number!'
+		
+                messages.error(request, message) 
+                return render(request, 'app/change_profile.html', context)
+	
+            messages.success(request, 'Profile has been successfully updated!')
+            return redirect('profile')    
+
+    return render(request, 'app/change_profile.html', context)
+
+@login_required(login_url = 'login')
+def change_password(request):
+    email = request.user.username
+    user = User.objects.get(username = email)
+    context = {'old_password': '', 'new_password': '', 'confirm_new_password': ''}
+
+    if request.method == 'POST':
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+        confirm_new_password = request.POST.get('confirm_new_password')
+	
+        context['old_password'] = old_password
+        context['new_password'] = new_password
+        context['confirm_new_password'] = confirm_new_password
+	
+        if not user.check_password(old_password):
+            messages.error(request, 'Old password entered is incorrect')
+            return render(request, 'app/change_password.html', context)
+	
+        elif new_password != confirm_new_password:
+            messages.error(request, 'Passwords do not match!')
+            return render(request, 'app/change_password.html', context)
+	
+        user.set_password(new_password)
+        user.save()
+        login(request, user)
+        messages.success(request, 'Password has been successfully updated!')  
+	
+    return render(request, 'app/change_password.html', context)
+
+@login_required(login_url = 'login')
+def bookings(request):
+    email = request.user.username
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
+		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id AND booked_by = %s ORDER BY b.booking_id", [email])
+        bookings = cursor.fetchall()
+	
+    context = {}
+    context['bookings'] = bookings
+    return render(request, 'app/bookings.html', context)
