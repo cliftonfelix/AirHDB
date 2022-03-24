@@ -58,8 +58,9 @@ def logout_page(request):
     return redirect('login')
 
 def register_page(request):
+    context = {'name': '', 'number': '', 'email': '', 'password': '', 'confirm_password': ''}
     if request.method == 'POST':
-        context = {'name': '', 'number': '', 'email': '', 'password': '', 'confirm_password': ''}
+        
         name = request.POST.get('name')
         number = request.POST.get('number')
         email = request.POST.get('email').lower()
