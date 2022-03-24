@@ -15,20 +15,24 @@ def login_page(request):
             row = cursor.fetchone()
 
             if row[3] == 'Yes':
-                return redirect('admin')
+                return redirect('adminunits')
 
             elif row[3] == 'No':
                 return redirect('listings')
 
+    context = {"current_email": "", "current_password": ""}
+
     if request.method == 'POST':
         email = request.POST.get('email').lower()
         password = request.POST.get('password')
+        context["current_email"] = email
+        context["current_password"] = password
 
         try:
             user = User.objects.get(username = email)
         except:
             messages.error(request, 'Invalid email address!')
-            return render(request, 'app/login.html')
+            return render(request, 'app/login.html', context)
 
         user = authenticate(request, username = email, password = password)
         if user is not None:
@@ -38,16 +42,16 @@ def login_page(request):
                 login(request, user)
 
             if row[3] == 'Yes':
-                return redirect('admin')
+                return redirect('adminunits')
 
             elif row[3] == 'No':
                 return redirect('listings')
 
         else:
             messages.error(request, 'Wrong password entered!')
-            return render(request, 'app/login.html')
+            return render(request, 'app/login.html', context)
 
-    return render(request, 'app/login.html')
+    return render(request, 'app/login.html', context)
 
 def logout_page(request):
     logout(request)
