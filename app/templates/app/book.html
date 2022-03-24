@@ -1,0 +1,50 @@
+{% extends 'main.html' %}
+
+{% block content %}
+{% load static %}
+  <body>
+    <div>
+      <form method = "POST">
+        {% csrf_token %}
+        <div id="div_id_hdb_id" class="control-group"> 
+          <label for="id_hdb_id" class="control-label requiredField">HDB ID</label>
+            <div class="controls"> <input type="text" name="hdb_id" value="{{hdb_id}}" maxlength="64" class="textinput textInput" required="" id="id_hdb_id" disabled> </div>
+            </div>
+        <div id="div_id_booked_by" class="control-group"> 
+          <label for="id_booked_by" class="control-label requiredField">Booked By</label>
+            <div class="controls"> <input type="text" name="booked_by" value="{{booked_by}}" maxlength="64" class="textinput textInput" required="" id="id_booked_by" disabled> </div>
+            </div>  
+        <div id="div_id_hdb_id" class="control-group"> 
+          <label for="id_start_date" class="control-label requiredField">Start Date</label> 
+            <div class="controls"> <input type="date" id="id_start_date" name="start_date" value={{start_date}} disabled> </div> 
+        </div> 
+        
+        <div id="div_id_end_date" class="control-group"> 
+          <label for="id_end_date" class="control-label requiredField">End Date</label> 
+            <div class="controls"> <input type="date" id="id_end_date" name="end_date" value={{end_date}} disabled> </div> 
+        </div> 
+        <div id="div_id_credit_card_type" class="control-group"> 
+          <label for="id_credit_card_type" class="control-label requiredField">Credit Card Type </label>
+            <div class="controls"> <select name="credit_card_type" id="id_credit_card_type">
+                <option value="Mastercard" {%if "Mastercard" == credit_card_type%} selected {% endif %}>Mastercard</option>
+                <option value="VISA" {%if "VISA" == credit_card_type%} selected {% endif %}>VISA</option>
+                <option value="American Express" {%if "American Express" == credit_card_type%} selected {% endif %}>American Express</option>
+            </div> 
+        <div id="div_id_credit_card_number" class="control-group"> 
+          <label for="id_credit_card_number" class="control-label requiredField">Credit Card Number </label>
+            <div class="controls"> <input type="text" name="credit_card_number" value="{{credit_card_number}}" maxlength="64" class="textinput textInput" required="" id="id_credit_card_number"> </div>
+             </div> 
+        <div id="div_id_total_price" class="control-group"> 
+          <label for="id_total_price" class="control-label requiredField">Total Price</label>
+            <div class="controls"> <input type="text" name="total_price" value="{{total_price}}" maxlength="64" class="textinput textInput" required="" id="id_total_price" disabled> </div>
+             </div> 
+        
+        
+        
+        <button type="submit">Confirm</button>
+
+      </form>
+    </div>
+   
+  </body>
+{% endblock %}
