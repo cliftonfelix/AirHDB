@@ -1,0 +1,40 @@
+{% extends 'main.html' %}
+
+{% block content %}
+{% load static %}
+  <body>
+    <div>
+      <form method = "POST">
+        {% csrf_token %}
+        <div id="div_id_hdb_id" class="control-group"> 
+          <label for="id_hdb_id" class="control-label requiredField">HDB ID</label>
+            <div class="controls"> <input type="text" name="hdb_id" value="{{hdb_id}}" maxlength="64" class="textinput textInput" required="" id="id_hdb_id" disabled> </div>
+            </div>
+        <div id="div_id_hdb_address" class="control-group"> 
+          <label for="id_hdb_id" class="control-label requiredField">HDB Address</label>
+            <div class="controls"> <input type="text" name="hdb_address" value="{{hdb_address}}" maxlength="64" class="textinput textInput" required="" id="id_hdb_address" disabled> </div>
+            </div>
+        <div id="div_id_hdb_unit_number" class="control-group"> 
+          <label for="id_hdb_unit_number" class="control-label requiredField">HDB Address</label>
+            <div class="controls"> <input type="text" name="hdb_unit_number" value="{{hdb_unit_number}}" maxlength="64" class="textinput textInput" required="" id="id_hdb_unit_number" disabled> </div>
+            </div>
+        <div id="div_id_booked_by" class="control-group"> 
+          <label for="id_booked_by" class="control-label requiredField">Booked By</label>
+            <div class="controls"> <input type="text" name="booked_by" value="{{booked_by}}" maxlength="64" class="textinput textInput" required="" id="id_booked_by" disabled> </div>
+            </div>
+        <div id="div_id_start_date" class="control-group"> 
+          <label for="id_start_date" class="control-label requiredField">Start Date</label> 
+            <div class="controls"> <input type="date" id="id_start_date" name="start_date" value={{start_date}} disabled> </div> 
+        </div> 
+        
+        <div id="div_id_end_date" class="control-group"> 
+          <label for="id_end_date" class="control-label requiredField">End Date</label> 
+            <div class="controls"> <input type="date" id="id_end_date" name="end_date" value={{end_date}} disabled> </div> 
+        </div> 
+        <button type="submit">Confirm</button>
+
+      </form>
+    </div>
+   
+  </body>
+{% endblock %}
