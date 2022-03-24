@@ -1,0 +1,27 @@
+<html>
+<body>
+    <h2>Add New Mrt</h2>
+    <a href="{% url 'adminmrts' %}">Back to Admin Mrt Page</a>
+
+    <p style="color:red">{{ status|safe }}</p>
+    <!-- Create a Form -->
+    <form method="POST" >
+        <!-- Security token by Django -->
+        {% csrf_token %}
+        <!-- form -->
+        <div id="div_id_mrt_name" class="control-group"> <label for="id_mrt_name" class="control-label requiredField">Mrt Station Name<span class="asteriskField">*</span> </label>
+             <div class="controls"> <input type="text" name="mrt_name" maxlength="64" class="textinput textInput" required="" id="id_mrt_name" value = '{{mrt_name}}'> </div> 
+            </div> 
+        <div id="div_id_latitude" class="control-group"> <label for="id_id_latitude" class="control-label requiredField">Latitude<span class="asteriskField">*</span> </label> 
+            <div class="controls"> <input type="number" step ='any' min='0' max='2'name="latitude" maxlength="64" class="textinput textInput" required="" id="id_latitude" value = {{lat}}> </div> 
+            </div>
+        <div id="div_id_longitude" class="control-group"> <label for="id_longitude" class="control-label requiredField">Longitude<span class="asteriskField">*</span> </label> 
+            <div class="controls"> <input type="number" step ='any'min='103' max='105' name="longitude" maxlength="64" class="textinput textInput" required="" id="id_longitude" value = {{long}}> </div> 
+            </div>
+        
+
+        <br>
+        <button type="submit" value="Add">Add</button>
+    </form>
+</body>
+</html>
