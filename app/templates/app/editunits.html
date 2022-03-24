@@ -14,7 +14,7 @@
             <div class="controls"> <input type="text" name="contact_person" value="{{obj.8}}" maxlength="64" class="textinput textInput" required="" id="id_contact_name" > </div> 
             </div> 
         <div id="div_id_contact_number" class="control-group"> <label for="id_contact_number" class="control-label requiredField">Contact Number<span class="asteriskField">*</span> </label>
-             <div class="controls"> <input type="number" name="contact_number" max='99999999' value="{{obj.9}}" maxlength="64" class="textinput textInput" required="" id="id_contact_number" value ={{number}}> </div>
+             <div class="controls"> <input type="number" name="contact_number" min = 10000000 max = 99999999 value="{{obj.9}}" maxlength="64" class="textinput textInput" required="" id="id_contact_number" value ={{number}}> </div>
              </div> 
         <div id="div_id_can_book" class="control-group"> <label for="id_can_book" class="control-label requiredField">Can Book?<span class="asteriskField">*</span> </label>
                 <div class="controls"> <select name="can_book" id="can_book">
