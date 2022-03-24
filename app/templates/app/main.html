@@ -9,6 +9,13 @@
 </head>
 <body>
     <img src="{% static 'app/images/AirHDB_logo2.png' %}" width="13%"   alt="AirHDB Logo"/><br/>
+    <a href = "{% url 'listings' %}">Listings</a>
+    <a href = "{% url 'adminunits' %}">Admin Page - Units</a> 
+    <a href = "{% url 'adminbookings' %}">Admin Page - Bookings</a> 
+    <a href = "{% url 'adminmrts' %}">Admin Page - MRTs</a> 
+    <a href = "{% url 'bookings' %}">Bookings</a>
+    <a href = "{% url 'profile' %}">Profile</a>
+    <a href = "{% url 'change_password' %}">Change Password</a>
     <a href = "{% url 'logout' %}">Log Out</a>
     <hr>
     {% if messages %}
