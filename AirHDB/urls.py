@@ -24,7 +24,6 @@ urlpatterns = [
     path('logout/', app.views.logout_page, name = "logout"),
     path('register/', app.views.register_page, name = 'register'),
     path('listings/', app.views.listings, name = 'listings'),
-    path('adm/', app.views.admin, name = 'admin'),
     path('adminbookings/',views.adminb,name='adminbookings'),
     path('adminunits/',views.adminu,name='adminunits'),
     path('adminunits/view/<str:id>/',views.viewunits),
