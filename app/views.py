@@ -154,6 +154,7 @@ def editunits(request, id):
                     status = 'Unsuccessful , Please enter a valid Singapore Mobile Number'
                 elif 'violates check constraint "hdb_units_can_book_check"' in message:
                     status = 'Please input Yes or No for Can Book?'
+                
                 else:
                     status = message
 
@@ -263,7 +264,7 @@ def addunits(request):
 
     if request.POST:
         context['towns_default'] = request.POST.get('town')
-        context['address'] = request.POST.get('hdb_address').upper()
+        context['address'] = request.POST['hdb_address'].upper()
         context['unit'] = request.POST.get('hdb_unit_number')
         context['size'] = request.POST.get('size')
         context['price'] = request.POST.get('price_per_day')
