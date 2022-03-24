@@ -51,6 +51,7 @@ def adminu(request):
     status = ''
     
 
+<<<<<<< HEAD
     if request.POST:
         
 
@@ -61,6 +62,8 @@ def adminu(request):
                 except:
                     status = 'Unit has been booked by a person, you cannot delete it'
 
+=======
+>>>>>>> 7f189638f0fbdb526e8e78dd39193c8e466f12be
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM hdb_units")
         units = cursor.fetchall()
