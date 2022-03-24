@@ -780,6 +780,8 @@ def user_bookings(request):
     context['bookings'] = bookings
     return render(request, 'app/userbookings.html', context)
 
+from datetime import datetime
+
 @login_required(login_url = 'login')
 def book(request, id, start_date, end_date):
     email = request.user.username
@@ -790,7 +792,7 @@ def book(request, id, start_date, end_date):
         return render(request, 'app/listings.html', context)
 
     with connection.cursor() as cursor:
-        cursor.execute("SELECT hu1.hdb_address, hu1.hdb_unit_number FROM hdb_units hu1 WHERE hu1.hdb_id = %s", [id])
+        cursor.execute("SELECT hu1.hdb_address, hu1.hdb_unit_number, hu1.price_per_day FROM hdb_units hu1 WHERE hu1.hdb_id = %s", [id])
         row = cursor.fetchone()
 
     context["hdb_id"] = id
@@ -801,6 +803,7 @@ def book(request, id, start_date, end_date):
     context["end_date"] = end_date
     context["credit_card_type"] = ""
     context["credit_card_number"] = ""
+    context["total_price"] = (datetime.strptime(end_date, '%d/%m/%Y') - datetime.strptime(start_date, '%d/%m/%Y')).days * row[2]
 
     if request.method == 'POST':
         card_number = request.POST.get("credit_card_number")
