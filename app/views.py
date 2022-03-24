@@ -808,8 +808,8 @@ def book1(request, id):
         
         try:
             with connection.cursor() as cursor:
-                cursor.execute("INSERT INTO bookings(hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number)\
-                            VALUES ({}, '{}', '{}', '{}', 'mastercard', '2221000000000000')".format(id, email, start_date, end_date))
+                cursor.execute("INSERT INTO bookings(hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price)\
+                            VALUES ({}, '{}', '{}', '{}', 'mastercard', '2221000000000000', 0)".format(id, email, start_date, end_date))
                 cursor.execute("DELETE FROM bookings WHERE hdb_id = %s AND booked_by = %s AND start_date = %s AND end_date = %s", [id, email, start_date, end_date])
             
         except Exception as e:
@@ -817,6 +817,9 @@ def book1(request, id):
 
             if "Booking Dates Not Available" in error:
                 messages.error(request, "Selected dates are not available")
+
+            elif 'invalid input syntax' in error:
+                messages.error(request, "Please fill in the dates")
 
             else:
                 messages.error(request, error)
@@ -842,6 +845,7 @@ def book2(request):
         hdb_unit_number = request.POST.get("hdb_unit_number")
         card_number = request.POST.get("credit_card_number")
         card_type = request.POST.get("credit_card_type")
+        total_price = request.POST.get("total_price")
         context["start_date"] = start_date
         context["end_date"] = end_date
         context["hdb_id"] = hdb_id
@@ -850,11 +854,12 @@ def book2(request):
         context["credit_card_number"] = card_number
         context["credit_card_type"] = card_type
         context["booked_by"] = email
+        context["total_price"] = total_price
         
         try:
             with connection.cursor() as cursor:
-                cursor.execute("INSERT INTO bookings(hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number)\
-                                VALUES ({}, '{}', '{}', '{}', '{}', '{}')".format(id, email, start_date, end_date, card_type, card_number))
+                cursor.execute("INSERT INTO bookings(hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price)\
+                                VALUES ({}, '{}', '{}', '{}', '{}', '{}', {})".format(id, email, start_date, end_date, card_type, card_number, total_price))
 
         except Exception as e:
             error = str(e)
@@ -875,3 +880,4 @@ def book2(request):
     messages.error(request, "Please do not refresh the page")
     return render(request, "app/listings.html", context)
                         
+
