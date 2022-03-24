@@ -434,7 +434,8 @@ def change_password(request):
 def bookings(request):
     email = request.user.username
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM bookings WHERE booked_by = %s", [email])
+        cursor.execute("SELECT b.booking_id, b.hdb_id, h.address, h.hdb_unit_number, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
+		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id AND booked_by = %s", [email])
         bookings = cursor.fetchall()
     context = {}
     context['bookings'] = bookings
