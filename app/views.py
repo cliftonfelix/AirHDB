@@ -394,7 +394,7 @@ def adminu(request):
     status = ''
 
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM hdb_units")
+        cursor.execute("SELECT * FROM hdb_units hu1 ORDER BY hu1.hdb_id")
         units = cursor.fetchall()
 
     result_dict = {'records': units}
@@ -410,7 +410,8 @@ def adminb(request):
                 cursor.execute("DELETE FROM bookings WHERE booking_id = %s", [request.POST['id']])
  
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM bookings")
+        cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
+		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id ORDER BY b.booking_id")
         bookings = cursor.fetchall()
 
     booking_dict = {'bookings':bookings}
@@ -422,7 +423,7 @@ def adminm(request):
     status = ''
 
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM mrt_stations")
+        cursor.execute("SELECT * FROM mrt_stations mrt1 ORDER BY mrt1.mrt_name")
         stations = cursor.fetchall()
 
     result_dict = {'stations': stations}
