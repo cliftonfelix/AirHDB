@@ -24,11 +24,13 @@ urlpatterns = [
     path('logout/', app.views.logout_page, name = "logout"),
     path('register/', app.views.register_page, name = 'register'),
     path('listings/', app.views.listings, name = 'listings'),
-    path('adminbookings/', app.views.adminb, name='adminbookings'),
-    path('adminunits/', app.views.adminu, name='adminunits'),
-    path('adminunits/view/<str:id>/', app.views.viewunits),
-    path('adminbookings/view/<str:id>/', app.views.viewbookings),
-    path('adminunits/edit/<str:id>/', app.views.editunits),
-    path('adminbookings/edit/<str:id>/', app.views.editbookings),
-    path('adminunits/add/',app.views.addunits, name='adminaddunits')
+    path('bookings/', app.views.adminb, name='adminbookings'),
+    path('units/', app.views.adminu, name='adminunits'),
+    path('units/view/<str:id>/', app.views.viewunits),
+    path('bookings/view/<str:id>/', app.views.viewbookings),
+    path('units/edit/<str:id>/', app.views.editunits),
+    path('bookings/edit/<str:id>/', app.views.editbookings),
+    path('units/add/', app.views.addunits, name='adminaddunits'),
+    path('mrts/', app.views.adminm, name='adminmrts'),
+    path('mrts/add', app.views.addmrt, name='adminaddmrt')
 ]
