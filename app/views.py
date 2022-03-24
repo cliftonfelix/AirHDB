@@ -78,7 +78,7 @@ def register_page(request):
                     message = 'Please enter a valid email address!'
                 elif 'new row for relation "users" violates check constraint "users_mobile_number_check"' in string:
                     message = 'Please enter a valid Singapore number!'
-                elif 'integer out of range' in string:
+                elif 'out of range for type integer' in string:
                     message = 'Please enter a valid Singapore number!'
                 messages.error(request, message)
                 return render(request, 'app/register.html')
@@ -398,8 +398,6 @@ def change_profile(request):
             messages.error(request, 'New profile is identical to the old one!') 
             return render(request, 'app/change_profile.html', context)
         with connection.cursor() as cursor:
-            cursor.execute("UPDATE users SET name = %s, mobile_number = %s WHERE email_address = %s", [name, number, email])
-            """
             try:
                 cursor.execute("UPDATE users SET name = %s, mobile_number = %s WHERE email_address = %s", [name, number, email])
             except Exception as e:
@@ -407,11 +405,10 @@ def change_profile(request):
                 message = ""
                 if 'new row for relation "users" violates check constraint "users_mobile_number_check"' in string:
                     message = 'Please enter a valid Singapore number!'
-                elif 'integer out of range' in string:
+                elif 'out of range for type integer' in string:
                     message = 'Please enter a valid Singapore number!'
                 messages.error(request, message) 
                 return render(request, 'app/change_profile.html', context)
-            """
             messages.success(request, 'Profile has been successfully updated!')
             return redirect('profile')    
     return render(request, 'app/change_profile.html', context)
