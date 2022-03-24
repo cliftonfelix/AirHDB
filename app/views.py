@@ -783,6 +783,8 @@ def book1(request, id):
     context["hdb_address"] = row[0]
     context["hdb_unit_number"] = row[1]
     context["booked_by"] = email
+    context["credit_card_number"] = ""
+    context["credit_card_type"] = ""
 
     if request.method == "POST":
         start_date = request.POST.get("start_date")
@@ -850,4 +852,3 @@ def book2(request):
         messages.success(request, "Successful booking for HDB address {} unit {} from {} to {}".format(row[0], row[1], start_date, end_date))
 
         return render(request, "app/listings.html", context)
-                        
