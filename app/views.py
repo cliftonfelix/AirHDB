@@ -59,16 +59,21 @@ def logout_page(request):
 
 def register_page(request):
     if request.method == 'POST':
-        # Ensure password matches confirmation
+        context = {'name': '', 'number': '', 'email': '', 'password' = '', 'confirm_password' = ''}
         name = request.POST.get('name')
         number = request.POST.get('number')
         email = request.POST.get('email').lower()
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
+        context['name'] = name
+        context['number'] = number
+        context['email'] = email
+        context['password'] = password
+        context['confirm_password'] = confirm_password
 
         if password != confirm_password:
             messages.error(request, 'Passwords do not match!')
-            return render(request, 'app/register.html')
+            return render(request, 'app/register.html', context)
 
         with connection.cursor() as cursor:
             try:
@@ -85,14 +90,14 @@ def register_page(request):
                 elif 'out of range for type integer' in string:
                     message = 'Please enter a valid Singapore number!'
                 messages.error(request, message)
-                return render(request, 'app/register.html')
+                return render(request, 'app/register.html', context)
 
             user = User.objects.create_user(email, password = password)
             user.save()
             messages.success(request, 'Account has been successfully registered!')
             return redirect('login')
     return render(request, 'app/register.html', context)
-    
+
 @login_required(login_url = 'login')
 def listings(request):
     with connection.cursor() as cursor:
@@ -389,15 +394,17 @@ def profile(request):
 @login_required(login_url = 'login')
 def change_profile(request):
     email = request.user.username
+    
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM users WHERE email_address = %s", [email])
         row = cursor.fetchone()
-    
-    context = {'old_name': row[0], 'email': email, 'old_number': row[2]}
+    context = {'old_name': row[0], 'old_number': row[2]}
+
     if request.method == 'POST':
         name = request.POST.get('name')
         number = request.POST.get('number')
-        
+        context['old_name'] = name
+        context['old_number'] = number
         if name == row[0] and number == str(row[2]):
             messages.error(request, 'New profile is identical to the old one!') 
             return render(request, 'app/change_profile.html', context)
