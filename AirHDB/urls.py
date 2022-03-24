@@ -37,6 +37,6 @@ urlpatterns = [
     path('change_profile/', app.views.change_profile, name = 'change_profile'),
     path('user_bookings/', app.views.user_bookings, name = 'user_bookings'),
     path('change_password/', app.views.change_password, name = 'change_password'),
-    path('listings/book/', app.views.book2)
+    path('listings/book/', app.views.book2),
     path('listings/book/<str:id>/', app.views.book1)
 ]
