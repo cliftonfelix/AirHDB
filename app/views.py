@@ -392,7 +392,7 @@ def change_profile(request):
         name = request.POST.get('name')
         number = request.POST.get('number')
         
-        if name == row[0] and str(number) == row[2]:
+        if name == row[0] and number == str(row[2]):
             messages.error(request, 'New profile is identical to the old one!') 
             return render(request, 'app/change_profile.html', context)
         with connection.cursor() as cursor:
@@ -427,8 +427,7 @@ def change_password(request):
         user.set_password(new_password)
         user.save()
         login(request, user)
-        messages.success(request, 'Profile has been successfully updated!')
-        return redirect('profile')    
+        messages.success(request, 'Password has been successfully updated!')  
     return render(request, 'app/change_password.html')
 
 @login_required(login_url = 'login')
