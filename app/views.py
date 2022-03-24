@@ -78,6 +78,8 @@ def register_page(request):
                     message = 'Please enter a valid email address!'
                 elif 'new row for relation "users" violates check constraint "users_mobile_number_check"' in string:
                     message = 'Please enter a valid Singapore number!'
+                elif 'integer out of range' in string:
+                    message = 'Please enter a valid Singapore number!'
                 messages.error(request, message)
                 return render(request, 'app/register.html')
 
@@ -402,7 +404,10 @@ def change_profile(request):
                 string = str(e)
                 message = ""
                 if 'new row for relation "users" violates check constraint "users_mobile_number_check"' in string:
-                    messages.error(request, 'Please enter a valid Singapore number!') 
+                    message = 'Please enter a valid Singapore number!'
+                elif 'integer out of range' in string:
+                    message = 'Please enter a valid Singapore number!'
+                messages.error(request, message) 
                 return render(request, 'app/change_profile.html', context)
             messages.success(request, 'Profile has been successfully updated!')
             return redirect('profile')    
