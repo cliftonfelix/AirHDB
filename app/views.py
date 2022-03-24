@@ -410,6 +410,64 @@ def adminb(request):
     return render(request,'app/adminbookings.html',booking_dict)
 
 @login_required(login_url = 'login')
+def adminm(request):
+    status = ''
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM mrt_stations")
+        stations = cursor.fetchall()
+
+    result_dict = {'stations': stations}
+    result_dict['status'] = status
+
+    return render(request,'app/adminmrts.html',result_dict)
+
+@login_required(login_url = 'login')
+def addmrt(request):
+    """Shows the main page"""
+    context = {}
+    status = ''
+
+    context['mrt_name'] = ''
+    context['lat'] = ''
+    context['long'] = ''
+    
+    if request.POST:
+        context['mrt_name'] = request.POST.get('mrt_name').capitalize()
+        context['lat'] = request.POST['latitude']
+        context['long'] = request.POST.get('longitude')
+
+        ## Check if customerid is already in the table
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM mrt_stations WHERE mrt_name = %s or (mrt_lat = %s and mrt_long =%s)", [request.POST['mrt_name'].capitalize(),request.POST['latitude'],request.POST['longitude']])
+            mrt = cursor.fetchone()
+            ## No customer with same id
+            if mrt == None:
+                ##TODO: date validation
+                try:
+                    cursor.execute("INSERT INTO mrt_stations(mrt_name,mrt_lat,mrt_long) VALUES (%s, %s, %s)"
+                            , [request.POST['mrt_name'].capitalize(), request.POST['latitude'], request.POST['longitude']])
+                            
+                    messages.success(request, '%s station has been successfully added!'% (request.POST['mrt_name'].capitalize()))
+                    return redirect('adminmrts')
+                   
+                except Exception as e:
+                    message = str(e)
+                    if '"mrt_stations" violates check constraint "mrt_stations_mrt_lat_check"' in message:
+                        status ='%s Station latitude out of range for Singapore'%(request.POST['mrt_name'].capitalize())
+                    elif '"mrt_stations" violates check constraint "mrt_stations_mrt_long_check"' in message:
+                        status ='%s Station longitude out of range for Singapore'%(request.POST['mrt_name'].capitalize())
+
+                    else:
+                        status = message
+            else:
+                status = '%s already exists' % (request.POST['mrt_name'].capitalize())
+
+    context['status'] = status
+ 
+    return render(request, "app/adminaddmrt.html", context)
+
+@login_required(login_url = 'login')
 def viewunits(request,id):
     ## Use raw query to get a customer
     with connection.cursor() as cursor:
@@ -566,7 +624,6 @@ def addunits(request):
         context['number'] = request.POST.get('contact_person_mobile')
         context['type'] = request.POST.get('hdb_type')
         context['ans'] = request.POST.get('multistorey_carpark')
-        
 
         ## Check if customerid is already in the table
         with connection.cursor() as cursor:
@@ -614,10 +671,8 @@ def addunits(request):
                     else:
                         status = message
 
-
             else:
                 status = '%s %s already exists' % (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number'])
-
 
     context['status'] = status
  
