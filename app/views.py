@@ -779,3 +779,53 @@ def user_bookings(request):
     context = {}
     context['bookings'] = bookings
     return render(request, 'app/userbookings.html', context)
+
+@login_required(login_url = 'login')
+def book(request, id, start_date, end_date):
+    email = request.user.username
+    context = {}
+
+    if not start_date or not end_date:
+        messages.error(request, "Please select start date and end date before proceeding")
+        return render(request, 'app/listings.html', context)
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT hu1.hdb_address, hu1.hdb_unit_number FROM hdb_units hu1 WHERE hu1.hdb_id = %s", [id])
+        row = cursor.fetchone()
+
+    context["hdb_id"] = id
+    context["hdb_address"] = row[0]
+    context["hdb_unit_number"] = row[1]
+
+    context["start_date"] = start_date
+    context["end_date"] = end_date
+    context["credit_card_type"] = ""
+    context["credit_card_number"] = ""
+
+    if request.method == 'POST':
+        card_number = request.POST.get("credit_card_number")
+        card_type = request.POST.get("credit_card_type")
+        context["credit_card_number"] = card_number
+        context["credit_card_type"] = card_type
+        
+        try:
+            cursor.execute("INSERT INTO bookings(hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number)\
+                            VALUES (%s, '%s', '%s', '%s', '%s', '%s')", [id, request.user.username, start_date, end_date, card_type, card_number])
+
+        except Exception as e:
+            error = str(e)
+
+            if e == 'new row for relation "bookings" violates check constraint "bookings_check1"':
+                if card_type == "Mastercard":
+                    messages.error(request, "Please input a valid Mastercard number")
+                elif card_type == "VISA":
+                    messages.error(request, "Please input a valid VISA card number")
+                else:
+                    messages.error(request, "Please input a valid American Express card number")
+            return render(request, "app/book.html", context)
+
+        messages.success(request, "Successful booking for HDB address {} unit {} from {} to {}".format(row[0], row[1], start_date, end_date))
+
+        return render(request, "app/listings.html", context)
+
+    return render(request, "app/book.html", context)
