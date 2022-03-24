@@ -1,6 +1,6 @@
 <html>
 <body>
-    <h2>Add New Customer</h2>
+    <h2>Add New Unit</h2>
     <a href="{% url 'adminunits' %}">Back to Admin Unit Page</a>
 
     <p style="color:red">{{ status|safe }}</p>
@@ -10,7 +10,7 @@
         {% csrf_token %}
         <!-- form -->
         <div id="div_id_hdb_address" class="control-group"> <label for="id_hdb_address" class="control-label requiredField">HDB Address<span class="asteriskField">*</span> </label>
-             <div class="controls"> <input type="text" name="hdb_address" maxlength="64" class="textinput textInput" required="" id="id_hdb_address" value = {{address}}> </div> 
+             <div class="controls"> <input type="text" name="hdb_address" maxlength="64" class="textinput textInput" required="" id="id_hdb_address" value = '{{address}}'> </div> 
             </div> 
         <div id="div_id_hdb_unit_number" class="control-group"> <label for="id_hdb_unit_number" class="control-label requiredField">HDB Unit Number<span class="asteriskField">*</span> </label> 
             <div class="controls"> <input type="text" name="hdb_unit_number" maxlength="64" class="textinput textInput" required="" id="id_hdb_unit_number" value = {{unit}}> </div> 
