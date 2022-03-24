@@ -7,20 +7,18 @@
     </ul>
     {% endif %}
 
-
-    <div>
-        <h1>Login</h1>
-        <form method = "POST" action = "">
-            {% csrf_token %}
-            <label>Email:</label>
-            <input type = "text" name = "email" placeholder = "Enter Email" required=""/><br>
-            <label>Password:</label>
-            <input type = "password" name = "password" placeholder = "Enter Password" required=""/><br>
-            <input type = "submit" value = "Login"/>
-
-            <p>Haven't signed up yet?</p>
-            <a href = "{% url 'register' %}">Sign up</a>
-
-        </form>
-    </div>
 </body>
+<div>
+    <form method = "POST" action = "">
+        {% csrf_token %}
+        <label>Email:</label>
+        <input type = "text" name = "email" placeholder = "Enter Email" value = "{{current_email}}" required=""/>
+        <label>Password:</label>
+        <input type = "password" name = "password" placeholder = "Enter Password" value = "{{current_password}}" required=""/>
+        <input type = "submit" value = "Login"/>
+        
+        <p>Haven't signed up yet?</p>
+        <a href = "{% url 'register' %}">Sign up</a>
+
+    </form>
+</div>
