@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from datetime import datetime
 import requests
 
 api_key = "AIzaSyCfbRJX3HAzw1mb4ZwHsQCOf4XES8h0eFU"
@@ -780,8 +781,6 @@ def user_bookings(request):
     context['bookings'] = bookings
     return render(request, 'app/userbookings.html', context)
 
-from datetime import datetime
-
 @login_required(login_url = 'login')
 def book(request, id, start_date, end_date):
     email = request.user.username
@@ -803,7 +802,7 @@ def book(request, id, start_date, end_date):
     context["end_date"] = end_date
     context["credit_card_type"] = ""
     context["credit_card_number"] = ""
-    context["total_price"] = (datetime.strptime(end_date, '%d/%m/%Y') - datetime.strptime(start_date, '%d/%m/%Y')).days * row[2]
+    context["total_price"] = (datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days * row[2]
 
     if request.method == 'POST':
         card_number = request.POST.get("credit_card_number")
