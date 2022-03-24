@@ -136,6 +136,7 @@
         <th>HDB Longitude</th>
         <th>Nearest MRT Station</th>
         <th>Nearest MRT Distance (in km)</th>
+        <th>Action</th>
       </thead>
       {% for listing in listings %}
       <tr>
@@ -157,6 +158,7 @@
         <td> {{ listing.11 }} </td>
         <td> {{ listing.12 }} </td>
         <td> {{ listing.13 }} </td>
+        <td> <a href="book/{{listing.2}}/{{start_date}}/{{end_date}}"><button>Book</button></a>
       </tr>
       {% endfor %}
     </table>
