@@ -24,7 +24,14 @@ urlpatterns = [
     path('logout/', app.views.logout_page, name = "logout"),
     path('register/', app.views.register_page, name = 'register'),
     path('listings/', app.views.listings, name = 'listings'),
-    path('adm/', app.views.admin, name = 'admin')
+    path('adm/', app.views.admin, name = 'admin'),
+    path('adminbookings/',views.adminb,name='adminbookings'),
+    path('adminunits/',views.adminu,name='adminunits'),
+    path('adminunits/view/<str:id>/',views.viewunits),
+    path('adminbookings/view/<str:id>/',views.viewbookings),
+    path('adminunits/edit/<str:id>/',views.editunits),
+    path('adminbookings/edit/<str:id>/',views.editbookings),
+    path('adminunits/add/',views.addunits,name='adminaddunits')
 #     path('add', app.views.add, name='add'),
 #     path('view/<str:id>', app.views.view, name='view'),
 #     path('edit/<str:id>', app.views.edit, name='edit'),
