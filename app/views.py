@@ -47,14 +47,6 @@ def login_page(request):
 def adminu(request):
     status = ''
 
-    if request.POST:
-        if request.POST['action'] == 'delete':
-            with connection.cursor() as cursor:
-                try:
-                    cursor.execute("DELETE FROM hdb_units WHERE hdb_id = %s", [request.POST['id']])
-                except:
-                    status = 'Unit has been booked by a person, you cannot delete it'
-
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM hdb_units")
         units = cursor.fetchall()
