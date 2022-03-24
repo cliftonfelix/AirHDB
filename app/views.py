@@ -817,6 +817,9 @@ def book1(request, id):
             if "Booking Dates Not Available" in error:
                 messages.error(request, "Selected dates are not available")
 
+            else:
+                messages.error(request, error)
+
             return render(request, "app/book1.html", context)
 
         context["total_price"] = (datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days * row[2]
@@ -869,3 +872,4 @@ def book2(request):
 
     messages.error(request, "Please do not refresh the page")
     return render(request, "app/listings.html", context)
+                        
