@@ -1,6 +1,13 @@
 <h1>Book admin Page</h1>
 <a href="{% url 'adminunits' %}">Untis Admin Page</a>
 
+<form method="POST" >
+  {% csrf_token %}
+  <input type = 'search' name ='searched' placeholder ="Search bookings"/>
+  <button type="submit" name="action" value="search">Search</button>
+
+</form>
+
 
 
 {% load static %}

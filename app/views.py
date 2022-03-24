@@ -1,5 +1,6 @@
 from email import message
 from pstats import Stats
+from re import search
 from django.shortcuts import render, redirect
 from django.db import connection
 from django.contrib.auth.models import User
@@ -8,6 +9,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.contrib import messages
 import requests
+from sympy import re
 
 
 api_key = "AIzaSyCfbRJX3HAzw1mb4ZwHsQCOf4XES8h0eFU"
@@ -45,9 +47,13 @@ def login_page(request):
 
 
 def adminu(request):
+    
     status = ''
+    
 
     if request.POST:
+        
+
         if request.POST['action'] == 'delete':
             with connection.cursor() as cursor:
                 try:
@@ -59,6 +65,7 @@ def adminu(request):
         cursor.execute("SELECT * FROM hdb_units")
         units = cursor.fetchall()
     
+    
         
     
     result_dict = {'records': units}
@@ -68,24 +75,115 @@ def adminu(request):
 
     return render(request,'app/adminunits.html',result_dict)
 
-def adminb(request):
+def adminm(request):
+    
+    status = ''
+    
+
+    
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM mrt_stations")
+        stations = cursor.fetchall()
+    
+    
+        
+    
+    result_dict = {'stations': stations}
+    result_dict['status'] = status
+    
+
+
+    return render(request,'app/adminmrts.html',result_dict)
+
+def addmrt(request):
+    """Shows the main page"""
+    context = {}
+    status = ''
+    
+
+   
+        
+    context['mrt_name'] = ''
+    context['lat'] = ''
+    context['long'] = ''
     
 
     if request.POST:
+        context['mrt_name'] = request.POST.get('mrt_name').capitalize()
+        context['lat'] = request.POST['latitude']
+        context['long'] = request.POST.get('longitude')
+        
+        
+
+        ## Check if customerid is already in the table
+        with connection.cursor() as cursor:
+
+            cursor.execute("SELECT * FROM mrt_stations WHERE mrt_name = %s or (mrt_lat = %s and mrt_long =%s)", [request.POST['mrt_name'].capitalize(),request.POST['latitude'],request.POST['longitude']])
+            mrt = cursor.fetchone()
+            ## No customer with same id
+            if mrt == None:
+                ##TODO: date validation
+                try:
+                    cursor.execute("INSERT INTO mrt_stations(mrt_name,mrt_lat,mrt_long) VALUES (%s, %s, %s)"
+                            , [request.POST['mrt_name'].capitalize(), request.POST['latitude'], request.POST['longitude']])
+                            
+                    
+                    messages.success(request, '%s station has been successfully added!'% (request.POST['mrt_name'].capitalize()))
+                    return redirect('adminmrts')
+                   
+                except Exception as e:
+                    message = str(e)
+                    if '"mrt_stations" violates check constraint "mrt_stations_mrt_lat_check"' in message:
+                        status ='%s Station latitude out of range for Singapore'%(request.POST['mrt_name'].capitalize())
+                    elif '"mrt_stations" violates check constraint "mrt_stations_mrt_long_check"' in message:
+                        status ='%s Station longitude out of range for Singapore'%(request.POST['mrt_name'].capitalize())
+
+                    
+                    else:
+                        status = message
+
+
+            else:
+                status = '%s already exists' % (request.POST['mrt_name'].capitalize())
+
+
+    context['status'] = status
+ 
+    return render(request, "app/adminaddmrt.html", context)
+
+def adminb(request):
+    searched = ''
+    
+
+    if request.POST:
+        if request.POST['action'] == 'search':
+            searched = request.POST['searched']
+            print(searched)
+            
         if request.POST['action'] == 'delete':
             with connection.cursor() as cursor:
             
                 cursor.execute("DELETE FROM bookings WHERE booking_id = %s", [request.POST['id']])
+
+    if searched == '':
+        with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM bookings")
+                bookings = cursor.fetchall()
                 
 
+    elif searched !='':
 
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM bookings")
-        bookings = cursor.fetchall()
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM bookings WHERE booking_id= %s or hdb_id =%s ",[searched,searched])
+            bookings = cursor.fetchall()
+    
+
         
     
     
     booking_dict = {'bookings':bookings}
+    booking_dict['searched'] = searched
     
 
 

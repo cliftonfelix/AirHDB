@@ -1,0 +1,50 @@
+<h1>Admin Mrt Page</h1>
+<p style="color:red">{{ status|safe }}</p>
+<br>
+{% if messages %}
+    
+        {% for message in messages %}
+        <p style="color:rgb(27, 216, 52)">{{ message|safe }}</p>
+        {% endfor %}
+    
+    {% endif %}
+
+<a href="{% url 'adminbookings' %}">Admin Bookings Page</a>
+
+<br>
+<a href="{% url 'adminunits' %}">Admin Units Page</a>
+<br>
+<a href="{% url 'adminaddmrt' %}">Add New Mrt</a>
+
+<form method="GET">
+  <input type = 'text' name ='' placeholder ="Search mrt"/>
+
+</form>
+
+
+{% load static %}
+<html>
+  <body>
+    
+    <div>
+    <table border = 1>
+      <thead>
+        <th>Station Name</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        
+      </thead>
+      {% for station in stations %}
+      <tr>
+        <td> {{ station.0 }} </td>
+        <td> {{ station.1 }} </td>
+        <td> {{ station.2 }} </td>
+
+      </tr>
+      {% endfor %}
+    </table>
+    
+
+
+  </body>
+</html>
