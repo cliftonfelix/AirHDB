@@ -14,7 +14,7 @@ urlpatterns = [
     path('bookings/edit/<str:id>/',views.editbookings),
     path('units/add/',views.addunits,name='adminaddunits'),
     path('mrts/',views.adminm,name='adminmrts'),
-    path('mrts/add',views.addmrt,name='adminaddmrt')
+    path('mrts/add',views.addmrt,name='adminaddmrt'),
     
 
 ]
