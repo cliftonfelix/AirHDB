@@ -1,0 +1,60 @@
+<html>
+<body>
+    <h2>Add New Unit</h2>
+    <a href="{% url 'adminunits' %}">Back to Admin Unit Page</a>
+
+    <p style="color:red">{{ status|safe }}</p>
+    <!-- Create a Form -->
+    <form method="POST" >
+        <!-- Security token by Django -->
+        {% csrf_token %}
+        <!-- form -->
+        <div id="div_id_hdb_address" class="control-group"> <label for="id_hdb_address" class="control-label requiredField">HDB Address<span class="asteriskField">*</span> </label>
+             <div class="controls"> <input type="text" name="hdb_address" maxlength="64" class="textinput textInput" required="" id="id_hdb_address" value = '{{address}}'> </div> 
+            </div> 
+        <div id="div_id_hdb_unit_number" class="control-group"> <label for="id_hdb_unit_number" class="control-label requiredField">HDB Unit Number<span class="asteriskField">*</span> </label> 
+            <div class="controls"> <input type="text" name="hdb_unit_number" maxlength="64" class="textinput textInput" required="" id="id_hdb_unit_number" value = {{unit}}> </div> 
+            </div>
+        <div id="div_id_hdb_type" class="control-group"> <label for="id_hdb_type" class="control-label requiredField">HDB Type<span class="asteriskField">*</span> </label> 
+            <div class="controls"><select name="hdb_type" id="id_hdb_type">
+                {% for hdb_type in hdb_types %}
+                <option value="{{hdb_type.0}}" {%if hdb_type.0 == type%} selected {% endif %}>{{hdb_type.0}}</option>
+                {%endfor%}
+                
+              </select> </div>
+                </div> 
+        
+         <div id="div_id_size" class="control-group"> <label for="id_size" class="control-label requiredField">Size<span class="asteriskField">*</span> </label> 
+            <div class="controls"> <input type="text" name="size" maxlength="64" class="textinput textInput" required="" id="id_size" value ={{size}}> </div>
+            </div> 
+        <div id="div_id_price_per_day" class="control-group"> <label for="id_price_per_day" class="control-label requiredField">Price Per Day<span class="asteriskField">*</span> </label> 
+            <div class="controls"> <input type="text" name="price_per_day" class="textinput textInput" required="" id="id_price_per_day" value = {{price}} > </div>
+            </div> 
+        <div id="div_id_town" class="control-group"> <label for="id_town" class="control-label requiredField">Town<span class="asteriskField">*</span> </label>
+             <div class="controls"> <select name="town" id="id_town">
+                 {% for town in towns %}
+                <option value="{{town.0}}" {%if town.0 == towns_default%} selected {% endif %}>{{town.0}}</option>
+                {%endfor%}
+                
+              </select> </div>
+             </div> 
+        <div id="div_id_multistorey_carpark" class="control-group"> <label for="id_multistorey_carpark" class="control-label requiredField">Multistorey Carpark<span class="asteriskField">*</span> </label>
+             <div class="controls"> <select name="multistorey_carpark" id="id_multistorey_carpark">
+                <option value="Yes" {%if "Yes" == ans%} selected {% endif %}>Yes</option>
+                <option value="No" {%if "No" == ans%} selected {% endif %}>No</option>
+                
+                
+              </select> </div> 
+            </div> 
+        <div id="div_id_contact_person_name" class="control-group"> <label for="id_contact_person_name" class="control-label requiredField">Contact Person Name<span class="asteriskField">*</span> </label>
+             <div class="controls"> <input type="text" name="contact_person_name" maxlength="64" class="textinput textInput" required="" id="id_contact_person_name" value ={{name}}> </div>
+             </div>
+        <div id="div_id_contact_person_mobile" class="control-group"> <label for="id_contact_person_mobile" class="control-label requiredField">Contact Person Number<span class="asteriskField">*</span> </label>
+            <div class="controls"> <input type="number" name="contact_person_mobile" max="99999999" class="textinput textInput" required="" id="id_contact_person_mobile" value ={{number}}> </div>
+            </div>
+
+        <br>
+        <button type="submit" value="Add">Add</button>
+    </form>
+</body>
+</html>

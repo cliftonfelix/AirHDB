@@ -1,0 +1,64 @@
+<html>
+<body>
+    <h2>Details for {{unit.0}} {{unit.1}}</h2>
+    <a href="{% url 'adminunits' %}">Back to Units Admin Page</a>
+    <br/><br/>
+    <table style='text-align:left'>
+        <tr>
+            <th>HDB Unit Number</th>
+            <td>:</td>
+            <td> {{ unit.1 }} </td>
+        </tr>
+        <tr>
+            <th>HDB Type</th>
+            <td>:</td>
+            <td> {{ unit.2 }} </td>
+        </tr>
+        <tr>
+            <th>Size( In squarmeters)</th>
+            <td>:</td>
+            <td> {{ unit.3 }} </td>
+        </tr>
+        <tr>
+            <th>Rent (Daily Rate)</th>
+            <td>:</td>
+            <td> {{ unit.4 }} </td>
+        </tr>
+        <tr>
+            <th>Town</th>
+            <td>:</td>
+            <td> {{ unit.5 }} </td>
+        </tr>
+        <tr>
+            <th>Multistorey Carpark</th>
+            <td>:</td>
+            <td> {{ unit.6 }} </td>
+        </tr>
+        <tr>
+            <th>Owner Name</th>
+            <td>:</td>
+            <td> {{ unit.7 }} </td>
+        </tr>
+        <tr>
+            <th>Owner Mobile</th>
+            <td>:</td>
+            <td> {{ unit.8 }} </td>
+        </tr>
+        <tr>
+            <th>HDB Latitude</th>
+            <td>:</td>
+            <td> {{ unit.9 }} </td>
+        </tr>
+        <tr>
+            <th>HDB Longitude</th>
+            <td>:</td>
+            <td> {{ unit.10 }} </td>
+        </tr>
+        <tr>
+            <th>Nearest Mrt</th>
+            <td>:</td>
+            <td> {{ unit.11 }} </td>
+        </tr>
+    </table>
+</body>
+</html>

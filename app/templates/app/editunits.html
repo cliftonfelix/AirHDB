@@ -1,0 +1,55 @@
+<html>
+<body>
+    <h2>Edit HDB ID {{obj.0}}, Address: {{obj.1}} {{obj.2}} </h2>
+    <a href="{% url 'adminunits' %}">Back to Admin Unit Page</a>
+
+    <p style="color:red">{{ status|safe }}</p>
+
+    <!-- Create a Form -->
+    <form method="POST">
+        <!-- Security token by Django -->
+        {% csrf_token %}
+        <!-- form -->
+        <div id="div_id_contact_name" class="control-group"> <label for="id_contact_name" class="control-label requiredField">Contact Name<span class="asteriskField">*</span> </label> 
+            <div class="controls"> <input type="text" name="contact_person" value="{{obj.8}}" maxlength="64" class="textinput textInput" required="" id="id_contact_name" > </div> 
+            </div> 
+        <div id="div_id_contact_number" class="control-group"> <label for="id_contact_number" class="control-label requiredField">Contact Number<span class="asteriskField">*</span> </label>
+             <div class="controls"> <input type="number" name="contact_number" max='99999999' value="{{obj.9}}" maxlength="64" class="textinput textInput" required="" id="id_contact_number" value ={{number}}> </div>
+             </div> 
+        <div id="div_id_can_book" class="control-group"> <label for="id_can_book" class="control-label requiredField">Can Book?<span class="asteriskField">*</span> </label>
+                <div class="controls"> <select name="can_book" id="can_book">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                    
+                  </select> </div>
+                 </div> 
+
+        <div id="div_id_hdb_address" class="control-group"> <label for="id_hdb_address" class="control-label requiredField">HDB Address </label>
+                <div class="controls"> <input type="text" name="hdb_address" value="{{obj.1}}" maxlength="64" class="textinput textInput" required="" id="id_hdb_address" disabled> </div> 
+                </div> 
+        <div id="div_id_hdb_unit_number" class="control-group"> <label for="id_hdb_unit_number" class="control-label requiredField">HDB Unit Number </label> 
+                <div class="controls"> <input type="text" name="hdb_unit_number" value="{{obj.2}}" maxlength="64" class="textinput textInput" required="" id="id_hdb_unit_number" disabled> </div> 
+                </div>
+        <div id="div_id_hdb_type" class="control-group"> <label for="id_hdb_type" class="control-label requiredField">HDB Type </label> 
+                <div class="controls"> <input type="text" name="hdb_type" value="{{obj.3}}" maxlength="64" class="textinput textInput" required="" id="id_hdb_type" disabled> </div>
+                 </div> 
+               
+        <div id="div_id_size" class="control-group"> <label for="id_size" class="control-label requiredField">Size</label> 
+                <div class="controls"> <input type="text" name="size" value="{{obj.4}}" maxlength="64" class="textinput textInput" required="" id="id_size" disabled> </div>
+                </div> 
+        <div id="div_id_price_per_day" class="control-group"> <label for="id_price_per_day" class="control-label requiredField">Price Per Day </label> 
+                 <div class="controls"> <input type="text" name="price_per_day" value="{{obj.5}}" class="textinput textInput" required="" id="id_price_per_day" disabled> </div>
+                </div> 
+        <div id="div_id_town" class="control-group"> <label for="id_town" class="control-label requiredField">Town</label>
+                 <div class="controls"> <input type="text" name="town" value="{{obj.6}}" class="textinput textInput" required="" id="id_town" disabled> </div>
+                </div> 
+            <div id="div_id_multistorey_carpark" class="control-group"> <label for="id_multistorey_carpark" class="control-label requiredField">Multistorey Carpark<span class="asteriskField">*</span> </label>
+                    <div class="controls"> <input type="text" name="multistorey_carpark" value="{{obj.7}}" maxlength="16" class="textinput textInput" required="" id="id_multistorey_carpark" disabled> </div> 
+            
+        
+
+        <br>
+        <button type="submit" value="Update">Update</button>
+    </form>
+</body>
+</html>
