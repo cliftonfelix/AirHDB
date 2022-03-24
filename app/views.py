@@ -809,7 +809,7 @@ def book1(request, id):
         try:
             with connection.cursor() as cursor:
                 cursor.execute("INSERT INTO bookings(hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number)\
-                            VALUES (%s, '%s', '%s', '%s', 'mastercard', '2221000000000000')", [id, email, start_date, end_date])
+                            VALUES ({}, '{}', '{}', '{}', 'mastercard', '2221000000000000')".format(id, email, start_date, end_date))
                 cursor.execute("DELETE FROM bookings WHERE hdb_id = %s AND booked_by = %s AND start_date = %s AND end_date = %s", [id, email, start_date, end_date])
             
         except Exception as e:
@@ -854,7 +854,7 @@ def book2(request):
         try:
             with connection.cursor() as cursor:
                 cursor.execute("INSERT INTO bookings(hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number)\
-                                VALUES (%s, '%s', '%s', '%s', '%s', '%s')", [id, email, start_date, end_date, card_type, card_number])
+                                VALUES ({}, '{}', '{}', '{}', '{}', '{}')".format(id, email, start_date, end_date, card_type, card_number))
 
         except Exception as e:
             error = str(e)
