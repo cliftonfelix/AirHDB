@@ -87,7 +87,7 @@ def register_page(request):
             user.save()
             messages.success(request, 'Account has been successfully registered!')
             return redirect('login')
-    return render(request, 'app/register.html')
+    return render(request, 'app/register.html', context)
     
 @login_required(login_url = 'login')
 def listings(request):
@@ -417,23 +417,25 @@ def change_profile(request):
 def change_password(request):
     email = request.user.username
     user = User.objects.get(username = email)
-	
+    context = {'old_password': '', 'new_password': '', 'confirm_new_password': ''}
     if request.method == 'POST':
         old_password = request.POST.get('old_password')
         new_password = request.POST.get('new_password')
         confirm_new_password = request.POST.get('confirm_new_password')
+        context['old_password'] = old_password
+        context['new_password'] = new_password
+        context['confirm_new_password'] = confirm_new_password
         if not user.check_password(old_password):
             messages.error(request, 'Old password entered is incorrect')
-            return render(request, 'app/change_password.html')
+            return render(request, 'app/change_password.html', context)
         elif new_password != confirm_new_password:
             messages.error(request, 'Passwords do not match!')
-            return render(request, 'app/change_password.html')
-        
+            return render(request, 'app/change_password.html', context)
         user.set_password(new_password)
         user.save()
         login(request, user)
         messages.success(request, 'Password has been successfully updated!')  
-    return render(request, 'app/change_password.html')
+    return render(request, 'app/change_password.html', context)
 
 @login_required(login_url = 'login')
 def bookings(request):
