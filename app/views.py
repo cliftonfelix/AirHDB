@@ -796,7 +796,7 @@ def book(request, id, start_date, end_date):
     context["hdb_id"] = id
     context["hdb_address"] = row[0]
     context["hdb_unit_number"] = row[1]
-
+    context["booked_by"] = email
     context["start_date"] = start_date
     context["end_date"] = end_date
     context["credit_card_type"] = ""
@@ -810,7 +810,7 @@ def book(request, id, start_date, end_date):
         
         try:
             cursor.execute("INSERT INTO bookings(hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number)\
-                            VALUES (%s, '%s', '%s', '%s', '%s', '%s')", [id, request.user.username, start_date, end_date, card_type, card_number])
+                            VALUES (%s, '%s', '%s', '%s', '%s', '%s')", [id, email, start_date, end_date, card_type, card_number])
 
         except Exception as e:
             error = str(e)
@@ -829,3 +829,4 @@ def book(request, id, start_date, end_date):
         return render(request, "app/listings.html", context)
 
     return render(request, "app/book.html", context)
+                        
