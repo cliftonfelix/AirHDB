@@ -852,3 +852,6 @@ def book2(request):
         messages.success(request, "Successful booking for HDB address {} unit {} from {} to {}".format(row[0], row[1], start_date, end_date))
 
         return render(request, "app/listings.html", context)
+
+    messages.error(request, "Please do not refresh the page")
+    return render(request, "app/listings.html", context)
