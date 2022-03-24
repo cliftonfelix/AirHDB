@@ -767,7 +767,7 @@ def change_password(request):
     return render(request, 'app/change_password.html', context)
 
 @login_required(login_url = 'login')
-def bookings(request):
+def user_bookings(request):
     email = request.user.username
 
     with connection.cursor() as cursor:
@@ -777,4 +777,4 @@ def bookings(request):
 	
     context = {}
     context['bookings'] = bookings
-    return render(request, 'app/bookings.html', context)
+    return render(request, 'app/userbookings.html', context)
