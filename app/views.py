@@ -836,7 +836,7 @@ def book1(request, id):
 
             return render(request, "app/book1.html", context)
 
-##        request.session["total_price"] = (datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days * row[2]
+        request.session["total_price"] = str((datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days * row[2])
 
         return redirect("book2")
 
@@ -853,8 +853,8 @@ def book2(request):
     context["hdb_address"] = request.session["hdb_address"]
     context["hdb_unit_number"] = request.session["hdb_unit_number"]
     context["booked_by"] = email
-##    context["total_price"] = request.session["total_price"]
-    context["total_price"] = ""
+    context["total_price"] = request.session["total_price"]
+##    context["total_price"] = ""
     context["credit_card_number"] = ""
     context["credit_card_type"] = ""
 
@@ -907,5 +907,5 @@ def book2(request):
 
         return render(request, "app/listings.html", context)
 
-    return render(request, "app/listings.html", context)
+    return render(request, "app/book2.html", context)
                         
