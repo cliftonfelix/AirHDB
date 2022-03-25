@@ -875,11 +875,18 @@ def book2(request):
         context["credit_card_type"] = card_type
         context["booked_by"] = email
         context["total_price"] = total_price
+
+        if card_type == "Mastercard":
+            sql_card_type = "mastercard"
+        elif card_type == "VISA":
+            sql_card_type = "visa"
+        else:
+            sql_card_type = "americanexpress"
         
         try:
             with connection.cursor() as cursor:
                 cursor.execute("INSERT INTO bookings(hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price)\
-                                VALUES ({}, '{}', '{}', '{}', '{}', '{}', {})".format(id, email, start_date, end_date, card_type, card_number, total_price))
+                                VALUES ({}, '{}', '{}', '{}', '{}', '{}', {})".format(id, email, start_date, end_date, sql_card_type, card_number, total_price))
 
         except Exception as e:
             error = str(e)
