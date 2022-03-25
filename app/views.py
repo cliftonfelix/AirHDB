@@ -877,6 +877,8 @@ def book2(request):
                     messages.error(request, "Please input a valid VISA card number")
                 else:
                     messages.error(request, "Please input a valid American Express card number")
+            else:
+                messages.error(request, error)
             return render(request, "app/book2.html", context)
 
         messages.success(request, "Successful booking for HDB address {} unit {} from {} to {}".format(row[0], row[1], start_date, end_date))
@@ -885,4 +887,6 @@ def book2(request):
 
     messages.error(request, "Please do not refresh the page")
     return render(request, "app/listings.html", context)
+                        
+
                         
