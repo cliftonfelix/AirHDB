@@ -12,7 +12,7 @@ BEFORE UPDATE ON bookings
 FOR EACH ROW EXECUTE PROCEDURE change_total_price();
 
 CREATE TRIGGER booking_dates_availability
-BEFORE UPDATE ON bookings
+BEFORE INSERT OR UPDATE ON bookings
 FOR EACH ROW EXECUTE PROCEDURE check_dates_availability();
 
 CREATE TRIGGER new_mrt_station

@@ -7,6 +7,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from datetime import datetime
+from datetime import timedelta
 import requests
 
 api_key = "AIzaSyCfbRJX3HAzw1mb4ZwHsQCOf4XES8h0eFU"
@@ -138,6 +140,12 @@ def listings(request):
         #START AND END DATE FILTER
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
+        if start_date and not end_date:
+            end_date = (datetime.strptime(start_date, '%Y-%m-%d') + timedelta(days = 1)).strftime("%Y-%m-%d")
+
+        elif not start_date and end_date:
+            start_date = (datetime.strptime(end_date, '%Y-%m-%d') - timedelta(days = 1)).strftime("%Y-%m-%d")
+            
         if start_date and end_date: #TODO: if only start_date filled in then show end_date to be start + 1 and vice versa
             result_dict['start_date'] = start_date
             result_dict['end_date'] = end_date
@@ -779,3 +787,133 @@ def user_bookings(request):
     context = {}
     context['bookings'] = bookings
     return render(request, 'app/userbookings.html', context)
+
+
+@login_required(login_url = 'login')
+def book(request, id):
+    email = request.user.username
+    context = {}
+    context["start_date"] = ""
+    context["end_date"] = ""
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT hu1.hdb_address, hu1.hdb_unit_number, hu1.price_per_day FROM hdb_units hu1 WHERE hu1.hdb_id = %s", [id])
+        row = cursor.fetchone()
+
+    context["hdb_id"] = id
+    context["hdb_address"] = row[0]
+    context["hdb_unit_number"] = row[1]
+    context["booked_by"] = email
+    request.session["hdb_id"] = id
+    request.session["hdb_address"] = row[0]
+    request.session["hdb_unit_number"] = row[1]
+    
+
+    if request.method == "POST":
+        start_date = request.POST.get("start_date")
+        end_date = request.POST.get("end_date")
+        context["start_date"] = start_date
+        context["end_date"] = end_date
+        request.session["start_date"] = start_date
+        request.session["end_date"] = end_date
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("INSERT INTO bookings(hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price)\
+                            VALUES ({}, '{}', '{}', '{}', 'mastercard', '2221000000000000', 0)".format(id, email, start_date, end_date))
+                cursor.execute("DELETE FROM bookings WHERE hdb_id = %s AND booked_by = %s AND start_date = %s AND end_date = %s", [id, email, start_date, end_date])
+            
+        except Exception as e:
+            error = str(e)
+
+            if "Booking Dates Not Available" in error:
+                messages.error(request, "Selected dates are not available")
+
+            elif 'invalid input syntax' in error:
+                messages.error(request, "Please fill in the dates")
+
+            elif 'violates check constraint "bookings_start_date_check"' in error:
+                messages.error(request, 'There are no bookings to be made earlier than 2022-04-11, please choose another start date')
+
+            elif 'violates check constraint "bookings_check"' in error:
+                messages.error(request, 'Please input a valid start and end date, the start date should be before end date')
+
+            else:
+                messages.error(request, error)
+
+            return render(request, "app/book.html", context)
+
+        request.session["total_price"] = str((datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days * row[2])
+
+        return redirect("payment")
+
+    return render(request, "app/book.html", context)
+
+@login_required(login_url = 'login')
+def payment(request):
+    email = request.user.username
+    context = {}
+    
+    context["start_date"] = request.session["start_date"]
+    context["end_date"] = request.session["end_date"]
+    context["hdb_id"] = request.session["hdb_id"]
+    context["hdb_address"] = request.session["hdb_address"]
+    context["hdb_unit_number"] = request.session["hdb_unit_number"]
+    context["booked_by"] = email
+    context["total_price"] = request.session["total_price"]
+##    context["total_price"] = ""
+    context["credit_card_number"] = ""
+    context["credit_card_type"] = ""
+
+    if request.method == 'POST':
+        start_date = request.session["start_date"]
+        end_date = request.session["end_date"]
+        hdb_id = request.session["hdb_id"]
+        hdb_address = request.session["hdb_address"]
+        hdb_unit_number = request.session["hdb_unit_number"]
+        card_number = request.POST.get("credit_card_number")
+        card_type = request.POST.get("credit_card_type")
+        total_price = request.session["total_price"]
+        context["start_date"] = start_date
+        context["end_date"] = end_date
+        context["hdb_id"] = hdb_id
+        context["hdb_address"] = hdb_address
+        context["hdb_unit_number"] = hdb_unit_number
+        context["credit_card_number"] = card_number
+        context["credit_card_type"] = card_type
+        context["booked_by"] = email
+        context["total_price"] = total_price
+
+        if card_type == "Mastercard":
+            sql_card_type = "mastercard"
+        elif card_type == "VISA":
+            sql_card_type = "visa"
+        else:
+            sql_card_type = "americanexpress"
+        
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("INSERT INTO bookings(hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price)\
+                                VALUES ({}, '{}', '{}', '{}', '{}', '{}', {})".format(hdb_id, email, start_date, end_date, sql_card_type, card_number, total_price))
+
+        except Exception as e:
+            error = str(e)
+
+            if 'new row for relation "bookings" violates check constraint "bookings_check1"' in error:
+                if card_type == "Mastercard":
+                    messages.error(request, "Please input a valid Mastercard number")
+                elif card_type == "VISA":
+                    messages.error(request, "Please input a valid VISA card number")
+                else:
+                    messages.error(request, "Please input a valid American Express card number")
+            else:
+                messages.error(request, error)
+                
+            return render(request, "app/payment.html", context)
+
+        messages.success(request, "Successful booking for HDB address {} unit {} from {} to {}".format(hdb_address, hdb_unit_number, start_date, end_date))
+
+        return redirect("listings")
+
+    return render(request, "app/payment.html", context)
+                        
