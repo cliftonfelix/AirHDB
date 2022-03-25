@@ -834,14 +834,14 @@ def book1(request, id):
 
         context["total_price"] = (datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days * row[2]
 
-        return redirect("final_book", context)
+        return redirect("book2")
 
     return render(request, "app/book1.html", context)
 
 @login_required(login_url = 'login')
-def book2(request, context = {}):
+def book2(request):
     email = request.user.username
-    context = context.copy()
+    context = {}
 
     if request.method == 'POST':
         start_date = request.POST.get("start_date")
