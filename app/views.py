@@ -866,7 +866,7 @@ def book2(request):
         hdb_unit_number = request.session["hdb_unit_number"]
         card_number = request.POST.get("credit_card_number")
         card_type = request.POST.get("credit_card_type")
-        total_price = request.POST.get("total_price")
+        total_price = request.session["total_price"]
         context["start_date"] = start_date
         context["end_date"] = end_date
         context["hdb_id"] = hdb_id
@@ -875,7 +875,7 @@ def book2(request):
         context["credit_card_number"] = card_number
         context["credit_card_type"] = card_type
         context["booked_by"] = email
-        context["total_price"] = request.session["total_price"]
+        context["total_price"] = total_price
 
         if card_type == "Mastercard":
             sql_card_type = "mastercard"
