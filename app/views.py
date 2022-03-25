@@ -783,7 +783,7 @@ def user_bookings(request):
 
 
 @login_required(login_url = 'login')
-def book1(request, id):
+def book(request, id):
     email = request.user.username
     context = {}
     context["start_date"] = ""
@@ -834,16 +834,16 @@ def book1(request, id):
             else:
                 messages.error(request, error)
 
-            return render(request, "app/book1.html", context)
+            return render(request, "app/book.html", context)
 
         request.session["total_price"] = str((datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days * row[2])
 
-        return redirect("book2")
+        return redirect("payment")
 
-    return render(request, "app/book1.html", context)
+    return render(request, "app/book.html", context)
 
 @login_required(login_url = 'login')
-def book2(request):
+def payment(request):
     email = request.user.username
     context = {}
     
@@ -902,11 +902,11 @@ def book2(request):
             else:
                 messages.error(request, error)
                 
-            return render(request, "app/book2.html", context)
+            return render(request, "app/payment.html", context)
 
         messages.success(request, "Successful booking for HDB address {} unit {} from {} to {}".format(hdb_address, hdb_unit_number, start_date, end_date))
 
         return redirect("listings")
 
-    return render(request, "app/book2.html", context)
+    return render(request, "app/payment.html", context)
                         
