@@ -906,7 +906,7 @@ def book2(request):
 
         messages.success(request, "Successful booking for HDB address {} unit {} from {} to {}".format(hdb_address, hdb_unit_number, start_date, end_date))
 
-        return render(request, "app/listings.html", context)
+        return redirect("listings")
 
     return render(request, "app/book2.html", context)
                         
