@@ -859,11 +859,11 @@ def book2(request):
     context["credit_card_type"] = ""
 
     if request.method == 'POST':
-        start_date = request.POST.get("start_date")
-        end_date = request.POST.get("end_date")
-        hdb_id = request.POST.get("hdb_id")
-        hdb_address = request.POST.get("hdb_address")
-        hdb_unit_number = request.POST.get("hdb_unit_number")
+        start_date = request.session["start_date"]
+        end_date = request.session["end_date"]
+        hdb_id = request.session["hdb_id"]
+        hdb_address = request.session["hdb_address"]
+        hdb_unit_number = request.session["hdb_unit_number"]
         card_number = request.POST.get("credit_card_number")
         card_type = request.POST.get("credit_card_type")
         total_price = request.POST.get("total_price")
@@ -875,7 +875,7 @@ def book2(request):
         context["credit_card_number"] = card_number
         context["credit_card_type"] = card_type
         context["booked_by"] = email
-        context["total_price"] = total_price
+        context["total_price"] = request.session["total_price"]
 
         if card_type == "Mastercard":
             sql_card_type = "mastercard"
@@ -887,7 +887,7 @@ def book2(request):
         try:
             with connection.cursor() as cursor:
                 cursor.execute("INSERT INTO bookings(hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price)\
-                                VALUES ({}, '{}', '{}', '{}', '{}', '{}', {})".format(id, email, start_date, end_date, sql_card_type, card_number, total_price))
+                                VALUES ({}, '{}', '{}', '{}', '{}', '{}', {})".format(hdb_id, email, start_date, end_date, sql_card_type, card_number, total_price))
 
         except Exception as e:
             error = str(e)
@@ -901,6 +901,7 @@ def book2(request):
                     messages.error(request, "Please input a valid American Express card number")
             else:
                 messages.error(request, error)
+                
             return render(request, "app/book2.html", context)
 
         messages.success(request, "Successful booking for HDB address {} unit {} from {} to {}".format(row[0], row[1], start_date, end_date))
