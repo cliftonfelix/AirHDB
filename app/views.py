@@ -821,6 +821,12 @@ def book1(request, id):
             elif 'invalid input syntax' in error:
                 messages.error(request, "Please fill in the dates")
 
+            elif 'violates check constraint "bookings_start_date_check"' in error:
+                messages.error(request, 'There are no bookings to be made earlier than 2022-04-11, please choose another start date')
+
+            elif 'violates check constraint "bookings_check"' in error:
+                messages.error(request, 'Please input a valid start and end date, the start date should be before end date')
+
             else:
                 messages.error(request, error)
 
@@ -871,7 +877,7 @@ def book2(request):
                     messages.error(request, "Please input a valid VISA card number")
                 else:
                     messages.error(request, "Please input a valid American Express card number")
-            return render(request, "app/book1.html", context)
+            return render(request, "app/book2.html", context)
 
         messages.success(request, "Successful booking for HDB address {} unit {} from {} to {}".format(row[0], row[1], start_date, end_date))
 
@@ -880,4 +886,3 @@ def book2(request):
     messages.error(request, "Please do not refresh the page")
     return render(request, "app/listings.html", context)
                         
-
