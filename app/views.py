@@ -797,14 +797,18 @@ def book1(request, id):
     context["hdb_address"] = row[0]
     context["hdb_unit_number"] = row[1]
     context["booked_by"] = email
-    context["credit_card_number"] = ""
-    context["credit_card_type"] = ""
+    request.session["hdb_id"] = id
+    request.session["hdb_address"] = row[0]
+    request.session["hdb_unit_number"] = row[1]
+    
 
     if request.method == "POST":
         start_date = request.POST.get("start_date")
         end_date = request.POST.get("end_date")
         context["start_date"] = start_date
         context["end_date"] = end_date
+        request.session["start_date"] = start_date
+        request.session["end_date"] = end_date
         
         try:
             with connection.cursor() as cursor:
@@ -832,7 +836,7 @@ def book1(request, id):
 
             return render(request, "app/book1.html", context)
 
-        context["total_price"] = (datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days * row[2]
+        request.session["total_price"] = (datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days * row[2]
 
         return redirect("book2")
 
@@ -842,6 +846,16 @@ def book1(request, id):
 def book2(request):
     email = request.user.username
     context = {}
+    
+    context["start_date"] = request.session["start_date"]
+    context["end_date"] = request.session["end_date"]
+    context["hdb_id"] = request.session["hdb_id"]
+    context["hdb_address"] = request.session["hdb_address"]
+    context["hdb_unit_number"] = request.session["hdb_unit_number"]
+    context["booked_by"] = email
+    context["total_price"] = request.session["total_price"]
+    context["credit_card_number"] = ""
+    context["credit_card_type"] = ""
 
     if request.method == 'POST':
         start_date = request.POST.get("start_date")
@@ -885,6 +899,5 @@ def book2(request):
 
         return render(request, "app/listings.html", context)
 
-    messages.error(request, "Please do not refresh the page")
     return render(request, "app/listings.html", context)
                         
