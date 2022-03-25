@@ -892,7 +892,7 @@ def book2(request):
         except Exception as e:
             error = str(e)
 
-            if e == 'new row for relation "bookings" violates check constraint "bookings_check1"':
+            if 'new row for relation "bookings" violates check constraint "bookings_check1"' in e:
                 if card_type == "Mastercard":
                     messages.error(request, "Please input a valid Mastercard number")
                 elif card_type == "VISA":
