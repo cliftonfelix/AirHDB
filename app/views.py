@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from datetime import datetime
+from datetime import timedelta
 import requests
 
 api_key = "AIzaSyCfbRJX3HAzw1mb4ZwHsQCOf4XES8h0eFU"
@@ -139,6 +140,12 @@ def listings(request):
         #START AND END DATE FILTER
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
+        if start_date and not end_date:
+            end_date = (datetime.strptime(start_date, '%Y-%m-%d') + timedelta(days = 1)).strftime("%Y-%m-%d")
+
+        elif not start_date and end_date:
+            start_date = (datetime.strptime(end_date, '%Y-%m-%d') - timedelta(days = 1)).strftime("%Y-%m-%d")
+            
         if start_date and end_date: #TODO: if only start_date filled in then show end_date to be start + 1 and vice versa
             result_dict['start_date'] = start_date
             result_dict['end_date'] = end_date
