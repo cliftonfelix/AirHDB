@@ -132,6 +132,7 @@ def listings(request):
     result_dict['num_bedrooms'] = [('1', 'No'), ('2', 'No'), ('3', 'No'), ('4', 'No')]
     result_dict['num_bathrooms'] = [('1', 'No'), ('2', 'No'), ('3', 'No')]
     result_dict['nearest_mrt_dist'] = [("< 100 m", 'No'), ("100 - 250 m", 'No'), ("250 m - 1 km", 'No'), ("1 - 2 km", 'No'), ("> 2 km", 'No')]
+    result_dict['search_by_address'] = ''
 
     if request.method == "POST":
         result = ""
@@ -376,21 +377,58 @@ def listings(request):
                 if result:
                     result += " INTERSECT "
                 result += "({})".format(temp)
-	
-        with connection.cursor() as cursor:
-            if result:
-                result = "SELECT * FROM ({}) temp ORDER BY temp.hdb_id".format(result)
-                cursor.execute(result)
-            else:
-                cursor.execute("SELECT * FROM hdb_listings")
-            listings = cursor.fetchall()
+
+        search_by_address = request.POST.get('search_by_address')
+        result_dict["search_by_address"] = search_by_address
+        address_exists = False
+        address_correct = False
+
+        def get_coordinates(address):
+            response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + address, params = {"key": api_key})
+            resp_json_payload = response.json()
+            return resp_json_payload['results'][0]['geometry']['location']["lat"], resp_json_payload['results'][0]['geometry']['location']["lng"]
+
+        if search_by_address:
+            try:
+                address_lat, address_long = get_coordinates(search_by_address)
+                address_exists = True
+
+                if address_lat <= 1.472 and address_lat >= 1.158 and address_long <= 104.1 and address_long >= 103.6:
+                    address_correct = True
+                else:
+                    messages.error(request, "The address is not a Singapore address. Please input a Singapore address and reapply the filter")
+                    
+            except:
+                messages.error(request, "The address is not recognized by Google Maps. Please input a valid address and reapply the filter")
+
+        if not address_exists or not address_correct:
+            with connection.cursor() as cursor:
+                if result:
+                    result = "SELECT *, '-' FROM ({}) temp ORDER BY temp.hdb_id".format(result)
+                    cursor.execute(result)
+                    
+                else:
+                    cursor.execute("SELECT *, '-' FROM hdb_listings")
+                    
+                listings = cursor.fetchall()
+                
+        else:
+            with connection.cursor() as cursor:
+                if result:
+                    result = """SELECT *, ROUND(get_distance(temp.hdb_lat, temp.hdb_long, {}, {}), 2) dist FROM ({}) temp ORDER BY dist""".format(address_lat, address_long, result)
+                    cursor.execute(result)
+                    
+                else:
+                    cursor.execute("SELECT *, ROUND(get_distance(hdb_listings.hdb_lat, hdb_listings.hdb_long, {}, {}), 2) dist FROM hdb_listings ORDER BY dist".format(address_lat, address_long))
+                    
+                listings = cursor.fetchall()
 
         result_dict['listings'] = listings
 
         return render(request, 'app/listings.html', result_dict)
 
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM hdb_listings")
+        cursor.execute("SELECT *, '-' FROM hdb_listings")
         listings = cursor.fetchall()
 
     result_dict['listings'] = listings
@@ -924,4 +962,3 @@ def payment(request):
         return redirect("listings")
 
     return render(request, "app/payment.html", context)
-                        

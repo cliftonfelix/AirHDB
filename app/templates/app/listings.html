@@ -37,10 +37,6 @@
                 
               </select> </div>
         </div>
-<!--         
-        {% for listing in listings %}
-          {{listing}}
-        {% endfor %} -->
         
         <div id="div_id_towns" class="control-group"> 
           <label for="id_towns" class="control-label requiredField">Town (multi-select with ctrl)</label> 
@@ -109,7 +105,13 @@
               </select> </div>
         </div>
         
+        <div id="div_id_search_by_address" class="control-group"> 
+          <label for="id_search_by_address" class="control-label requiredField">Search Nearest HDBs by Address/Landmark</label> 
+            <div class="controls"> <input type="text" name="search_by_address" id="id_search_by_address" value="{{search_by_address}}" placeholder = "Enter a Valid Singapore Address"> </div>
+        </div> 
+        
         <button type="submit">Apply Filter</button>
+        <br>
         <a href = "{% url 'listings' %}">Clear Selections</a>
 
       </form>
@@ -136,6 +138,7 @@
         <th>HDB Longitude</th>
         <th>Nearest MRT Station</th>
         <th>Nearest MRT Distance (in km)</th>
+        <th>Distance from Specified Address/Landmark (in km)</th>
         <th>Action</th>
       </thead>
       {% for listing in listings %}
@@ -158,6 +161,7 @@
         <td> {{ listing.11 }} </td>
         <td> {{ listing.12 }} </td>
         <td> {{ listing.13 }} </td>
+        <td> {{ listing.19 }} </td>
         <td> <a href="book/{{listing.2}}"><button>Book</button></a>
       </tr>
       {% endfor %}
