@@ -38,6 +38,8 @@
                 <button onclick="return confirm('Are you sure you want to delete {{booking.0}}?');" type="submit" name="action" value="delete">Delete</button> 
               </form></td>
          </tr>
+	 {% endfor %}
+	 </table>
 	 {% for past_booking in past_bookings %}
          <tr>
             <td> {{ past_booking.0 }} </td>
