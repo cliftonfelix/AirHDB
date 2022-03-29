@@ -1,0 +1,64 @@
+<html>
+<script type="'text/javascript">
+    function formProcess(){
+        var capture = document.forms['input']['id_start_date'].value +'<br>';
+        capture += document.forms['input']['id_end_date'].value +'<br>';
+        document.getElementById("outputDiv").innerHTML =capture;
+
+    }
+
+
+</script>
+<body>
+    <h2>Edit Booking ID {{obj.0}}</h2>
+    <a href="{% url 'user_bookings' %}">Back to Bookings Page - Bookings</a>
+
+    <p style="color:red">{{ status|safe }}</p>
+    <div id="outputDiv">
+
+    <!-- Create a Form -->
+    <form method="POST" id ='input' >
+        <!-- Security token by Django -->
+        {% csrf_token %}
+        <!-- form -->
+        <div><label for="id_original_start_date" class="control-label requiredField">Original Start Date </label> 
+            <div><input type="text" name="original_start_date" value="{{obj.3}}" maxlength="64" class="textinput textInput" required="" id="id_original_start_date" disabled></div></div>
+
+        <div id="div_id_start_date" class="control-group"> <label for="id_start_date" class="control-label requiredField">Start Date<span class="asteriskField">*</span> </label> 
+            <div class="controls"> <input type="date" id="id_start_date" name="start_date" value={{startdate}} required="" max = '2025-01-01'> </div> 
+            
+            </div> 
+        <div><label for="id_original_end_date" class="control-label requiredField">Original End Date </label> 
+            <div><input type="text" name="original_end_date" value="{{obj.4}}" maxlength="64" class="textinput textInput" required="" id="id_start_date" disabled></div></div>
+
+        <div id="div_id_end_date" class="control-group"> <label for="id_end_date" class="control-label requiredField">End Date<span class="asteriskField">*</span> </label>
+             <div class="controls"> <input type="date" id="id_end_date" name="end_date" value={{enddate}} required=""max = '2025-01-01'> </div>
+             </div> 
+
+        <div id="div_id_booking_id" class="control-group"> <label for="id_booking_id" class="control-label requiredField">Booking ID </label>
+            <div class="controls"> <input type="text" name="booking_id" value="{{obj.0}}" maxlength="64" class="textinput textInput" required="" id="id_booking_id" disabled> </div>
+            </div> 
+        <div id="div_id_hdb_id" class="control-group"> <label for="id_hdb_id" class="control-label requiredField">HDB ID</label>
+            <div class="controls"> <input type="text" name="hdb_id" value="{{obj.1}}" maxlength="64" class="textinput textInput" required="" id="id_hdb_id" disabled> </div>
+            </div>
+        <div id="div_id_booked_by" class="control-group"> <label for="id_booked_by" class="control-label requiredField">Booked By</label>
+            <div class="controls"> <input type="text" name="booked_by" value="{{obj.2}}" maxlength="64" class="textinput textInput" required="" id="id_booked_by" disabled> </div>
+            </div>  
+        <div id="div_id_credit_card_type" class="control-group"> <label for="id_credit_card_type" class="control-label requiredField">Credit Card Type </label>
+            <div class="controls"> <input type="text" name="credit_card_type" value="{{obj.5}}" maxlength="64" class="textinput textInput" required="" id="id_credit_card_type" disabled> </div>
+            </div> 
+        <div id="div_id_credit_card_number" class="control-group"> <label for="id_credit_card_number" class="control-label requiredField">Credit Card Number </label>
+            <div class="controls"> <input type="text" name="credit_card_number" value="{{obj.6}}" maxlength="64" class="textinput textInput" required="" id="id_credit_card_number" disabled> </div>
+             </div> 
+        <div id="div_id_total_price" class="control-group"> <label for="id_total_price" class="control-label requiredField">Total Price</label>
+            <div class="controls"> <input type="text" name="total_price" value="{{obj.7}}" maxlength="64" class="textinput textInput" required="" id="id_total_price" disabled> </div>
+             </div> 
+        
+        
+
+        <br>
+        <button type="submit" value="Update" onclick='formProcess()'>Update</button>
+    </form>
+    
+</body>
+</html>
