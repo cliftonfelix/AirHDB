@@ -378,7 +378,7 @@ def listings(request):
                     result += " INTERSECT "
                 result += "({})".format(temp)
 
-        search_by_address = request.POST.get_list('search_by_address')
+        search_by_address = request.POST.get('search_by_address')
         result_dict["search_by_address"] = search_by_address
         address_exists = False
         address_correct = False
@@ -961,4 +961,3 @@ def payment(request):
         return redirect("listings")
 
     return render(request, "app/payment.html", context)
-                        
