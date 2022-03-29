@@ -421,7 +421,7 @@ def listings(request):
                 else:
                     cursor.execute("SELECT *, ROUND(get_distance(hdb_listings.hdb_lat, hdb_listings.hdb_long, {}, {}), 2) dist FROM hdb_listings ORDER BY dist".format(address_lat, address_long))
                     
-                listings - cursor.fetchall()
+                listings = cursor.fetchall()
 
         result_dict['listings'] = listings
 
@@ -962,3 +962,4 @@ def payment(request):
         return redirect("listings")
 
     return render(request, "app/payment.html", context)
+                        
