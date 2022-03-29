@@ -778,17 +778,17 @@ def change_password(request):
 @login_required(login_url = 'login')
 def user_bookings(request):
     email = request.user.username
-    current_date = date.today()
-    format_date = current_date.strftime("%B %d, %Y")
+    #current_date = date.today()
+    #format_date = current_date.strftime("%B %d, %Y")
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
-		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id AND b.end_date < format_date AND booked_by = %s ORDER BY b.booking_id", [email])
+		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id AND b.end_date < CURRENT_TIMESTAMP AND booked_by = %s ORDER BY b.booking_id", [email])
         past_bookings = cursor.fetchall()
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
-		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id AND b.start_date > format_date AND booked_by = %s ORDER BY b.booking_id", [email])
+		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id AND b.start_date > CURRENT_TIMESTAMP AND booked_by = %s ORDER BY b.booking_id", [email])
         upcoming_bookings = cursor.fetchall()	
 	
     context = {}
