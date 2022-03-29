@@ -399,7 +399,7 @@ def listings(request):
                     messages.error(request, "The address is not a Singapore address. Please input a Singapore address and reapply the filter")
                     
             except:
-                messages.error(request, "The address is not valid. Please input a valid address and reapply the filter")
+                messages.error(request, "The address is not recognized by Google Maps. Please input a valid address and reapply the filter")
 
         if not address_exists or not address_correct:
             with connection.cursor() as cursor:
@@ -962,4 +962,3 @@ def payment(request):
         return redirect("listings")
 
     return render(request, "app/payment.html", context)
-                        
