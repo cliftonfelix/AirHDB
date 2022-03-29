@@ -382,6 +382,11 @@ def listings(request):
         result_dict["search_by_address"] = search_by_address
         address_exists = False
         address_correct = False
+
+        def get_coordinates(address):
+            response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + address, params = {"key": api_key})
+            resp_json_payload = response.json()
+            return resp_json_payload['results'][0]['geometry']['location']["lat"], resp_json_payload['results'][0]['geometry']['location']["lng"]
         
         try:
             address_lat, address_long = get_coordinates(search_by_address)
@@ -392,14 +397,8 @@ def listings(request):
             else:
                 messages.error(request, "The address is not a Singapore address. Please input a Singapore address and reapply the filter")
                 
-        except Exception as e:
-            messages.error(request, str(e))
+        except:
             messages.error(request, "The address is not valid. Please input a valid address and reapply the filter")
-        
-        def get_coordinates(address):
-            response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + address, params = {"key": api_key})
-            resp_json_payload = response.json()
-            return resp_json_payload['results'][0]['geometry']['location']["lat"], resp_json_payload['results'][0]['geometry']['location']["lng"]
 
         if not address_exists or not address_correct:
             with connection.cursor() as cursor:
@@ -962,4 +961,3 @@ def payment(request):
         return redirect("listings")
 
     return render(request, "app/payment.html", context)
-                        
