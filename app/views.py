@@ -427,7 +427,7 @@ def listings(request):
         return render(request, 'app/listings.html', result_dict)
 
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM hdb_listings")
+        cursor.execute("SELECT *, '-' FROM hdb_listings")
         listings = cursor.fetchall()
 
     result_dict['listings'] = listings
