@@ -143,6 +143,7 @@
         <th>HDB Longitude</th>
         <th>Nearest MRT Station</th>
         <th>Nearest MRT Distance (in km)</th>
+        <th>Distance to Specified Address (in km)</th>
         <th>Action</th>
       </thead>
       {% for listing in listings %}
@@ -165,6 +166,7 @@
         <td> {{ listing.11 }} </td>
         <td> {{ listing.12 }} </td>
         <td> {{ listing.13 }} </td>
+        <td> {{ listing.19 }} </td>
         <td> <a href="book/{{listing.2}}"><button>Book</button></a>
       </tr>
       {% endfor %}
