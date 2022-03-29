@@ -392,7 +392,8 @@ def listings(request):
             else:
                 messages.error(request, "The address is not a Singapore address. Please input a Singapore address and reapply the filter")
                 
-        except:
+        except Exception as e:
+            messages.error(request, str(e))
             messages.error(request, "The address is not valid. Please input a valid address and reapply the filter")
         
         def get_coordinates(address):
@@ -961,3 +962,4 @@ def payment(request):
         return redirect("listings")
 
     return render(request, "app/payment.html", context)
+                        
