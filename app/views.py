@@ -387,18 +387,19 @@ def listings(request):
             response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + address, params = {"key": api_key})
             resp_json_payload = response.json()
             return resp_json_payload['results'][0]['geometry']['location']["lat"], resp_json_payload['results'][0]['geometry']['location']["lng"]
-        
-        try:
-            address_lat, address_long = get_coordinates(search_by_address)
-            address_exists = True
 
-            if address_lat <= 1.472 and address_lat >= 1.158 and address_long <= 104.1 and address_long >= 103.6:
-                address_correct = True
-            else:
-                messages.error(request, "The address is not a Singapore address. Please input a Singapore address and reapply the filter")
-                
-        except:
-            messages.error(request, "The address is not valid. Please input a valid address and reapply the filter")
+        if search_by_address:
+            try:
+                address_lat, address_long = get_coordinates(search_by_address)
+                address_exists = True
+
+                if address_lat <= 1.472 and address_lat >= 1.158 and address_long <= 104.1 and address_long >= 103.6:
+                    address_correct = True
+                else:
+                    messages.error(request, "The address is not a Singapore address. Please input a Singapore address and reapply the filter")
+                    
+            except:
+                messages.error(request, "The address is not valid. Please input a valid address and reapply the filter")
 
         if not address_exists or not address_correct:
             with connection.cursor() as cursor:
