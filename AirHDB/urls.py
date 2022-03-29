@@ -40,5 +40,5 @@ urlpatterns = [
     path('payment/', app.views.payment, name = "payment"),
     path('listings/book/<str:id>/', app.views.book),
     path('user_bookings/edit/<str:id>/', app.views.user_editbookings),
-    path('user_bookings/view/<str:id>/', app.views.viewbookings)
+    path('user_bookings/view/<str:id>/', app.views.user_viewbookings)
 ]
