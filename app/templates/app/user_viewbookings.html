@@ -1,0 +1,44 @@
+<html>
+<body>
+    <h2>Details for Booking ID {{booking.0}}</h2>
+    <a href="{% url 'user_bookings' %}">Back to Bookings Page - Bookings</a>
+    <br/><br/>
+    <table style='text-align:left'>
+        <tr>
+            <th>HDB Unit Number</th>
+            <td>:</td>
+            <td> {{ booking.1 }} </td>
+        </tr>
+        <tr>
+            <th>Booked by</th>
+            <td>:</td>
+            <td> {{ booking.2}} </td>
+        </tr>
+        <tr>
+            <th>Start Date</th>
+            <td>:</td>
+            <td> {{ booking.3 }} </td>
+        </tr>
+        <tr>
+            <th>End Date</th>
+            <td>:</td>
+            <td> {{ booking.4 }} </td>
+        </tr>
+        <tr>
+            <th>Credit Card Type</th>
+            <td>:</td>
+            <td> {{ booking.5 }} </td>
+        </tr>
+        <tr>
+            <th>Credit Card Number</th>
+            <td>:</td>
+            <td> {{ booking.6 }} </td>
+        </tr>
+        <tr>
+            <th>Total Price</th>
+            <td>:</td>
+            <td> {{ booking.7 }} </td>
+        </tr>
+    </table>
+</body>
+</html>
