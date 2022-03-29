@@ -27,6 +27,16 @@
             <td> {{ upcoming_booking.6 }} </td>
             <td> {{ upcoming_booking.7 }} </td>
 	    <td> {{ upcoming_booking.8 }} </td>
+	    
+ 	    <!--need to change the primary key once clifton adds the id for booking-->
+            <td><a href="view/{{booking.0}}"><button>View</button></a> | 
+                <a href="edit/{{booking.0}}"><button>Edit</button></a>
+                | 
+                <form method="POST" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{booking.0}}"/>
+                <button onclick="return confirm('Are you sure you want to delete {{booking.0}}?');" type="submit" name="action" value="delete">Delete</button> 
+              </form></td>
          </tr>
 	 {% for past_booking in past_bookings %}
          <tr>
