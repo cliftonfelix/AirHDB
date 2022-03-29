@@ -506,6 +506,16 @@ def viewbookings(request,id):
     return render(request,'app/viewbookings.html',result_dict)
 
 @login_required(login_url = 'login')
+def user_viewbookings(request,id):
+    ## Use raw query to get a customer
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
+        booking = cursor.fetchone()
+    result_dict = {'booking': booking}
+
+    return render(request,'app/user_viewbookings.html',result_dict)
+
+@login_required(login_url = 'login')
 def editunits(request, id):
     """Shows the main page"""
 
