@@ -665,6 +665,7 @@ def adminaddunits(request):
     context['unit'] =''
     context['size'] =''
     context['price'] = ''
+    context['posted_by'] = ''
     context['name'] = ''
     context['number'] = ''
     context['ans'] = ''
@@ -676,6 +677,7 @@ def adminaddunits(request):
         context['size'] = request.POST.get('size')
         context['price'] = request.POST.get('price_per_day')
         context['name'] = request.POST.get('contact_person_name')
+	context['posted_by'] = request.POST.get('posted_by')
         context['number'] = request.POST.get('contact_person_mobile')
         context['type'] = request.POST.get('hdb_type')
         context['ans'] = request.POST.get('multistorey_carpark')
@@ -689,9 +691,9 @@ def adminaddunits(request):
             if customer == None:
                 ##TODO: date validation
                 try:
-                    cursor.execute("INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES (%s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
-                            , [request.POST['hdb_address'].upper(), request.POST['hdb_unit_number'], request.POST['hdb_type'],
-                            request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'],
+                    cursor.execute("INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,posted_by,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES (%s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
+                            , [request.POST['hdb_address'].upper(), request.POST['hdb_unit_number'], request.POST['hdb_type'], 
+                            request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'], request.POST.get('posted_by'),
                             request.POST['contact_person_name'] ,request.POST['contact_person_mobile'] ,get_coordinates(request.POST['hdb_address'])[0],get_coordinates(request.POST['hdb_address'])[1]])
                     
                     messages.success(request, '%s %s has been successfully added!'% (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number']))
@@ -728,10 +730,20 @@ def adminaddunits(request):
 
             else:
                 status = '%s %s already exists' % (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number'])
-
-    context['status'] = status
- 
     return render(request, "app/adminunitsadd.html", context)
+
+@login_required(login_url = 'login')
+def user_posts(request):
+    status = ''
+    email = request.user.username
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_units hu1 WHERE email_address = %s ORDER BY hu1.hdb_id", [email])
+        units = cursor.fetchall()
+
+    result_dict = {'records': units}
+    result_dict['status'] = status
+    
+    return render(request,'app/user_posts.html',result_dict)
 
 @login_required(login_url = 'login')
 def useraddunits(request):
@@ -759,6 +771,7 @@ def useraddunits(request):
     context['unit'] =''
     context['size'] =''
     context['price'] = ''
+    context['posted_by'] = ''
     context['name'] = ''
     context['number'] = ''
     context['ans'] = ''
@@ -770,6 +783,7 @@ def useraddunits(request):
         context['size'] = request.POST.get('size')
         context['price'] = request.POST.get('price_per_day')
         context['name'] = request.POST.get('contact_person_name')
+	context['posted_by'] = request.POST.get('posted_by')
         context['number'] = request.POST.get('contact_person_mobile')
         context['type'] = request.POST.get('hdb_type')
         context['ans'] = request.POST.get('multistorey_carpark')
@@ -783,13 +797,13 @@ def useraddunits(request):
             if customer == None:
                 ##TODO: date validation
                 try:
-                    cursor.execute("INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES (%s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
-                            , [request.POST['hdb_address'].upper(), request.POST['hdb_unit_number'], request.POST['hdb_type'],
-                            request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'],
+                    cursor.execute("INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,posted_by,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES (%s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
+                            , [request.POST['hdb_address'].upper(), request.POST['hdb_unit_number'], request.POST['hdb_type'], 
+                            request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'], request.POST.get('posted_by'),
                             request.POST['contact_person_name'] ,request.POST['contact_person_mobile'] ,get_coordinates(request.POST['hdb_address'])[0],get_coordinates(request.POST['hdb_address'])[1]])
                     
                     messages.success(request, '%s %s has been successfully added!'% (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number']))
-                    return redirect('listings')
+                    return redirect('posts')
                    
                 except Exception as e:
                     message = str(e)
@@ -825,7 +839,59 @@ def useraddunits(request):
 
     context['status'] = status
  
-    return render(request, "app/userunitsadd.html", context)
+    return render(request, "app/useraddunits.html", context)
+
+def viewposts(request,id):
+    ## Use raw query to get a customer
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_units WHERE hdb_id = %s", [id])
+        unit = cursor.fetchone()
+	
+    result_dict = {'unit': unit}
+
+    return render(request,'app/viewposts.html',result_dict)
+
+def editposts(request, id):
+    """Shows the main page"""
+
+    # dictionary for initial data with
+    # field names as keys
+    context ={}
+    
+    # fetch the object related to passed id
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_units WHERE hdb_id = %s", [id])
+        obj = cursor.fetchone()
+
+    status = ''
+    # save the data from the form
+
+    if request.POST:
+        ##TODO: date validation
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("UPDATE hdb_units SET contact_person_name = %s, contact_person_mobile = %s,can_book = %s WHERE hdb_id = %s"
+                    , [request.POST['contact_person'], request.POST['contact_number'],request.POST['can_book'], id ])
+                status = 'Customer edited successfully!'
+                
+            except Exception as e:
+                message = str(e)
+		
+                if 'violates check constraint "hdb_units_contact_person_mobile_check"' in message:
+                    status = 'Unsuccessful , Please enter a valid Singapore Mobile Number'
+                elif 'violates check constraint "hdb_units_can_book_check"' in message:
+                    status = 'Please input Yes or No for Can Book?'
+                
+                else:
+                    status = message
+
+            cursor.execute("SELECT * FROM hdb_units WHERE hdb_id = %s", [id])
+            obj = cursor.fetchone()
+		
+    context["obj"] = obj
+    context["status"] = status
+ 
+    return render(request, "app/editposts.html", context)
 
 
 
