@@ -629,14 +629,13 @@ def user_editbookings(request, id):
 	with connection.cursor() as cursor:
 		cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [id])
 		obj2 = cursor.fetchone()
-		obj2 = obj2[0]
 
 	curr_date = datetime.today().strftime('%Y-%m-%d')
 
 	status = ''
 	# save the data from the form
 
-	if ((-curr_date + obj2).days >= 2):
+	if ((-curr_date + obj2[0]).days >= 2):
 		if request.POST:
 			with connection.cursor() as cursor:
 				context['startdate'] = request.POST.get('start_date')
