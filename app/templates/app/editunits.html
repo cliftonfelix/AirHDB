@@ -1,4 +1,7 @@
-<html>
+{% extends 'main.html' %}
+
+{% block content %}
+{% load static %}
 <body>
     <h2>Edit HDB ID {{obj.0}}, Address: {{obj.1}} {{obj.2}} </h2>
     <a href="{% url 'adminunits' %}">Back to Admin Unit Page</a>
@@ -52,4 +55,4 @@
         <button type="submit" value="Update">Update</button>
     </form>
 </body>
-</html>
+{% endblock %}
