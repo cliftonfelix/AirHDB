@@ -737,7 +737,7 @@ def user_posts(request):
     status = ''
     email = request.user.username
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM hdb_units hu1 WHERE email_address = %s ORDER BY hu1.hdb_id", [email])
+        cursor.execute("SELECT * FROM hdb_units hu1 WHERE posted_by = %s ORDER BY hu1.hdb_id", [email])
         units = cursor.fetchall()
 
     result_dict = {'records': units}
