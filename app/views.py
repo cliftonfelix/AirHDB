@@ -690,7 +690,7 @@ def adminaddunits(request):
             if customer == None:
                 ##TODO: date validation
                 try:
-                    cursor.execute("INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,posted_by,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES (%s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
+                    cursor.execute("INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,posted_by,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
                             , [request.POST['hdb_address'].upper(), request.POST['hdb_unit_number'], request.POST['hdb_type'], 
                             request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'], email,
                             request.POST['contact_person_name'] ,request.POST['contact_person_mobile'] ,get_coordinates(request.POST['hdb_address'])[0],get_coordinates(request.POST['hdb_address'])[1]])
@@ -795,7 +795,7 @@ def useraddunits(request):
             if customer == None:
                 ##TODO: date validation
                 try:
-                    cursor.execute("INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,posted_by,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES (%s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
+                    cursor.execute("INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,posted_by,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
                             , [request.POST['hdb_address'].upper(), request.POST['hdb_unit_number'], request.POST['hdb_type'], 
                             request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'], email,
                             request.POST['contact_person_name'] ,request.POST['contact_person_mobile'] ,get_coordinates(request.POST['hdb_address'])[0],get_coordinates(request.POST['hdb_address'])[1]])
