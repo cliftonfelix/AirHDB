@@ -613,66 +613,65 @@ def editbookings(request, id):
 
 @login_required(login_url = 'login')
 def user_editbookings(request, id):
-    """Shows the main page"""
+	"""Shows the main page"""
 
-    # dictionary for initial data with
-    # field names as keys
-    context ={}
-    context['startdate'] = ''
-    context['enddate'] = ''
+	# dictionary for initial data with
+	# field names as keys
+	context ={}
+	context['startdate'] = ''
+	context['enddate'] = ''
 
-    # fetch the object related to passed id
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
-        obj = cursor.fetchone()
+	# fetch the object related to passed id
+	with connection.cursor() as cursor:
+		cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
+		obj = cursor.fetchone()
+		
+	with connection.cursor() as cursor:
+		cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [id])
+		obj2 = cursor.fetchone()
+		obj2 = datetime.strptime(date_str, "%Y-%m-%d").date()
 
-    with connection.cursor() as cursor:
-	cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [id])
-	obj2 = cursor.fetchone()
-	obj2 = datetime.strptime(date_str, "%Y-%m-%d").date()
+	curr_date = date.today()
 
-    curr_date = date.today()
+	status = ''
+	# save the data from the form
 
-    status = ''
-    # save the data from the form
+	if ((-curr_date + obj2).days >= 2):
+		if request.POST:
+			with connection.cursor() as cursor:
+				context['startdate'] = request.POST.get('start_date')
+				context['enddate'] = request.POST.get('end_date')
+				
+				try:
+					cursor.execute("UPDATE bookings SET start_date = %s, end_date = %s WHERE booking_id = %s"
+								, [request.POST['start_date'], request.POST['end_date'], id ])
+					status = 'Customer edited successfully!'
+				
+				except Exception as e:
+					message = str(e)
 
-    if ((curr_date - obj2).days > 2):
-    	if request.POST:
-        	##TODO: date validation
-       		with connection.cursor() as cursor:
-            		context['startdate'] = request.POST.get('start_date')
-            		context['enddate'] = request.POST.get('end_date')
+					if 'violates check constraint "bookings_start_date_check"' in message:
+						status = 'There are no bookings to be made earlier than 2022-04-11, please choose another start date'
+					elif 'invalid input syntax' in message:
+						status ='Please check your start and end date and follow the format'
+					elif 'violates check constraint "bookings_check"' in message:
+						status = 'Please input a valid start and end date, the start date should be before end date'
+					elif 'duplicate key value violates unique constraint "bookings_pkey"' in message:
+						status = 'There exists a booking in these dates please choose another start and end date'
+					elif 'Booking Dates Not Available' in message:
+						status = 'There exists a booking in these dates please choose another start and end date'
+					else:
+						status = message
 
-            	try:
-                	cursor.execute("UPDATE bookings SET start_date = %s, end_date = %s WHERE booking_id = %s"
-                        , [request.POST['start_date'], request.POST['end_date'], id ])
-                	status = 'Customer edited successfully!'
-                
-            	except Exception as e:
-                	message = str(e)
+				cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
+				obj = cursor.fetchone()
 
-               		if 'violates check constraint "bookings_start_date_check"' in message:
-                    		status = 'There are no bookings to be made earlier than 2022-04-11, please choose another start date'
-                	elif 'invalid input syntax' in message:
-                    		status ='Please check your start and end date and follow the format'
-                	elif 'violates check constraint "bookings_check"' in message:
-                    		status = 'Please input a valid start and end date, the start date should be before end date'
-                	elif 'duplicate key value violates unique constraint "bookings_pkey"' in message:
-                    		status = 'There exists a booking in these dates please choose another start and end date'
-                	elif 'Booking Dates Not Available' in message:
-                    		status = 'There exists a booking in these dates please choose another start and end date'
-                	else:
-                    		status = message
-
-            	cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
-            	obj = cursor.fetchone()
-
-    	context["obj"] = obj
-    	context["status"] = status
+		context["obj"] = obj
+		context["status"] = status
 	
-    	return render(request, "app/user_editbookings.html", context)
-    else:
-	return redirect('bookings')	
+		return render(request, "app/user_editbookings.html", context)
+	else:
+		return redirect('bookings')	
 
 @login_required(login_url = 'login')
 def addunits(request):
