@@ -629,7 +629,7 @@ def user_editbookings(request, id):
 	with connection.cursor() as cursor:
 		cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [id])
 		obj2 = cursor.fetchone()
-		obj2 = datetime.strptime(obj2, "%Y-%m-%d").date()
+		obj2 = datetime.strptime(obj2[0], "%Y-%m-%d").date()
 
 	curr_date = date.today()
 
