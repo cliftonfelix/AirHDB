@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS hdb_units (
 	town VARCHAR(256) NOT NULL REFERENCES towns(town),
 	multistorey_carpark VARCHAR(3) NOT NULL CHECK(multistorey_carpark = 'Yes' OR 
 												  multistorey_carpark = 'No'),
+	posted_by VARCHAR(256) NOT NULL REFERENCES users(name),
 	contact_person_name VARCHAR(256) NOT NULL,
 	contact_person_mobile INT NOT NULL CHECK ((contact_person_mobile BETWEEN 30000000 AND 39999999) OR
 											  (contact_person_mobile BETWEEN 60000000 AND 69999999) OR
