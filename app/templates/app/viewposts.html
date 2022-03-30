@@ -1,4 +1,7 @@
-<html>
+{% extends 'main.html' %}
+
+{% block content %}
+{% load static %}
 <body>
     <h2>Details for HDB ID {{unit.0}}</h2>
     <a href="{% url 'posts' %}">Back to Posts Page</a>
@@ -77,4 +80,4 @@
         </tr>
     </table>
 </body>
-</html>
+{% endblock %}
