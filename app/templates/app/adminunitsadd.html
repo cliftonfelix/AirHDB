@@ -1,4 +1,7 @@
-<html>
+{% extends 'main.html' %}
+
+{% block content %}
+{% load static %}
 <body>
     <h2>Add New Unit</h2>
     <a href="{% url 'adminunits' %}">Back to Admin Page - Units</a>
@@ -57,4 +60,4 @@
         <button type="submit" value="Add">Add</button>
     </form>
 </body>
-</html>
+{% endblock %}
