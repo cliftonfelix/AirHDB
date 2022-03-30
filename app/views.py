@@ -7,8 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, date, timedelta
 import requests
 
 api_key = "AIzaSyCfbRJX3HAzw1mb4ZwHsQCOf4XES8h0eFU"
@@ -630,7 +629,7 @@ def user_editbookings(request, id):
 		cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [id])
 		obj2 = cursor.fetchone()
 
-	curr_date = datetime.today()
+	curr_date = date.today()
 
 	status = ''
 	# save the data from the form
