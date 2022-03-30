@@ -631,7 +631,7 @@ def user_editbookings(request, id):
 		obj2 = cursor.fetchone()
 		obj2 = obj2[0]
 
-	curr_date = date.today()
+	curr_date = datetime.today().strftime('%Y-%m-%d')
 
 	status = ''
 	# save the data from the form
