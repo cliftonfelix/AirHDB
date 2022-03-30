@@ -635,7 +635,7 @@ def user_editbookings(request, id):
 	status = ''
 	# save the data from the form
 
-	if ((-curr_date + obj2[0]).days >= 2):
+	if ((obj2[0] - curr_date).days >= 2):
 		if request.POST:
 			with connection.cursor() as cursor:
 				context['startdate'] = request.POST.get('start_date')
