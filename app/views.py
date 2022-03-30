@@ -729,6 +729,7 @@ def adminaddunits(request):
 
             else:
                 status = '%s %s already exists' % (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number'])
+        context['status'] = status
     return render(request, "app/adminunitsadd.html", context)
 
 @login_required(login_url = 'login')
