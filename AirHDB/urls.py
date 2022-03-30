@@ -33,9 +33,14 @@ urlpatterns = [
     path('units/add/', app.views.adminaddunits, name='adminaddunits'),
     path('mrts/', app.views.adminm, name='adminmrts'),
     path('mrts/add', app.views.addmrt, name='adminaddmrt'),
-    path('post_units/', app.views.useraddunits, name='useraddunits'),
     path('profile/', app.views.profile, name = 'profile'),
     path('change_profile/', app.views.change_profile, name = 'change_profile'),
+    
+    path('user_posts/', app.views.user_posts, name = 'posts'),
+    path('post_units/', app.views.useraddunits, name='useraddunits'),
+    path('user_posts/view/<str:id>/', app.views.viewposts),
+    path('user_posts/edit/<str:id>/', app.views.editposts),
+    
     path('user_bookings/', app.views.user_bookings, name = 'user_bookings'),
     path('change_password/', app.views.change_password, name = 'change_password'),
     path('payment/', app.views.payment, name = "payment"),
