@@ -630,7 +630,7 @@ def user_editbookings(request, id):
 		cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [id])
 		obj2 = cursor.fetchone()
 
-	curr_date = datetime.today().strftime('%Y-%m-%d')
+	curr_date = datetime.today()
 
 	status = ''
 	# save the data from the form
