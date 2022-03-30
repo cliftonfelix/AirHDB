@@ -1,4 +1,7 @@
-<html>
+{% extends 'main.html' %}
+
+{% block content %}
+{% load static %}
 <body>
     <h2>Post New Unit</h2>
     <a href="{% url 'posts' %}">Back to Posted HDBs Page</a>
@@ -57,4 +60,4 @@
         <button type="submit" value="Add">Add</button>
     </form>
 </body>
-</html>
+{% endblock %}
