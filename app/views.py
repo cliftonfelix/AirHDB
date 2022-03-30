@@ -643,6 +643,7 @@ def editbookings(request, id):
 def adminaddunits(request):
     """Shows the main page"""
     context = {}
+    email = request.user.username
     status = ''
     def get_coordinates(address):
     
@@ -665,7 +666,6 @@ def adminaddunits(request):
     context['unit'] =''
     context['size'] =''
     context['price'] = ''
-    context['posted_by'] = ''
     context['name'] = ''
     context['number'] = ''
     context['ans'] = ''
@@ -677,7 +677,6 @@ def adminaddunits(request):
         context['size'] = request.POST.get('size')
         context['price'] = request.POST.get('price_per_day')
         context['name'] = request.POST.get('contact_person_name')
-        context['posted_by'] = request.POST.get('posted_by')
         context['number'] = request.POST.get('contact_person_mobile')
         context['type'] = request.POST.get('hdb_type')
         context['ans'] = request.POST.get('multistorey_carpark')
@@ -693,7 +692,7 @@ def adminaddunits(request):
                 try:
                     cursor.execute("INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,posted_by,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES (%s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
                             , [request.POST['hdb_address'].upper(), request.POST['hdb_unit_number'], request.POST['hdb_type'], 
-                            request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'], request.POST.get('posted_by'),
+                            request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'], email,
                             request.POST['contact_person_name'] ,request.POST['contact_person_mobile'] ,get_coordinates(request.POST['hdb_address'])[0],get_coordinates(request.POST['hdb_address'])[1]])
                     
                     messages.success(request, '%s %s has been successfully added!'% (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number']))
@@ -749,6 +748,7 @@ def user_posts(request):
 def useraddunits(request):
     """Shows the main page"""
     context = {}
+    email = request.user.username
     status = ''
     def get_coordinates(address):
     
@@ -771,7 +771,6 @@ def useraddunits(request):
     context['unit'] =''
     context['size'] =''
     context['price'] = ''
-    context['posted_by'] = ''
     context['name'] = ''
     context['number'] = ''
     context['ans'] = ''
@@ -783,7 +782,6 @@ def useraddunits(request):
         context['size'] = request.POST.get('size')
         context['price'] = request.POST.get('price_per_day')
         context['name'] = request.POST.get('contact_person_name')
-        context['posted_by'] = request.POST.get('posted_by')
         context['number'] = request.POST.get('contact_person_mobile')
         context['type'] = request.POST.get('hdb_type')
         context['ans'] = request.POST.get('multistorey_carpark')
@@ -799,7 +797,7 @@ def useraddunits(request):
                 try:
                     cursor.execute("INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,posted_by,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES (%s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
                             , [request.POST['hdb_address'].upper(), request.POST['hdb_unit_number'], request.POST['hdb_type'], 
-                            request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'], request.POST.get('posted_by'),
+                            request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'], email,
                             request.POST['contact_person_name'] ,request.POST['contact_person_mobile'] ,get_coordinates(request.POST['hdb_address'])[0],get_coordinates(request.POST['hdb_address'])[1]])
                     
                     messages.success(request, '%s %s has been successfully added!'% (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number']))
