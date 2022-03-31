@@ -4,7 +4,7 @@
 {% load static %}
 <body>
     <h2>Details for HDB ID {{unit.0}}</h2>
-    <a href="{% url 'adminunits' %}">Back to Admin Page - Units</a>
+    <a href="{% url 'posts' %}">Back to Posts Page</a>
     <br/><br/>
     
     <table style='text-align:left'>
@@ -24,7 +24,7 @@
             <td> {{ unit.3 }} </td>
         </tr>
         <tr>
-            <th>Size (in Square Meters)</th>
+            <th>Size (In Square Meters)</th>
             <td>:</td>
             <td> {{ unit.4 }} </td>
         </tr>

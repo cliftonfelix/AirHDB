@@ -1,7 +1,7 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<h1>Admin Page - Units</h1>
+<h1>Posted HDBs</h1>
 <p style="color:red">{{ status|safe }}</p>
 <br>
 {% if messages %}
@@ -12,7 +12,7 @@
     
     {% endif %}
 
-<a href="{% url 'adminaddunits' %}">Add New Unit</a>
+<a href="{% url 'useraddunits' %}">Add New Unit</a>
 
 {% load static %}
 <html>
