@@ -35,8 +35,13 @@ urlpatterns = [
     path('mrts/add', app.views.addmrt, name='adminaddmrt'),
     path('profile/', app.views.profile, name = 'profile'),
     path('change_profile/', app.views.change_profile, name = 'change_profile'),
-    path('user_bookings/', app.views.user_bookings, name = 'user_bookings'),
+    
     path('change_password/', app.views.change_password, name = 'change_password'),
     path('payment/', app.views.payment, name = "payment"),
-    path('listings/book/<str:id>/', app.views.book)
+    path('listings/book/<str:id>/', app.views.book),
+    path('user_bookings/', app.views.user_bookings, name = 'user_bookings'),
+     path('user_bookings/edit/<str:id>/', app.views.user_editbookings),
+     path('user_bookings/view/<str:id>/', app.views.user_viewbookings),
+     path('refund/', app.views.refund,name='adminrefund'),
+
 ]

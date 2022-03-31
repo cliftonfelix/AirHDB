@@ -88,3 +88,28 @@ CREATE TABLE IF NOT EXISTS bookings (
 	-- by right, mastercard doesn't include 50 and americanexpress doesn't include 33, but sample data from Mockaroo include them.
 	-- sample data from Mockaroo also doesnt include mastercard with starting numbers 2221 to 2720.
 );
+
+CREATE TABLE IF NOT EXISTS refunds (
+	booking_id INT NOT NULL PRIMARY KEY,
+	hdb_id INT NOT NULL REFERENCES hdb_units(hdb_id),
+	booked_by VARCHAR(256) NOT NULL CHECK (booked_by LIKE '%_@_%._%') REFERENCES users(email_address),
+	start_date DATE NOT NULL CHECK (start_date >= '2022-04-11'), -- Initial start date 11 April
+	end_date DATE NOT NULL, -- End date is like the checkout date. A new booking can start on the end date.
+	credit_card_type VARCHAR(256) NOT NULL,
+	credit_card_number VARCHAR(16) NOT NULL,
+	total_price NUMERIC NOT NULL,
+	CHECK (end_date > start_date),
+	CHECK((credit_card_type = 'visa' 
+		   AND LEFT(credit_card_number, 1) = '4'
+		   AND (LENGTH(credit_card_number) IN (13, 16)))
+		  OR (credit_card_type = 'mastercard' 
+			  AND LENGTH(credit_card_number) = 16
+			  AND (LEFT(credit_card_number, 4) BETWEEN '2221' AND '2720' 
+				   OR LEFT(credit_card_number, 2) BETWEEN '50' AND '55'))
+		  OR (credit_card_type = 'americanexpress' 
+			  AND LENGTH(credit_card_number) = 15
+			  AND (LEFT(credit_card_number, 2) IN ('33', '34', '37'))))
+	-- Source: Wikipedia and some other sites
+	-- by right, mastercard doesn't include 50 and americanexpress doesn't include 33, but sample data from Mockaroo include them.
+	-- sample data from Mockaroo also doesnt include mastercard with starting numbers 2221 to 2720.
+);

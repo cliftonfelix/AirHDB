@@ -1,0 +1,74 @@
+{% extends 'main.html' %}
+
+{% block content %}
+{% if user.is_authenticated and user.is_staff and user.is_superuser %}
+
+
+
+
+
+<h1>Admin Page - Refund</h1>
+<p style="color:green">{{ status|safe }}</p>
+<br>
+{% if messages %}
+    
+        {% for message in messages %}
+        <p style="color:rgb(27, 216, 52)">{{ message|safe }}</p>
+        {% endfor %}
+    
+    {% endif %}
+
+    
+
+{% load static %}
+<html>
+  <body>
+    
+    <div>
+    <table border = 1>
+      <thead>
+        <th>Booking ID</th>
+	    <th>HDB ID</th>
+	    <th>Address</th>
+	    <th>Unit Number</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Credit Card Type</th>
+            <th>Credit Card Number</th>
+            <th>Refund</th>
+            <th>Action</th>
+        
+      </thead>
+      {% for refund in refunds %}
+      <tr>
+        <td> {{ refund.0 }} </td>
+        <td> {{ refund.1 }} </td>
+        <td> {{ refund.2 }} </td>
+        <td> {{ refund.3 }} </td>
+  <td> {{ refund.4 }} </td>
+        <td> {{ refund.5 }} </td>
+        <td> {{ refund.6 }} </td>
+        <td> {{ refund.7 }} </td>
+  <td> {{ refund.8 }} </td>
+        <td>
+            
+            <form method="POST" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{refund.0}}"/>
+            <button onclick="return confirm('Are you sure we already refunded booking id {{refund.0}}?');" type="submit" name="action" value="delete">Completed</button> 
+          </form></td>
+
+      </tr>
+      {% endfor %}
+    </table>
+    
+
+
+  </body>
+</html>
+{% else %}
+<h1 style="color:red">
+  Permission Denied
+</h1>
+{% endif %}
+{% endblock %}

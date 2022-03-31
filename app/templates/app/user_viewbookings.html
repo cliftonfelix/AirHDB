@@ -1,8 +1,8 @@
-{% if user.is_authenticated and user.is_staff and user.is_superuser %}
 <html>
 <body>
+    <p style="color:red">{{ status|safe }}</p>
     <h2>Details for Booking ID {{booking.0}}</h2>
-    <a href="{% url 'adminbookings' %}">Back to Admin Page - Bookings</a>
+    <a href="{% url 'user_bookings' %}">Back to Bookings Page - Bookings</a>
     <br/><br/>
     <table style='text-align:left'>
         <tr>
@@ -43,9 +43,3 @@
     </table>
 </body>
 </html>
-
-{% else %}
-<h1 style="color:red">
-  Permission Denied
-</h1>
-{% endif%}

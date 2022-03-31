@@ -1,3 +1,4 @@
+{% if user.is_authenticated and user.is_staff and user.is_superuser %}
 <html>
 <body>
     <h2>Details for HDB ID {{unit.0}}</h2>
@@ -73,3 +74,9 @@
     </table>
 </body>
 </html>
+{% else %}
+<h1 style="color:red">
+  Permission Denied
+</h1>
+{% endif%}
+

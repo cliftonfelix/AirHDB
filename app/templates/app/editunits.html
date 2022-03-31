@@ -1,3 +1,4 @@
+{% if user.is_authenticated and user.is_staff and user.is_superuser %}
 <html>
 <body>
     <h2>Edit HDB ID {{obj.0}}, Address: {{obj.1}} {{obj.2}} </h2>
@@ -53,3 +54,4 @@
     </form>
 </body>
 </html>
+{% endif%}

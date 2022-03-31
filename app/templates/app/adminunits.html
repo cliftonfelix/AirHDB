@@ -1,6 +1,7 @@
 {% extends 'main.html' %}
 
 {% block content %}
+{% if user.is_authenticated and user.is_staff and user.is_superuser %}
 <h1>Admin Page - Units</h1>
 <p style="color:red">{{ status|safe }}</p>
 <br>
@@ -68,4 +69,10 @@
 
   </body>
 </html>
+{% else %}
+<h1 style="color:red">
+  Permission Denied
+</h1>
+{% endif %}
+
 {% endblock %}

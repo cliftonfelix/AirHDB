@@ -1,13 +1,11 @@
-{% if user.is_authenticated and user.is_staff and user.is_superuser %}
-
 <html>
 
 
 
-</script>
+
 <body>
     <h2>Edit Booking ID {{obj.0}}</h2>
-    <a href="{% url 'adminbookings' %}">Back to Admin Page - Bookings</a>
+    <a href="{% url 'user_bookings' %}">Back to Bookings Page - Bookings</a>
 
     <p style="color:red">{{ status|safe }}</p>
     <div id="outputDiv">
@@ -58,8 +56,3 @@
     
 </body>
 </html>
-{% else %}
-<h1 style="color:red">
-  Permission Denied
-</h1>
-{% endif%}

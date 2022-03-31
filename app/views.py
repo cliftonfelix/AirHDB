@@ -7,8 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, date, timedelta
 import requests
 
 api_key = "AIzaSyCfbRJX3HAzw1mb4ZwHsQCOf4XES8h0eFU"
@@ -412,17 +411,33 @@ def adminu(request):
 
 @login_required(login_url = 'login')
 def adminb(request):
+    status = ''
+    curr_date = date.today()
     if request.POST:
         if request.POST['action'] == 'delete':
             with connection.cursor() as cursor:
-                cursor.execute("DELETE FROM bookings WHERE booking_id = %s", [request.POST['id']])
- 
+                cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [request.POST['id']])
+                start_date = cursor.fetchone()
+
+            if ((start_date[0] - curr_date).days >= 2):
+                with connection.cursor() as cursor:
+                    
+                    cursor.execute("INSERT INTO refunds (booking_id,hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price) SELECT * from bookings b where b.booking_id = %s ", [request.POST['id']])
+                    cursor.execute("DELETE FROM bookings WHERE booking_id = %s", [request.POST['id']])
+                    status = 'Refund for booking ID %s has been added to the refund table',(request.POST['id'])
+            else:
+                status = 'Refund for booking ID %s will not be given. Cancelation of booking within 48 hour window before the scheduled booking date will not be refunded',(request.POST['id'])
+
+
     with connection.cursor() as cursor:
         cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.booked_by, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
-		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id ORDER BY b.booking_id")
+            FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id ORDER BY b.booking_id")
         bookings = cursor.fetchall()
 
+   
+
     booking_dict = {'bookings':bookings}
+    booking_dict['status'] = status 
 
     return render(request,'app/adminbookings.html',booking_dict)
 
@@ -552,8 +567,6 @@ def editunits(request, id):
 def editbookings(request, id):
     """Shows the main page"""
 
-    # dictionary for initial data with
-    # field names as keys
     context ={}
     context['startdate'] = ''
     context['enddate'] = ''
@@ -562,44 +575,53 @@ def editbookings(request, id):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
         obj = cursor.fetchone()
+        
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [id])
+        obj2 = cursor.fetchone()
+
+    curr_date = date.today()
 
     status = ''
     # save the data from the form
 
-    if request.POST:
-        ##TODO: date validation
-        with connection.cursor() as cursor:
-            context['startdate'] = request.POST.get('start_date')
-            context['enddate'] = request.POST.get('end_date')
-
-            try:
-                cursor.execute("UPDATE bookings SET start_date = %s, end_date = %s WHERE booking_id = %s"
-                        , [request.POST['start_date'], request.POST['end_date'], id ])
-                status = 'Customer edited successfully!'
+    if ((obj2[0] - curr_date).days >= 2):
+        if request.POST:
+            with connection.cursor() as cursor:
+                context['startdate'] = request.POST.get('start_date')
+                context['enddate'] = request.POST.get('end_date')
                 
-            except Exception as e:
-                message = str(e)
+                try:
+                    cursor.execute("UPDATE bookings SET start_date = %s, end_date = %s WHERE booking_id = %s"
+                                , [request.POST['start_date'], request.POST['end_date'], id ])
+                    status = 'Booking ID %s dates edited successfully!',(id)
+                
+                except Exception as e:
+                    message = str(e)
 
-                if 'violates check constraint "bookings_start_date_check"' in message:
-                    status = 'There are no bookings to be made earlier than 2022-04-11, please choose another start date'
-                elif 'invalid input syntax' in message:
-                    status ='Please check your start and end date and follow the format'
-                elif 'violates check constraint "bookings_check"' in message:
-                    status = 'Please input a valid start and end date, the start date should be before end date'
-                elif 'duplicate key value violates unique constraint "bookings_pkey"' in message:
-                    status = 'There exists a booking in these dates please choose another start and end date'
-                elif 'Booking Dates Not Available' in message:
-                    status = 'There exists a booking in these dates please choose another start and end date'
-                else:
-                    status = message
+                    if 'violates check constraint "bookings_start_date_check"' in message:
+                        status = 'There are no bookings to be made earlier than 2022-04-11, please choose another start date'
+                    elif 'invalid input syntax' in message:
+                        status ='Please check your start and end date and follow the format'
+                    elif 'violates check constraint "bookings_check"' in message:
+                        status = 'Please input a valid start and end date, the start date should be before end date'
+                    elif 'duplicate key value violates unique constraint "bookings_pkey"' in message:
+                        status = 'There exists a booking in these dates please choose another start and end date'
+                    elif 'Booking Dates Not Available' in message:
+                        status = 'There exists a booking in these dates please choose another start and end date'
+                    else:
+                        status = message
 
-            cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
-            obj = cursor.fetchone()
+                cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
+                obj = cursor.fetchone()
 
-    context["obj"] = obj
-    context["status"] = status
-	
-    return render(request, "app/editbookings.html", context)
+        context["obj"] = obj
+        context["status"] = status
+    
+        return render(request, "app/editbookings.html", context)
+    else:
+        messages.success(request, 'Change of booking dates for booking ID can only be made up to 48 hours before the scheduled booking date'% (id))
+        return redirect('adminbookings')
 
 @login_required(login_url = 'login')
 def addunits(request):
@@ -777,15 +799,41 @@ def change_password(request):
 
 @login_required(login_url = 'login')
 def user_bookings(request):
+    status =''
     email = request.user.username
+    #current_date = date.today()
+    #format_date = current_date.strftime("%B %d, %Y")
+    curr_date = date.today()
+    if request.POST:
+        if request.POST['action'] == 'delete':
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [request.POST['id']])
+                start_date = cursor.fetchone()
+
+            if ((start_date[0] - curr_date).days >= 2):
+                with connection.cursor() as cursor:
+                    
+                    cursor.execute("INSERT INTO refunds (booking_id,hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price) SELECT * from bookings b where b.booking_id = %s ", [request.POST['id']])
+                    cursor.execute("DELETE FROM bookings WHERE booking_id = %s", [request.POST['id']])
+                    status = 'You will be refunded for booking ID %s',(request.POST['id'])
+        
+            else:
+                status = 'You will not be refunded for booking ID %s. Cancelation of booking within 48 hour window before the scheduled booking date will not be refunded',(request.POST['id'])
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
-		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id AND booked_by = %s ORDER BY b.booking_id", [email])
-        bookings = cursor.fetchall()
+		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id AND b.end_date < CURRENT_TIMESTAMP AND booked_by = %s ORDER BY b.booking_id", [email])
+        past_bookings = cursor.fetchall()
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
+		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id AND b.start_date > CURRENT_TIMESTAMP AND booked_by = %s ORDER BY b.booking_id", [email])
+        upcoming_bookings = cursor.fetchall()	
 	
     context = {}
-    context['bookings'] = bookings
+    context['past_bookings'] = past_bookings
+    context['upcoming_bookings'] = upcoming_bookings
+    context['status'] =status
     return render(request, 'app/userbookings.html', context)
 
 
@@ -848,6 +896,54 @@ def book(request, id):
         return redirect("payment")
 
     return render(request, "app/book.html", context)
+
+
+@login_required(login_url = 'login')
+def cancelbooking(request):
+    if request.POST:
+        if request.POST['action'] == 'delete':
+            with connection.cursor() as cursor:
+                cursor.execute("INSERT INTO refund(SELECT * from bookings b where b.booking_id = %s)", [request.POST['id']])
+                cursor.execute("DELETE FROM bookings WHERE booking_id = %s", [request.POST['id']])
+                
+
+ 
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.booked_by, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
+		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id ORDER BY b.booking_id")
+        bookings = cursor.fetchall()
+
+    booking_dict = {'bookings':bookings}
+
+    return render(request,'app/adminbookings.html',booking_dict)
+
+@login_required(login_url = 'login')
+def refund(request):
+    status= ''
+    
+    if request.POST:
+        if request.POST['action'] == 'delete':
+            with connection.cursor() as cursor:
+                
+                cursor.execute("DELETE FROM refunds WHERE booking_id = %s", [request.POST['id']])
+                status = 'Booking ID %s has been successfully refunded!'% (request.POST['id'])
+                
+
+ 
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.booked_by, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
+		       FROM refunds b, hdb_units h WHERE b.hdb_id = h.hdb_id ORDER BY b.booking_id")
+        refunds = cursor.fetchall()
+
+    booking_dict = {'refunds':refunds}
+    booking_dict['status'] =status
+
+    return render(request,'app/refund.html',booking_dict)
+
+
+
+
+
 
 @login_required(login_url = 'login')
 def payment(request):
@@ -916,4 +1012,114 @@ def payment(request):
         return redirect("listings")
 
     return render(request, "app/payment.html", context)
+
+@login_required(login_url = 'login')
+def user_editbookings(request, id):
+    """Shows the main page"""
+
+    email = request.user.username
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM bookings WHERE booked_by = %s", [email])
+        user_bookings = cursor.fetchall()
+    if not user_bookings:
+        return redirect('user_bookings')
+
+
+    
+    
+
+    # dictionary for initial data with
+    # field names as keys
+    context ={}
+    context['startdate'] = ''
+    context['enddate'] = ''
+
+    # fetch the object related to passed id
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
+        obj = cursor.fetchone()
+    
+    if obj in user_bookings:
+        
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [id])
+            obj2 = cursor.fetchone()
+
+        curr_date = date.today()
+
+        status = ''
+        # save the data from the form
+        
+
+
+        if ((obj2[0] - curr_date).days >= 2):
+            if request.POST:
+                with connection.cursor() as cursor:
+                    context['startdate'] = request.POST.get('start_date')
+                    context['enddate'] = request.POST.get('end_date')
+                    
+                    try:
+                        cursor.execute("UPDATE bookings SET start_date = %s, end_date = %s WHERE booking_id = %s"
+                                    , [request.POST['start_date'], request.POST['end_date'], id ])
+                        status = 'Booking ID %s dates edited successfully!',(id)
+                    
+                    except Exception as e:
+                        message = str(e)
+
+                        if 'violates check constraint "bookings_start_date_check"' in message:
+                            status = 'There are no bookings to be made earlier than 2022-04-11, please choose another start date'
+                        elif 'invalid input syntax' in message:
+                            status ='Please check your start and end date and follow the format'
+                        elif 'violates check constraint "bookings_check"' in message:
+                            status = 'Please input a valid start and end date, the start date should be before end date'
+                        elif 'duplicate key value violates unique constraint "bookings_pkey"' in message:
+                            status = 'There exists a booking in these dates please choose another start and end date'
+                        elif 'Booking Dates Not Available' in message:
+                            status = 'There exists a booking in these dates please choose another start and end date'
+                        else:
+                            status = message
+
+                    cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
+                    obj = cursor.fetchone()
+
+            context["obj"] = obj
+            context["status"] = status
+            
+        
+            return render(request, "app/user_editbookings.html", context)
+            
+        else:
+            messages.success(request, 'Change of booking dates for booking ID can only be made up to 48 hours before the scheduled booking date'% (id))
+            
+
+            return redirect('user_bookings')
+    else:
+
+        return redirect('user_bookings')
+
+
+@login_required(login_url = 'login')
+def user_viewbookings(request,id):
+    email = request.user.username
+    
+    with connection.cursor() as cursor:
+       cursor.execute("SELECT * FROM bookings WHERE booked_by = %s", [email])
+       user_bookings = cursor.fetchall()
+    if not user_bookings:
+       return redirect('user_bookings')
+    
+    
+
+    ## Use raw query to get a customer
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
+        booking = cursor.fetchone()
+
+    if booking not in user_bookings:
+        return redirect('user_bookings')
+
+    result_dict = {'booking': booking}
+    result_dict['status'] =email
+
+    return render(request,'app/user_viewbookings.html',result_dict)  
                         
