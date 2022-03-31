@@ -1119,7 +1119,7 @@ def user_viewbookings(request,id):
         return redirect('user_bookings')
 
     result_dict = {'booking': booking}
-    result_dict['status'] =email
+    
 
     return render(request,'app/user_viewbookings.html',result_dict)  
                         
