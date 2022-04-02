@@ -37,10 +37,6 @@
                 
               </select> </div>
         </div>
-<!--         
-        {% for listing in listings %}
-          {{listing}}
-        {% endfor %} -->
         
         <div id="div_id_towns" class="control-group"> 
           <label for="id_towns" class="control-label requiredField">Town (multi-select with ctrl)</label> 
@@ -109,7 +105,13 @@
               </select> </div>
         </div>
         
+        <div id="div_id_search_by_address" class="control-group"> 
+          <label for="id_search_by_address" class="control-label requiredField">Search Nearest HDBs by Address/Landmark</label> 
+            <div class="controls"> <input type="text" name="search_by_address" id="id_search_by_address" value="{{search_by_address}}" placeholder = "Enter a Valid Singapore Address"> </div>
+        </div> 
+        
         <button type="submit">Apply Filter</button>
+        <br>
         <a href = "{% url 'listings' %}">Clear Selections</a>
 
       </form>
@@ -130,12 +132,14 @@
         <th>Num Bathrooms</th>
         <th>Max Occupants</th>
         <th>Multistorey Carpark</th>
+        <th>Posted By</th>
         <th>Contact Person Name</th>
         <th>Contact Person Mobile</th>
         <th>HDB Latitude</th>
         <th>HDB Longitude</th>
         <th>Nearest MRT Station</th>
         <th>Nearest MRT Distance (in km)</th>
+        <th>Distance from Specified Address/Landmark (in km)</th>
         <th>Action</th>
       </thead>
       {% for listing in listings %}
@@ -144,13 +148,13 @@
         <td> {{ listing.3 }} </td>
         <td> {{ listing.4 }} </td>
         <td> {{ listing.1 }} </td>
-        <td> {{ listing.18 }} </td>
+        <td> {{ listing.19 }} </td>
         <td> {{ listing.0 }} </td>
         <td> {{ listing.6 }} </td>
         <td> {{ listing.5 }} </td>
-        <td> {{ listing.15 }} </td>
         <td> {{ listing.16 }} </td>
         <td> {{ listing.17 }} </td>
+        <td> {{ listing.18 }} </td>
         <td> {{ listing.7 }} </td>
         <td> {{ listing.8 }} </td>
         <td> {{ listing.9 }} </td>
@@ -158,6 +162,8 @@
         <td> {{ listing.11 }} </td>
         <td> {{ listing.12 }} </td>
         <td> {{ listing.13 }} </td>
+        <td> {{ listing.14 }} </td>
+        <td> {{ listing.20 }} </td>
         <td> <a href="book/{{listing.2}}"><button>Book</button></a>
       </tr>
       {% endfor %}

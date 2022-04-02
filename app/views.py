@@ -1122,4 +1122,192 @@ def user_viewbookings(request,id):
     
 
     return render(request,'app/user_viewbookings.html',result_dict)  
+
+
+@login_required(login_url = 'login')
+def user_posts(request):
+    status = ''
+    email = request.user.username
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_units hu1 WHERE posted_by = %s ORDER BY hu1.hdb_id", [email])
+        units = cursor.fetchall()
+
+    result_dict = {'records': units}
+    result_dict['status'] = status
+    
+    return render(request,'app/user_posts.html',result_dict)
+
+@login_required(login_url = 'login')
+def useraddunits(request):
+    """Shows the main page"""
+    context = {}
+    email = request.user.username
+    status = ''
+    def get_coordinates(address):
+    
+        response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + address, params = {"key": api_key})
+        resp_json_payload = response.json()
+        return resp_json_payload['results'][0]['geometry']['location']["lat"], resp_json_payload['results'][0]['geometry']['location']["lng"]
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM towns")
+        towns = cursor.fetchall()
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_types_info")
+        types = cursor.fetchall()
+        
+    context['hdb_types'] = types
+    context['towns'] = towns
+    context['towns_default'] = ''
+    context['type'] = ''
+    context['address'] = ''
+    context['unit'] =''
+    context['size'] =''
+    context['price'] = ''
+    context['name'] = ''
+    context['number'] = ''
+    context['ans'] = ''
+
+    if request.POST:
+        context['towns_default'] = request.POST.get('town')
+        context['address'] = request.POST['hdb_address'].upper()
+        context['unit'] = request.POST.get('hdb_unit_number')
+        context['size'] = request.POST.get('size')
+        context['price'] = request.POST.get('price_per_day')
+        context['name'] = request.POST.get('contact_person_name')
+        context['number'] = request.POST.get('contact_person_mobile')
+        context['type'] = request.POST.get('hdb_type')
+        context['ans'] = request.POST.get('multistorey_carpark')
+
+        ## Check if customerid is already in the table
+        with connection.cursor() as cursor:
+
+            cursor.execute("SELECT * FROM hdb_units WHERE hdb_address = %s and hdb_unit_number = %s", [request.POST['hdb_address'],request.POST['hdb_unit_number']])
+            customer = cursor.fetchone()
+            ## No customer with same id
+            if customer == None:
+                ##TODO: date validation
+                try:
+                    cursor.execute("INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,posted_by,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
+                            , [request.POST['hdb_address'].upper(), request.POST['hdb_unit_number'], request.POST['hdb_type'], 
+                            request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'], email,
+                            request.POST['contact_person_name'] ,request.POST['contact_person_mobile'] ,get_coordinates(request.POST['hdb_address'])[0],get_coordinates(request.POST['hdb_address'])[1]])
+                    
+                    messages.success(request, '%s %s has been successfully added!'% (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number']))
+                    return redirect('posts')
+                   
+                except Exception as e:
+                    message = str(e)
+                    if 'violates check constraint "hdb_units_check"' in message:
+                        if request.POST['hdb_type'] == "2-Room/2-Room Flexi":
+                            status = 'The size of a 2-Room/2-Room Flexi should be between 35 and 38 or size between 45 and 47'
+                        elif request.POST['hdb_type'] == '3-Room':
+                            status = 'The size of a 3-Room should be between 60 and 68'
+                        elif request.POST['hdb_type'] == '4-Room':
+                            status = 'The size of a 4-Room should be between 85 and 93'
+                        elif request.POST['hdb_type'] == '5-Room':
+                            status = 'The size of a 5-Room should be between 107 and 113'
+                        elif request.POST['hdb_type'] == '3-Gen':
+                            status = 'The size of a 3-Gen should be between 115 and 118'
+                    elif 'violates check constraint "hdb_units_contact_person_mobile_check"' in message:
+                        status = 'Please input a valid Singapore Number'
+
+                    elif 'violates check constraint "hdb_units_hdb_lat_check"' in message:
+                        status = 'Please input a valid Singapore Address'
+                    elif 'violates check constraint "hdb_units_hdb_unit_number_check"' in message:
+                        status = 'Please input unit number in this format:"#_-_" '
+                    elif message == 'list index out of range':
+                        status = 'Please input a valid Singapore Address'
+                    elif 'violates unique constraint "hdb_units_hdb_address_hdb_unit_number_key"' in message:
+                        status = '%s %s already exists' % (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number'])
+
+                    
+                    else:
+                        status = message
+
+            else:
+                status = '%s %s already exists' % (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number'])
+
+    context['status'] = status
+ 
+    return render(request, "app/useraddunits.html", context)
+
+def viewposts(request,id):
+
+    email = request.user.username
+    
+    with connection.cursor() as cursor:
+       cursor.execute("SELECT * FROM hdb_units WHERE posted_by = %s", [email])
+       user_posts = cursor.fetchall()
+    if not user_posts:
+       return redirect('posts')
+    
+    
+
+    
+    
+    ## Use raw query to get a customer
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_units WHERE hdb_id = %s", [id])
+        unit = cursor.fetchone()
+
+    if unit not in user_posts:
+        return redirect('posts')
+	
+    result_dict = {'unit': unit}
+
+    return render(request,'app/viewposts.html',result_dict)
+
+def editposts(request, id):
+    """Shows the main page"""
+
+    email = request.user.username
+    
+    with connection.cursor() as cursor:
+       cursor.execute("SELECT * FROM hdb_units WHERE posted_by = %s", [email])
+       user_posts = cursor.fetchall()
+    if not user_posts:
+       return redirect('posts')
+
+    # dictionary for initial data with
+    # field names as keys
+    context ={}
+    
+    # fetch the object related to passed id
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_units WHERE hdb_id = %s", [id])
+        obj = cursor.fetchone()
+    if obj not in user_posts:
+        return redirect('posts')
+
+    status = ''
+    # save the data from the form
+
+    if request.POST:
+        ##TODO: date validation
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("UPDATE hdb_units SET contact_person_name = %s, contact_person_mobile = %s,can_book = %s WHERE hdb_id = %s"
+                    , [request.POST['contact_person'], request.POST['contact_number'],request.POST['can_book'], id ])
+                status = 'Customer edited successfully!'
+                
+            except Exception as e:
+                message = str(e)
+		
+                if 'violates check constraint "hdb_units_contact_person_mobile_check"' in message:
+                    status = 'Unsuccessful , Please enter a valid Singapore Mobile Number'
+                elif 'violates check constraint "hdb_units_can_book_check"' in message:
+                    status = 'Please input Yes or No for Can Book?'
+                
+                else:
+                    status = message
+
+            cursor.execute("SELECT * FROM hdb_units WHERE hdb_id = %s", [id])
+            obj = cursor.fetchone()
+		
+    context["obj"] = obj
+    context["status"] = status
+ 
+    return render(request, "app/editposts.html", context)
+
                         

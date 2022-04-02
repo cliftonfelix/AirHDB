@@ -5,79 +5,84 @@
 
 {% if user.is_authenticated and user.is_staff and user.is_superuser %}
 <html>
-<body>
-    <h2>Details for HDB ID {{unit.0}}</h2>
-    <a href="{% url 'adminunits' %}">Back to Admin Page - Units</a>
-    <br/><br/>
-    
-    <table style='text-align:left'>
-        <tr>
-            <th>HDB Address</th>
-            <td>:</td>
-            <td> {{ unit.1 }} </td>
-        </tr>
-        <tr>
-            <th>HDB Unit Number</th>
-            <td>:</td>
-            <td> {{ unit.2 }} </td>
-        </tr>
-        <tr>
-            <th>HDB Type</th>
-            <td>:</td>
-            <td> {{ unit.1 }} </td>
-        </tr>
-        <tr>
-            <th>Size( In squarmeters)</th>
-            <td>:</td>
-            <td> {{ unit.4 }} </td>
-        </tr>
-        <tr>
-            <th>Rent (Daily Rate)</th>
-            <td>:</td>
-            <td> {{ unit.5 }} </td>
-        </tr>
-        <tr>
-            <th>Town</th>
-            <td>:</td>
-            <td> {{ unit.6 }} </td>
-        </tr>
-        <tr>
-            <th>Multistorey Carpark</th>
-            <td>:</td>
-            <td> {{ unit.7 }} </td>
-        </tr>
-        <tr>
-            <th>Owner Name</th>
-            <td>:</td>
-            <td> {{ unit.8 }} </td>
-        </tr>
-        <tr>
-            <th>Owner Mobile</th>
-            <td>:</td>
-            <td> {{ unit.9 }} </td>
-        </tr>
-        <tr>
-            <th>HDB Latitude</th>
-            <td>:</td>
-            <td> {{ unit.10 }} </td>
-        </tr>
-        <tr>
-            <th>HDB Longitude</th>
-            <td>:</td>
-            <td> {{ unit.11 }} </td>
-        </tr>
-        <tr>
-            <th>Nearest Mrt</th>
-            <td>:</td>
-            <td> {{ unit.12 }} </td>
-        </tr>
-        <tr>
-            <th>Distance From Mrt</th>
-            <td>:</td>
-            <td> {{ unit.13}} </td>
-        </tr>
-    </table>
-</body>
+    <body>
+        <h2>Details for HDB ID {{unit.0}}</h2>
+        <a href="{% url 'adminunits' %}">Back to Admin Page - Units</a>
+        <br/><br/>
+        
+        <table style='text-align:left'>
+            <tr>
+                <th>HDB Address</th>
+                <td>:</td>
+                <td> {{ unit.1 }} </td>
+            </tr>
+            <tr>
+                <th>HDB Unit Number</th>
+                <td>:</td>
+                <td> {{ unit.2 }} </td>
+            </tr>
+            <tr>
+                <th>HDB Type</th>
+                <td>:</td>
+                <td> {{ unit.3 }} </td>
+            </tr>
+            <tr>
+                <th>Size (in Square Meters)</th>
+                <td>:</td>
+                <td> {{ unit.4 }} </td>
+            </tr>
+            <tr>
+                <th>Rent (Daily Rate)</th>
+                <td>:</td>
+                <td> {{ unit.5 }} </td>
+            </tr>
+            <tr>
+                <th>Town</th>
+                <td>:</td>
+                <td> {{ unit.6 }} </td>
+            </tr>
+            <tr>
+                <th>Multistorey Carpark</th>
+                <td>:</td>
+                <td> {{ unit.7 }} </td>
+            </tr>
+            <tr>
+                <th>Posted By</th>
+                <td>:</td>
+                <td> {{ unit.8 }} </td>
+            </tr>
+            <tr>
+                <th>Contact Person Name</th>
+                <td>:</td>
+                <td> {{ unit.9 }} </td>
+            </tr>
+            <tr>
+                <th>Contact Person Mobile</th>
+                <td>:</td>
+                <td> {{ unit.10 }} </td>
+            </tr>
+            <tr>
+                <th>HDB Latitude</th>
+                <td>:</td>
+                <td> {{ unit.11 }} </td>
+            </tr>
+            <tr>
+                <th>HDB Longitude</th>
+                <td>:</td>
+                <td> {{ unit.12 }} </td>
+            </tr>
+            <tr>
+                <th>Nearest MRT</th>
+                <td>:</td>
+                <td> {{ unit.13 }} </td>
+            </tr>
+            <tr>
+                <th>Nearest MRT Distance (in km)</th>
+                <td>:</td>
+                <td> {{ unit.14 }} </td>
+            </tr>
+        </table>
+    </body>
 </html>
 {% else %}
 <h1 style="color:red">

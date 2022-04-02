@@ -44,4 +44,9 @@ urlpatterns = [
      path('user_bookings/view/<str:id>/', app.views.user_viewbookings),
      path('refund/', app.views.refund,name='adminrefund'),
 
+    path('user_posts/', app.views.user_posts, name = 'posts'),
+    path('post_units/', app.views.useraddunits, name='useraddunits'),
+    path('user_posts/view/<str:id>/', app.views.viewposts),
+    path('user_posts/edit/<str:id>/', app.views.editposts),
+
 ]

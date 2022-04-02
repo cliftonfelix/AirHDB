@@ -20,42 +20,44 @@
   <body>
     
     <div>
-    <table border = 1>
-      <thead>
-        <th>HDB ID</th>
-        <th>HDB Address</th>
-        <th>HDB Unit Number</th>
-        <th>HDB Type</th>
-        <th>Size</th>
-        <th>Rent Price per Day</th>
-        <th>Town</th>
-        <th>Multistorey Carpark</th>
-        <th>Contact Person Name</th>
-        <th>Contact Person Mobile</th>
-        <th>HDB Latitude</th>
-        <th>HDB Longitude</th>
-        <th>Nearest MRT</th>
-        <th>Distance From MRT</th>
-        <th>Can Book</th>
-        <th>Action</th>
-      </thead>
-      {% for unit in records %}
-      <tr>
-        <td> {{ unit.0 }} </td>
-        <td> {{ unit.1 }} </td>
-        <td> {{ unit.2 }} </td>
-        <td> {{ unit.3 }} </td>
-        <td> {{ unit.4 }} </td>
-        <td> {{ unit.5 }} </td>
-        <td> {{ unit.6 }} </td>
-        <td> {{ unit.7 }} </td>
-        <td> {{ unit.8 }} </td>
-        <td> {{ unit.9 }} </td>
-        <td> {{ unit.10 }} </td>
-        <td> {{ unit.11 }} </td>
-        <td> {{ unit.12 }} </td>
-        <td> {{ unit.13 }} </td>
-        <td> {{ unit.14 }} </td>
+      <table border = 1>
+        <thead>
+          <th>HDB ID</th>
+          <th>HDB Address</th>
+          <th>HDB Unit Number</th>
+          <th>HDB Type</th>
+          <th>Size</th>
+          <th>Rent Price per Day</th>
+          <th>Town</th>
+          <th>Multistorey Carpark</th>
+          <th>Posted By</th>
+          <th>Contact Person Name</th>
+          <th>Contact Person Mobile</th>
+          <th>HDB Latitude</th>
+          <th>HDB Longitude</th>
+          <th>Nearest MRT</th>
+          <th>Nearest MRT Distance (in km)</th>
+          <th>Can Book</th>
+          <th>Action</th>
+        </thead>
+        {% for unit in records %}
+        <tr>
+          <td> {{ unit.0 }} </td>
+          <td> {{ unit.1 }} </td>
+          <td> {{ unit.2 }} </td>
+          <td> {{ unit.3 }} </td>
+          <td> {{ unit.4 }} </td>
+          <td> {{ unit.5 }} </td>
+          <td> {{ unit.6 }} </td>
+          <td> {{ unit.7 }} </td>
+          <td> {{ unit.8 }} </td>
+          <td> {{ unit.9 }} </td>
+          <td> {{ unit.10 }} </td>
+          <td> {{ unit.11 }} </td>
+          <td> {{ unit.12 }} </td>
+          <td> {{ unit.13 }} </td>
+          <td> {{ unit.14 }} </td>
+          <td> {{ unit.15 }} </td>
         
         
       <td><a href="view/{{unit.0}}"><button>View</button></a> | 
