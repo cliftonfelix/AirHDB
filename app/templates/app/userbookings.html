@@ -14,7 +14,7 @@
         <br>  
     {% endif %}
 
-    <h1>Bookings</h1><br>
+    <h1>Upcoming Bookings</h1><br>
     <body>
         <table border = 1>
         <thead>
@@ -55,6 +55,26 @@
     
 	 {% endfor %}
 	 </table>
+
+     {% if past_bookings %}
+     <h1>Past Bookings</h1><br>
+
+     <table border = 1>
+        <thead>
+            <th>Booking ID</th>
+	    <th>HDB ID</th>
+	    <th>Address</th>
+	    <th>Unit Number</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Credit Card Type</th>
+            <th>Credit Card Number</th>
+            <th>Total Price</th>
+            <th>Action</th>
+        </thead>
+
+
+
 	 {% for past_booking in past_bookings %}
          <tr>
             <td> {{ past_booking.0 }} </td>
@@ -66,8 +86,10 @@
             <td> {{ past_booking.6 }} </td>
             <td> {{ past_booking.7 }} </td>
 	    <td> {{ past_booking.8 }} </td>
+        <td><a href="view/{{upcoming_booking.0}}"><button>View</button></a> </td>
          </tr>
         {% endfor %}
         </table>
+        {% endif %}
     </body>
 {% endblock %}

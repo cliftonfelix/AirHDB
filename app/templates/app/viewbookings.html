@@ -1,3 +1,7 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
 {% if user.is_authenticated and user.is_staff and user.is_superuser %}
 <html>
 <body>
@@ -49,3 +53,5 @@
   Permission Denied
 </h1>
 {% endif%}
+
+{% endblock %}

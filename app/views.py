@@ -815,10 +815,10 @@ def user_bookings(request):
                     
                     cursor.execute("INSERT INTO refunds (booking_id,hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price) SELECT * from bookings b where b.booking_id = %s ", [request.POST['id']])
                     cursor.execute("DELETE FROM bookings WHERE booking_id = %s", [request.POST['id']])
-                    status = 'You will be refunded for booking ID %s',(request.POST['id'])
+                    status = 'You will be refunded for booking ID %s' % (request.POST['id'])
         
             else:
-                status = 'You will not be refunded for booking ID %s. Cancelation of booking within 48 hour window before the scheduled booking date will not be refunded',(request.POST['id'])
+                status = 'You will not be refunded for booking ID %s. Cancelation of booking within 48 hour window before the scheduled booking date will not be refunded'% (request.POST['id'])
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
@@ -904,7 +904,7 @@ def cancelbooking(request):
         if request.POST['action'] == 'delete':
             with connection.cursor() as cursor:
                 cursor.execute("INSERT INTO refund(SELECT * from bookings b where b.booking_id = %s)", [request.POST['id']])
-                cursor.execute("DELETE FROM bookings WHERE booking_id = %s", [request.POST['id']])
+                cursor.execute("DELETE FROM bookings WHERE booking_id = %s"% [request.POST['id']])
                 
 
  
