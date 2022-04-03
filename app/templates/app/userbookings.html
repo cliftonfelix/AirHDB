@@ -48,7 +48,7 @@
                 <form method="POST" style="display: inline;">
                 {% csrf_token %}
                 <input type="hidden" name="id" value="{{upcoming_booking.0}}"/>
-                <button onclick="return confirm('Are you sure you want to cancel {{upcoming_booking.0}}?');" type="submit" name="action" value="refund">Refund</button> 
+                <button onclick="return confirm('Are you sure you want to refund booking id {{upcoming_booking.0}}?');" type="submit" name="action" value="refund">Refund</button> 
               </form></td>
          </tr>
     
