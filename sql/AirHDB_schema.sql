@@ -1,5 +1,6 @@
 DROP VIEW IF EXISTS hdb_listings;
 DROP VIEW IF EXISTS refunds_details;
+DROP TABLE IF EXISTS refunds;
 DROP TABLE IF EXISTS bookings;
 DROP TABLE IF EXISTS hdb_units;
 DROP TABLE IF EXISTS users;
