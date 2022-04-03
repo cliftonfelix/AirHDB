@@ -1012,8 +1012,8 @@ def user_bookings(request):
 
             if ((start_date[0] - curr_date).days >= 2):
                 with connection.cursor() as cursor:
-                    cursor.execute("INSERT INTO refunds (booking_id) VALUES (%s)", [request.POST['id']])
-##                    cursor.execute("INSERT INTO refunds (booking_id,hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price) SELECT * from bookings b where b.booking_id = %s ", [request.POST['id']])
+##                    cursor.execute("INSERT INTO refunds (booking_id) VALUES (%s)", [request.POST['id']])
+                    cursor.execute("INSERT INTO refunds (booking_id,hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price) SELECT * from bookings b where b.booking_id = %s ", [request.POST['id']])
                     cursor.execute("DELETE FROM bookings WHERE booking_id = %s", [request.POST['id']])
                     status = 'Your refund request for booking ID %s is submitted' % (request.POST['id'])
         
@@ -1133,10 +1133,10 @@ def refund(request):
 
  
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM refunds_details WHERE refund_status = 'Under Review'")
+        cursor.execute("SELECT * FROM refunds WHERE refund_status = 'Under Review'")
         under_review_refunds = cursor.fetchall()
 
-        cursor.execute("SELECT * FROM refunds_details WHERE refund_status = 'Completed'")
+        cursor.execute("SELECT * FROM refunds WHERE refund_status = 'Completed'")
         completed_refunds = cursor.fetchall()
 
     booking_dict = {'under_review_refunds': under_review_refunds, 'completed_refunds': completed_refunds}
