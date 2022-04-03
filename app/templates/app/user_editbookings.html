@@ -1,14 +1,9 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
 <html>
-<script type="'text/javascript">
-    function formProcess(){
-        var capture = document.forms['input']['id_start_date'].value +'<br>';
-        capture += document.forms['input']['id_end_date'].value +'<br>';
-        document.getElementById("outputDiv").innerHTML =capture;
 
-    }
-
-
-</script>
 <body>
     <h2>Edit Booking ID {{obj.0}}</h2>
     <a href="{% url 'user_bookings' %}">Back to Bookings Page - Bookings</a>
@@ -62,3 +57,4 @@
     
 </body>
 </html>
+{% endblock %}

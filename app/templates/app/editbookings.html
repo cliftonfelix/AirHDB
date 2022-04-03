@@ -1,11 +1,12 @@
-<html>
-<script type="'text/javascript">
-    function formProcess(){
-        var capture = document.forms['input']['id_start_date'].value +'<br>';
-        capture += document.forms['input']['id_end_date'].value +'<br>';
-        document.getElementById("outputDiv").innerHTML =capture;
+{% extends 'main.html' %}
 
-    }
+{% block content %}
+
+
+{% if user.is_authenticated and user.is_staff and user.is_superuser %}
+
+<html>
+
 
 
 </script>
@@ -62,3 +63,9 @@
     
 </body>
 </html>
+{% else %}
+<h1 style="color:red">
+  Permission Denied
+</h1>
+{% endif%}
+{% endblock %}

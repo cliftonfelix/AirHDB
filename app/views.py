@@ -7,8 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, date, timedelta
 import requests
 
 api_key = "AIzaSyCfbRJX3HAzw1mb4ZwHsQCOf4XES8h0eFU"
@@ -450,17 +449,33 @@ def adminu(request):
 
 @login_required(login_url = 'login')
 def adminb(request):
+    status = ''
+    curr_date = date.today()
     if request.POST:
         if request.POST['action'] == 'delete':
             with connection.cursor() as cursor:
-                cursor.execute("DELETE FROM bookings WHERE booking_id = %s", [request.POST['id']])
- 
+                cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [request.POST['id']])
+                start_date = cursor.fetchone()
+
+            if ((start_date[0] - curr_date).days >= 2):
+                with connection.cursor() as cursor:
+                    
+                    cursor.execute("INSERT INTO refunds (booking_id,hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price) SELECT * from bookings b where b.booking_id = %s ", [request.POST['id']])
+                    cursor.execute("DELETE FROM bookings WHERE booking_id = %s", [request.POST['id']])
+                    status = 'Refund for booking ID %s has been added to the refund table',(request.POST['id'])
+            else:
+                status = 'Refund for booking ID %s will not be given. Cancelation of booking within 48 hour window before the scheduled booking date will not be refunded',(request.POST['id'])
+
+
     with connection.cursor() as cursor:
         cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.booked_by, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
-		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id ORDER BY b.booking_id")
+            FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id ORDER BY b.booking_id")
         bookings = cursor.fetchall()
 
+   
+
     booking_dict = {'bookings':bookings}
+    booking_dict['status'] = status 
 
     return render(request,'app/adminbookings.html',booking_dict)
 
@@ -590,8 +605,6 @@ def editunits(request, id):
 def editbookings(request, id):
     """Shows the main page"""
 
-    # dictionary for initial data with
-    # field names as keys
     context ={}
     context['startdate'] = ''
     context['enddate'] = ''
@@ -600,44 +613,53 @@ def editbookings(request, id):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
         obj = cursor.fetchone()
+        
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [id])
+        obj2 = cursor.fetchone()
+
+    curr_date = date.today()
 
     status = ''
     # save the data from the form
 
-    if request.POST:
-        ##TODO: date validation
-        with connection.cursor() as cursor:
-            context['startdate'] = request.POST.get('start_date')
-            context['enddate'] = request.POST.get('end_date')
-
-            try:
-                cursor.execute("UPDATE bookings SET start_date = %s, end_date = %s WHERE booking_id = %s"
-                        , [request.POST['start_date'], request.POST['end_date'], id ])
-                status = 'Customer edited successfully!'
+    if ((obj2[0] - curr_date).days >= 2):
+        if request.POST:
+            with connection.cursor() as cursor:
+                context['startdate'] = request.POST.get('start_date')
+                context['enddate'] = request.POST.get('end_date')
                 
-            except Exception as e:
-                message = str(e)
+                try:
+                    cursor.execute("UPDATE bookings SET start_date = %s, end_date = %s WHERE booking_id = %s"
+                                , [request.POST['start_date'], request.POST['end_date'], id ])
+                    status = 'Booking ID %s dates edited successfully!',(id)
+                
+                except Exception as e:
+                    message = str(e)
 
-                if 'violates check constraint "bookings_start_date_check"' in message:
-                    status = 'There are no bookings to be made earlier than 2022-04-11, please choose another start date'
-                elif 'invalid input syntax' in message:
-                    status ='Please check your start and end date and follow the format'
-                elif 'violates check constraint "bookings_check"' in message:
-                    status = 'Please input a valid start and end date, the start date should be before end date'
-                elif 'duplicate key value violates unique constraint "bookings_pkey"' in message:
-                    status = 'There exists a booking in these dates please choose another start and end date'
-                elif 'Booking Dates Not Available' in message:
-                    status = 'There exists a booking in these dates please choose another start and end date'
-                else:
-                    status = message
+                    if 'violates check constraint "bookings_start_date_check"' in message:
+                        status = 'There are no bookings to be made earlier than 2022-04-11, please choose another start date'
+                    elif 'invalid input syntax' in message:
+                        status ='Please check your start and end date and follow the format'
+                    elif 'violates check constraint "bookings_check"' in message:
+                        status = 'Please input a valid start and end date, the start date should be before end date'
+                    elif 'duplicate key value violates unique constraint "bookings_pkey"' in message:
+                        status = 'There exists a booking in these dates please choose another start and end date'
+                    elif 'Booking Dates Not Available' in message:
+                        status = 'There exists a booking in these dates please choose another start and end date'
+                    else:
+                        status = message
 
-            cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
-            obj = cursor.fetchone()
+                cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
+                obj = cursor.fetchone()
 
-    context["obj"] = obj
-    context["status"] = status
-	
-    return render(request, "app/editbookings.html", context)
+        context["obj"] = obj
+        context["status"] = status
+    
+        return render(request, "app/editbookings.html", context)
+    else:
+        messages.success(request, 'Change of booking dates for booking ID can only be made up to 48 hours before the scheduled booking date'% (id))
+        return redirect('adminbookings')
 
 @login_required(login_url = 'login')
 def adminaddunits(request):
@@ -976,23 +998,44 @@ def change_password(request):
 
 @login_required(login_url = 'login')
 def user_bookings(request):
+    status =''
     email = request.user.username
-    current_date = date.today()
-    format_date = current_date.strftime("%B %d, %Y")
+
+    #current_date = date.today()
+    #format_date = current_date.strftime("%B %d, %Y")
+    curr_date = date.today()
+    if request.POST:
+        if request.POST['action'] == 'delete':
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [request.POST['id']])
+                start_date = cursor.fetchone()
+
+            if ((start_date[0] - curr_date).days >= 2):
+                with connection.cursor() as cursor:
+                    
+                    cursor.execute("INSERT INTO refunds (booking_id,hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price) SELECT * from bookings b where b.booking_id = %s ", [request.POST['id']])
+                    cursor.execute("DELETE FROM bookings WHERE booking_id = %s", [request.POST['id']])
+                    status = 'You will be refunded for booking ID %s' % (request.POST['id'])
+        
+            else:
+                status = 'You will not be refunded for booking ID %s. Cancelation of booking within 48 hour window before the scheduled booking date will not be refunded'% (request.POST['id'])
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
-		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id AND b.end_date < format_date AND booked_by = %s ORDER BY b.booking_id", [email])
+		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id AND b.end_date < CURRENT_TIMESTAMP AND booked_by = %s ORDER BY b.booking_id", [email])
+
         past_bookings = cursor.fetchall()
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
-		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id AND b.start_date > format_date AND booked_by = %s ORDER BY b.booking_id", [email])
+		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id AND b.start_date > CURRENT_TIMESTAMP AND booked_by = %s ORDER BY b.booking_id", [email])
+
         upcoming_bookings = cursor.fetchall()	
 	
     context = {}
     context['past_bookings'] = past_bookings
     context['upcoming_bookings'] = upcoming_bookings
+    context['status'] =status
     return render(request, 'app/userbookings.html', context)
 
 
@@ -1055,6 +1098,54 @@ def book(request, id):
         return redirect("payment")
 
     return render(request, "app/book.html", context)
+
+
+@login_required(login_url = 'login')
+def cancelbooking(request):
+    if request.POST:
+        if request.POST['action'] == 'delete':
+            with connection.cursor() as cursor:
+                cursor.execute("INSERT INTO refund(SELECT * from bookings b where b.booking_id = %s)", [request.POST['id']])
+                cursor.execute("DELETE FROM bookings WHERE booking_id = %s"% [request.POST['id']])
+                
+
+ 
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.booked_by, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
+		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id ORDER BY b.booking_id")
+        bookings = cursor.fetchall()
+
+    booking_dict = {'bookings':bookings}
+
+    return render(request,'app/adminbookings.html',booking_dict)
+
+@login_required(login_url = 'login')
+def refund(request):
+    status= ''
+    
+    if request.POST:
+        if request.POST['action'] == 'delete':
+            with connection.cursor() as cursor:
+                
+                cursor.execute("DELETE FROM refunds WHERE booking_id = %s", [request.POST['id']])
+                status = 'Booking ID %s has been successfully refunded!'% (request.POST['id'])
+                
+
+ 
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.booked_by, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
+		       FROM refunds b, hdb_units h WHERE b.hdb_id = h.hdb_id ORDER BY b.booking_id")
+        refunds = cursor.fetchall()
+
+    booking_dict = {'refunds':refunds}
+    booking_dict['status'] =status
+
+    return render(request,'app/refund.html',booking_dict)
+
+
+
+
+
 
 @login_required(login_url = 'login')
 def payment(request):
@@ -1123,3 +1214,301 @@ def payment(request):
         return redirect("listings")
 
     return render(request, "app/payment.html", context)
+
+@login_required(login_url = 'login')
+def user_editbookings(request, id):
+    """Shows the main page"""
+
+    email = request.user.username
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM bookings WHERE booked_by = %s", [email])
+        user_bookings = cursor.fetchall()
+    if not user_bookings:
+        return redirect('user_bookings')
+
+
+    
+    
+
+    # dictionary for initial data with
+    # field names as keys
+    context ={}
+    context['startdate'] = ''
+    context['enddate'] = ''
+
+    # fetch the object related to passed id
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
+        obj = cursor.fetchone()
+    
+    if obj in user_bookings:
+        
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [id])
+            obj2 = cursor.fetchone()
+
+        curr_date = date.today()
+
+        status = ''
+        # save the data from the form
+        
+
+
+        if ((obj2[0] - curr_date).days >= 2):
+            if request.POST:
+                with connection.cursor() as cursor:
+                    context['startdate'] = request.POST.get('start_date')
+                    context['enddate'] = request.POST.get('end_date')
+                    
+                    try:
+                        cursor.execute("UPDATE bookings SET start_date = %s, end_date = %s WHERE booking_id = %s"
+                                    , [request.POST['start_date'], request.POST['end_date'], id ])
+                        status = 'Booking ID %s dates edited successfully!',(id)
+                    
+                    except Exception as e:
+                        message = str(e)
+
+                        if 'violates check constraint "bookings_start_date_check"' in message:
+                            status = 'There are no bookings to be made earlier than 2022-04-11, please choose another start date'
+                        elif 'invalid input syntax' in message:
+                            status ='Please check your start and end date and follow the format'
+                        elif 'violates check constraint "bookings_check"' in message:
+                            status = 'Please input a valid start and end date, the start date should be before end date'
+                        elif 'duplicate key value violates unique constraint "bookings_pkey"' in message:
+                            status = 'There exists a booking in these dates please choose another start and end date'
+                        elif 'Booking Dates Not Available' in message:
+                            status = 'There exists a booking in these dates please choose another start and end date'
+                        else:
+                            status = message
+
+                    cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
+                    obj = cursor.fetchone()
+
+            context["obj"] = obj
+            context["status"] = status
+            
+        
+            return render(request, "app/user_editbookings.html", context)
+            
+        else:
+            messages.success(request, 'Change of booking dates for booking ID can only be made up to 48 hours before the scheduled booking date'% (id))
+            
+
+            return redirect('user_bookings')
+    else:
+
+        return redirect('user_bookings')
+
+
+@login_required(login_url = 'login')
+def user_viewbookings(request,id):
+    email = request.user.username
+    
+    with connection.cursor() as cursor:
+       cursor.execute("SELECT * FROM bookings WHERE booked_by = %s", [email])
+       user_bookings = cursor.fetchall()
+    if not user_bookings:
+       return redirect('user_bookings')
+    
+    
+
+    ## Use raw query to get a customer
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM bookings WHERE booking_id = %s", [id])
+        booking = cursor.fetchone()
+
+    if booking not in user_bookings:
+        return redirect('user_bookings')
+
+    result_dict = {'booking': booking}
+    
+
+    return render(request,'app/user_viewbookings.html',result_dict)  
+
+
+@login_required(login_url = 'login')
+def user_posts(request):
+    status = ''
+    email = request.user.username
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_units hu1 WHERE posted_by = %s ORDER BY hu1.hdb_id", [email])
+        units = cursor.fetchall()
+
+    result_dict = {'records': units}
+    result_dict['status'] = status
+    
+    return render(request,'app/user_posts.html',result_dict)
+
+@login_required(login_url = 'login')
+def useraddunits(request):
+    """Shows the main page"""
+    context = {}
+    email = request.user.username
+    status = ''
+    def get_coordinates(address):
+    
+        response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + address, params = {"key": api_key})
+        resp_json_payload = response.json()
+        return resp_json_payload['results'][0]['geometry']['location']["lat"], resp_json_payload['results'][0]['geometry']['location']["lng"]
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM towns")
+        towns = cursor.fetchall()
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_types_info")
+        types = cursor.fetchall()
+        
+    context['hdb_types'] = types
+    context['towns'] = towns
+    context['towns_default'] = ''
+    context['type'] = ''
+    context['address'] = ''
+    context['unit'] =''
+    context['size'] =''
+    context['price'] = ''
+    context['name'] = ''
+    context['number'] = ''
+    context['ans'] = ''
+
+    if request.POST:
+        context['towns_default'] = request.POST.get('town')
+        context['address'] = request.POST['hdb_address'].upper()
+        context['unit'] = request.POST.get('hdb_unit_number')
+        context['size'] = request.POST.get('size')
+        context['price'] = request.POST.get('price_per_day')
+        context['name'] = request.POST.get('contact_person_name')
+        context['number'] = request.POST.get('contact_person_mobile')
+        context['type'] = request.POST.get('hdb_type')
+        context['ans'] = request.POST.get('multistorey_carpark')
+
+        ## Check if customerid is already in the table
+        with connection.cursor() as cursor:
+
+            cursor.execute("SELECT * FROM hdb_units WHERE hdb_address = %s and hdb_unit_number = %s", [request.POST['hdb_address'],request.POST['hdb_unit_number']])
+            customer = cursor.fetchone()
+            ## No customer with same id
+            if customer == None:
+                ##TODO: date validation
+                try:
+                    cursor.execute("INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,posted_by,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
+                            , [request.POST['hdb_address'].upper(), request.POST['hdb_unit_number'], request.POST['hdb_type'], 
+                            request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'], email,
+                            request.POST['contact_person_name'] ,request.POST['contact_person_mobile'] ,get_coordinates(request.POST['hdb_address'])[0],get_coordinates(request.POST['hdb_address'])[1]])
+                    
+                    messages.success(request, '%s %s has been successfully added!'% (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number']))
+                    return redirect('posts')
+                   
+                except Exception as e:
+                    message = str(e)
+                    if 'violates check constraint "hdb_units_check"' in message:
+                        if request.POST['hdb_type'] == "2-Room/2-Room Flexi":
+                            status = 'The size of a 2-Room/2-Room Flexi should be between 35 and 38 or size between 45 and 47'
+                        elif request.POST['hdb_type'] == '3-Room':
+                            status = 'The size of a 3-Room should be between 60 and 68'
+                        elif request.POST['hdb_type'] == '4-Room':
+                            status = 'The size of a 4-Room should be between 85 and 93'
+                        elif request.POST['hdb_type'] == '5-Room':
+                            status = 'The size of a 5-Room should be between 107 and 113'
+                        elif request.POST['hdb_type'] == '3-Gen':
+                            status = 'The size of a 3-Gen should be between 115 and 118'
+                    elif 'violates check constraint "hdb_units_contact_person_mobile_check"' in message:
+                        status = 'Please input a valid Singapore Number'
+
+                    elif 'violates check constraint "hdb_units_hdb_lat_check"' in message:
+                        status = 'Please input a valid Singapore Address'
+                    elif 'violates check constraint "hdb_units_hdb_unit_number_check"' in message:
+                        status = 'Please input unit number in this format:"#_-_" '
+                    elif message == 'list index out of range':
+                        status = 'Please input a valid Singapore Address'
+                    elif 'violates unique constraint "hdb_units_hdb_address_hdb_unit_number_key"' in message:
+                        status = '%s %s already exists' % (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number'])
+
+                    
+                    else:
+                        status = message
+
+            else:
+                status = '%s %s already exists' % (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number'])
+
+    context['status'] = status
+ 
+    return render(request, "app/useraddunits.html", context)
+
+def viewposts(request,id):
+
+    email = request.user.username
+    
+    with connection.cursor() as cursor:
+       cursor.execute("SELECT * FROM hdb_units WHERE posted_by = %s", [email])
+       user_posts = cursor.fetchall()
+    if not user_posts:
+       return redirect('posts')
+    
+    
+
+    
+    
+    ## Use raw query to get a customer
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_units WHERE hdb_id = %s", [id])
+        unit = cursor.fetchone()
+
+    if unit not in user_posts:
+        return redirect('posts')
+	
+    result_dict = {'unit': unit}
+
+    return render(request,'app/viewposts.html',result_dict)
+
+def editposts(request, id):
+    """Shows the main page"""
+
+    email = request.user.username
+    
+    with connection.cursor() as cursor:
+       cursor.execute("SELECT * FROM hdb_units WHERE posted_by = %s", [email])
+       user_posts = cursor.fetchall()
+    if not user_posts:
+       return redirect('posts')
+
+    # dictionary for initial data with
+    # field names as keys
+    context ={}
+    
+    # fetch the object related to passed id
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_units WHERE hdb_id = %s", [id])
+        obj = cursor.fetchone()
+    if obj not in user_posts:
+        return redirect('posts')
+
+    status = ''
+    # save the data from the form
+
+    if request.POST:
+        ##TODO: date validation
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("UPDATE hdb_units SET contact_person_name = %s, contact_person_mobile = %s,can_book = %s WHERE hdb_id = %s"
+                    , [request.POST['contact_person'], request.POST['contact_number'],request.POST['can_book'], id ])
+                status = 'Customer edited successfully!'
+                
+            except Exception as e:
+                message = str(e)
+		
+                if 'violates check constraint "hdb_units_contact_person_mobile_check"' in message:
+                    status = 'Unsuccessful , Please enter a valid Singapore Mobile Number'
+                elif 'violates check constraint "hdb_units_can_book_check"' in message:
+                    status = 'Please input Yes or No for Can Book?'
+                
+                else:
+                    status = message
+
+            cursor.execute("SELECT * FROM hdb_units WHERE hdb_id = %s", [id])
+            obj = cursor.fetchone()
+		
+    context["obj"] = obj
+    context["status"] = status
+ 
+    return render(request, "app/editposts.html", context)
+

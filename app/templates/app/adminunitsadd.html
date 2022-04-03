@@ -1,7 +1,10 @@
 {% extends 'main.html' %}
 
 {% block content %}
-{% load static %}
+
+{% if user.is_authenticated and user.is_staff and user.is_superuser %}
+
+<html>
 <body>
     <h2>Add New Unit</h2>
     <a href="{% url 'adminunits' %}">Back to Admin Page - Units</a>
@@ -60,4 +63,13 @@
         <button type="submit" value="Add">Add</button>
     </form>
 </body>
+</html>
+
+{% else %}
+<h1 style="color:red">
+  Permission Denied
+</h1>
+{% endif%}
+
 {% endblock %}
+

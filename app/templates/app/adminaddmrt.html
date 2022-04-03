@@ -1,5 +1,12 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+{% if user.is_authenticated and user.is_staff and user.is_superuser %}
+
 <html>
 <body>
+
     <h2>Add New Mrt</h2>
     <a href="{% url 'adminmrts' %}">Back to Admin Page - MRTs</a>
 
@@ -25,3 +32,12 @@
     </form>
 </body>
 </html>
+{% else %}
+<h1 style="color:red">
+  Permission Denied
+</h1>
+{% endif%}
+{% endblock %}
+
+
+

@@ -1,9 +1,20 @@
 {% extends 'main.html' %}
 
 {% block content %}
+{% if user.is_authenticated and user.is_staff and user.is_superuser %}
 
 <h1>Admin Page - Bookings</h1>
+<p style="color:red">{{ status|safe }}</p>
+<br>
 
+{% if messages %}
+    
+        {% for message in messages %}
+        <p style="color:red">{{ message|safe }}</p>
+        {% endfor %}
+    
+    {% endif %}
+<br>
 {% load static %}
 <html>
   <body>
@@ -46,11 +57,16 @@
               <form method="POST" style="display: inline;">
               {% csrf_token %}
               <input type="hidden" name="id" value="{{booking.0}}"/>
-              <button onclick="return confirm('Are you sure you want to delete {{booking.0}}?');" type="submit" name="action" value="delete">Delete</button> 
+              <button onclick="return confirm('Are you sure you want to cancel booking id {{booking.0}}?');" type="submit" name="action" value="delete">Cancel</button> 
             </form></td>
         </tr>
         {% endfor %}
         </table>
   </body>
 </html>
+{% else %}
+<h1 style="color:red">
+  Permission Denied
+</h1>
+{% endif%}
 {% endblock %}
