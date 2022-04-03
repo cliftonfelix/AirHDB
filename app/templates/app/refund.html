@@ -56,7 +56,7 @@
             <form method="POST" style="display: inline;">
             {% csrf_token %}
             <input type="hidden" name="id" value="{{refund.0}}"/>
-            <button onclick="return confirm('Are you sure to refund booking id {{refund.0}}?');" type="submit" name="action" value="complete">Completed</button> 
+            <button onclick="return confirm('Are you sure to refund booking id {{refund.0}}?');" type="submit" name="action" value="completed">Completed</button> 
           </form></td>
 
       </tr>
