@@ -10,7 +10,7 @@
 <body>
 {% if user.is_authenticated and user.is_staff and user.is_superuser %}
 
-    <img src="{% static 'app/images/AirHDB_logo2.png' %}" width="13%"   alt="AirHDB Logo"/><br/>
+    <img src="{% static 'app/images/AirHDB_logo2.png' %}" width="13%" alt="AirHDB Logo"/>
     <a href = "{% url 'listings' %}">Listings</a>
     <a href = "{% url 'adminunits' %}">Admin Page - Units</a> 
     <a href = "{% url 'adminbookings' %}">Admin Page - Bookings</a> 
@@ -24,7 +24,7 @@
 
 {% elif user.is_authenticated %}
 
-        <img src="{% static 'app/images/AirHDB_logo2.png' %}" width="13%"   alt="AirHDB Logo"/><br/>
+        <img src="{% static 'app/images/AirHDB_logo2.png' %}" width="13%" alt="AirHDB Logo"/>
         <a href = "{% url 'listings' %}">Listings</a>
         <a href = "{% url 'profile' %}">Profile</a>
         <a href = "{% url 'user_bookings' %}">Bookings</a>
