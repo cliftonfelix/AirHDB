@@ -51,4 +51,4 @@ urlpatterns = [
     path('user_posts/edit/<str:id>/', app.views.editposts)
 ]
 
-handler404 = 'tasks.views.handler404'
+handler404 = 'app.views.handler404'
