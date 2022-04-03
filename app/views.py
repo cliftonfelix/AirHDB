@@ -1514,3 +1514,6 @@ def editposts(request, id):
  
     return render(request, "app/editposts.html", context)
 
+def handler404(request, exception):
+    return render(request, 'tasks/404.html')
+
