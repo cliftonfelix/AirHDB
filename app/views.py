@@ -1005,7 +1005,7 @@ def user_bookings(request):
     #format_date = current_date.strftime("%B %d, %Y")
     curr_date = date.today()
     if request.POST:
-        if request.POST['action'] == 'delete':
+        if request.POST['action'] == 'refund':
             with connection.cursor() as cursor:
                 cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [request.POST['id']])
                 start_date = cursor.fetchone()
