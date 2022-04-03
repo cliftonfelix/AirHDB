@@ -1237,7 +1237,7 @@ def user_editbookings(request, id):
         cursor.execute("SELECT * FROM bookings WHERE booked_by = %s", [email])
         user_bookings = cursor.fetchall()
     if not user_bookings:
-        messages.error(request, "You cannot access the page. The specified booking id doesn't exist")
+        messages.error(request, "You cannot access the page. The specified booking id was not made by the user")
         return redirect('user_bookings')
 
 
@@ -1322,7 +1322,7 @@ def user_viewbookings(request,id):
         cursor.execute("SELECT * FROM bookings WHERE booked_by = %s", [email])
         user_bookings = cursor.fetchall()
     if not user_bookings:
-        messages.error(request, "You cannot access the page. The specified booking id doesn't exist")
+        messages.error(request, "You cannot access the page. The specified booking id was not made by the user")
         return redirect('user_bookings')
     
     
@@ -1459,7 +1459,7 @@ def viewposts(request,id):
         cursor.execute("SELECT * FROM hdb_units WHERE posted_by = %s", [email])
         user_posts = cursor.fetchall()
     if not user_posts:
-        messages.error(request, "You cannot access the page. The specified hdb id doesn't exist")
+        messages.error(request, "You cannot access the page. The specified hdb id was not posted by the user")
         return redirect('posts')
     
     
@@ -1472,7 +1472,7 @@ def viewposts(request,id):
         unit = cursor.fetchone()
 
     if unit not in user_posts:
-        messages.error(request, "You cannot access the page. The specified hdb id was not made by the user")
+        messages.error(request, "You cannot access the page. The specified hdb id was not posted by the user")
         return redirect('posts')
 	
     result_dict = {'unit': unit}
@@ -1489,7 +1489,7 @@ def editposts(request, id):
         cursor.execute("SELECT * FROM hdb_units WHERE posted_by = %s", [email])
         user_posts = cursor.fetchall()
     if not user_posts:
-        messages.error(request, "You cannot access the page. The specified hdb id doesn't exist")
+        messages.error(request, "You cannot access the page. The specified hdb id was not posted by the user")
         return redirect('posts')
 
     # dictionary for initial data with
@@ -1501,7 +1501,7 @@ def editposts(request, id):
         cursor.execute("SELECT * FROM hdb_units WHERE hdb_id = %s", [id])
         obj = cursor.fetchone()
     if obj not in user_posts:
-        messages.error(request, "You cannot access the page. The specified hdb id was not made by the user")
+        messages.error(request, "You cannot access the page. The specified hdb id was not posted by the user")
         return redirect('posts')
 
     status = ''
