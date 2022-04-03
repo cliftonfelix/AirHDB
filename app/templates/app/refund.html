@@ -7,7 +7,7 @@
 
 
 
-<h1>Admin Page - Refund</h1>
+<h1>Admin Page - Refunds</h1>
 <p style="color:green">{{ status|safe }}</p>
 <br>
 {% if messages %}
@@ -23,43 +23,82 @@
 {% load static %}
 <html>
   <body>
+    <h2>Pending Refunds</h2>
     
     <div>
     <table border = 1>
       <thead>
         <th>Booking ID</th>
-	    <th>HDB ID</th>
-	    <th>Address</th>
-	    <th>Unit Number</th>
-      <th>Booked By</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Credit Card Type</th>
-            <th>Credit Card Number</th>
-            <th>Refund</th>
-            <th>Action</th>
+	<th>HDB ID</th>
+	<th>Address</th>
+	<th>Unit Number</th>
+        <th>Booked By</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Credit Card Type</th>
+        <th>Credit Card Number</th>
+        <th>Refund</th>
+	<th>Refund Status</th>
+        <th>Action</th>
         
       </thead>
-      {% for refund in refunds %}
+      {% for refund in under_review_refunds %}
       <tr>
         <td> {{ refund.0 }} </td>
-        <td> {{ refund.1 }} </td>
         <td> {{ refund.2 }} </td>
         <td> {{ refund.3 }} </td>
-  <td> {{ refund.4 }} </td>
+  	<td> {{ refund.4 }} </td>
         <td> {{ refund.5 }} </td>
         <td> {{ refund.6 }} </td>
         <td> {{ refund.7 }} </td>
-  <td> {{ refund.8 }} </td>
-  <td> {{ refund.9 }} </td>
+  	<td> {{ refund.8 }} </td>
+  	<td> {{ refund.9 }} </td>
+	<td> {{ refund.10 }} </td>
+	<td> {{ refund.1 }} </td>
         <td>
             
             <form method="POST" style="display: inline;">
             {% csrf_token %}
             <input type="hidden" name="id" value="{{refund.0}}"/>
-            <button onclick="return confirm('Are you sure we already refunded booking id {{refund.0}}?');" type="submit" name="action" value="delete">Completed</button> 
+            <button onclick="return confirm('Are you sure to refund booking id {{refund.0}}?');" type="submit" name="action" value="delete">Completed</button> 
           </form></td>
 
+      </tr>
+      {% endfor %}
+    </table>
+	    
+	    
+    <h2>Completed Refunds</h2>
+    
+    <div>
+    <table border = 1>
+      <thead>
+        <th>Booking ID</th>
+	<th>HDB ID</th>
+	<th>Address</th>
+	<th>Unit Number</th>
+        <th>Booked By</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Credit Card Type</th>
+        <th>Credit Card Number</th>
+        <th>Refund</th>
+	<th>Refund Status</th>
+        
+      </thead>
+      {% for refund in completed_refunds %}
+      <tr>
+        <td> {{ refund.0 }} </td>
+        <td> {{ refund.2 }} </td>
+        <td> {{ refund.3 }} </td>
+  	<td> {{ refund.4 }} </td>
+        <td> {{ refund.5 }} </td>
+        <td> {{ refund.6 }} </td>
+        <td> {{ refund.7 }} </td>
+  	<td> {{ refund.8 }} </td>
+  	<td> {{ refund.9 }} </td>
+	<td> {{ refund.10 }} </td>
+	<td> {{ refund.1 }} </td>
       </tr>
       {% endfor %}
     </table>
