@@ -14,6 +14,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import handler404
 
 import app.views
 
@@ -49,3 +50,5 @@ urlpatterns = [
     path('user_posts/view/<str:id>/', app.views.viewposts),
     path('user_posts/edit/<str:id>/', app.views.editposts)
 ]
+
+handler404 = 'tasks.views.handler404'
