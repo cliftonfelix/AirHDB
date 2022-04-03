@@ -1,0 +1,89 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<h1>Refunds</h1>
+<p style="color:green">{{ status|safe }}</p>
+<br>
+{% if messages %}
+    
+        {% for message in messages %}
+        <p style="color:rgb(27, 216, 52)">{{ message|safe }}</p>
+        {% endfor %}
+    
+    {% endif %}
+
+    
+
+{% load static %}
+<html>
+  <body>
+    <h2>Pending Refunds</h2>
+    
+    <div>
+    <table border = 1>
+      <thead>
+        <th>Booking ID</th>
+	      <th>HDB ID</th>
+        <th>Booked By</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Credit Card Type</th>
+        <th>Credit Card Number</th>
+        <th>Refund</th>
+	      <th>Refund Status</th>
+        
+      </thead>
+      {% for refund in under_review_refunds %}
+      <tr>
+        <td> {{ refund.0 }} </td>
+        <td> {{ refund.2 }} </td>
+        <td> {{ refund.3 }} </td>
+  	    <td> {{ refund.4 }} </td>
+        <td> {{ refund.5 }} </td>
+        <td> {{ refund.6 }} </td>
+        <td> {{ refund.7 }} </td>
+  	    <td> {{ refund.8 }} </td>
+	      <td> {{ refund.1 }} </td>
+
+      </tr>
+      {% endfor %}
+    </table>
+	    
+	    
+    <h2>Completed Refunds</h2>
+    
+    <div>
+    <table border = 1>
+      <thead>
+        <th>Booking ID</th>
+	<th>HDB ID</th>
+        <th>Booked By</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Credit Card Type</th>
+        <th>Credit Card Number</th>
+        <th>Refund</th>
+	<th>Refund Status</th>
+        
+      </thead>
+      {% for refund in completed_refunds %}
+      <tr>
+        <td> {{ refund.0 }} </td>
+        <td> {{ refund.2 }} </td>
+        <td> {{ refund.3 }} </td>
+  	<td> {{ refund.4 }} </td>
+        <td> {{ refund.5 }} </td>
+        <td> {{ refund.6 }} </td>
+        <td> {{ refund.7 }} </td>
+  	<td> {{ refund.8 }} </td>
+	<td> {{ refund.1 }} </td>
+      </tr>
+      {% endfor %}
+    </table>
+    
+
+
+  </body>
+{% endif %}
+{% endblock %}
