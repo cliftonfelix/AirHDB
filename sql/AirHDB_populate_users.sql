@@ -1,8 +1,4 @@
 INSERT INTO users(name,email_address,mobile_number,is_admin) VALUES ('Admin', 'admin@airhdb.com', '92450330', 'Yes');
-INSERT INTO users(name,email_address,mobile_number,is_admin) VALUES ('Jason','jason@airhdb.com',85553641, 'Yes');
-INSERT INTO users(name,email_address,mobile_number,is_admin) VALUES ('Clifton','clifton@airhdb.com',85553414, 'Yes');
-INSERT INTO users(name,email_address,mobile_number,is_admin) VALUES ('Hari','hari@airhdb.com',95552443, 'Yes');
-INSERT INTO users(name,email_address,mobile_number,is_admin) VALUES ('Bryan','bryan@airhdb.com',95552738, 'Yes');
 INSERT INTO users(name,email_address,mobile_number) VALUES ('Inigo','ituffrey0@altervista.org',95558401);
 INSERT INTO users(name,email_address,mobile_number) VALUES ('Meredith','mgwyther1@tripod.com',85555760);
 INSERT INTO users(name,email_address,mobile_number) VALUES ('Vida','vmanthroppe2@upenn.edu',85556404);

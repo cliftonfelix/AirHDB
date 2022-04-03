@@ -24,6 +24,17 @@ CREATE TABLE IF NOT EXISTS hdb_types_info (
 	max_occupants INT NOT NULL CHECK (max_occupants > 0)
 );
 
+CREATE TABLE IF NOT EXISTS users (
+	name VARCHAR(256) NOT NULL,
+	email_address VARCHAR(256) PRIMARY KEY CHECK (email_address LIKE '%_@_%._%'),
+	mobile_number INT NOT NULL CHECK ((mobile_number BETWEEN 30000000 AND 39999999) OR
+									  (mobile_number BETWEEN 60000000 AND 69999999) OR
+									  (mobile_number BETWEEN 80000000 AND 89999999) OR
+									  (mobile_number BETWEEN 90000000 AND 98999999)), -- https://en.wikipedia.org/wiki/Telephone_numbers_in_Singapore
+	is_admin VARCHAR(3) NOT NULL DEFAULT 'No' CHECK(is_admin = 'Yes' OR
+												    is_admin = 'No')
+);
+
 CREATE TABLE IF NOT EXISTS hdb_units (
 	hdb_id SERIAL NOT NULL PRIMARY KEY,
 	hdb_address VARCHAR(256) NOT NULL,
@@ -34,6 +45,7 @@ CREATE TABLE IF NOT EXISTS hdb_units (
 	town VARCHAR(256) NOT NULL REFERENCES towns(town),
 	multistorey_carpark VARCHAR(3) NOT NULL CHECK(multistorey_carpark = 'Yes' OR 
 												  multistorey_carpark = 'No'),
+	posted_by VARCHAR(256) NOT NULL REFERENCES users(email_address),
 	contact_person_name VARCHAR(256) NOT NULL,
 	contact_person_mobile INT NOT NULL CHECK ((contact_person_mobile BETWEEN 30000000 AND 39999999) OR
 											  (contact_person_mobile BETWEEN 60000000 AND 69999999) OR
@@ -51,17 +63,6 @@ CREATE TABLE IF NOT EXISTS hdb_units (
 		   (hdb_type = '4-Room' AND (size BETWEEN 85 AND 93)) OR
 		   (hdb_type = '5-Room' AND (size BETWEEN 107 AND 113)) OR
 		   (hdb_type = '3-Gen' AND (size BETWEEN 115 AND 118))) -- https://www.hdb.gov.sg/residential/buying-a-flat/new/types-of-flats
-);
-
-CREATE TABLE IF NOT EXISTS users (
-	name VARCHAR(256) NOT NULL,
-	email_address VARCHAR(256) PRIMARY KEY CHECK (email_address LIKE '%_@_%._%'),
-	mobile_number INT NOT NULL CHECK ((mobile_number BETWEEN 30000000 AND 39999999) OR
-									  (mobile_number BETWEEN 60000000 AND 69999999) OR
-									  (mobile_number BETWEEN 80000000 AND 89999999) OR
-									  (mobile_number BETWEEN 90000000 AND 98999999)), -- https://en.wikipedia.org/wiki/Telephone_numbers_in_Singapore
-	is_admin VARCHAR(3) NOT NULL DEFAULT 'No' CHECK(is_admin = 'Yes' OR
-												    is_admin = 'No')
 );
 
 CREATE TABLE IF NOT EXISTS bookings (

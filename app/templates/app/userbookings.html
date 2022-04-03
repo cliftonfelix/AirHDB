@@ -40,8 +40,7 @@
             <td> {{ upcoming_booking.6 }} </td>
             <td> {{ upcoming_booking.7 }} </td>
 	    <td> {{ upcoming_booking.8 }} </td>
-        
-	    
+
  	    <!--need to change the primary key once clifton adds the id for booking-->
             <td><a href="view/{{upcoming_booking.0}}"><button>View</button></a> | 
                 <a href="edit/{{upcoming_booking.0}}"><button>Edit</button></a>
@@ -73,8 +72,6 @@
             <th>Action</th>
         </thead>
 
-
-
 	 {% for past_booking in past_bookings %}
          <tr>
             <td> {{ past_booking.0 }} </td>
@@ -86,7 +83,9 @@
             <td> {{ past_booking.6 }} </td>
             <td> {{ past_booking.7 }} </td>
 	    <td> {{ past_booking.8 }} </td>
+
         <td><a href="view/{{upcoming_booking.0}}"><button>View</button></a> </td>
+
          </tr>
         {% endfor %}
         </table>

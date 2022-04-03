@@ -30,7 +30,7 @@ urlpatterns = [
     path('bookings/view/<str:id>/', app.views.viewbookings),
     path('units/edit/<str:id>/', app.views.editunits),
     path('bookings/edit/<str:id>/', app.views.editbookings),
-    path('units/add/', app.views.addunits, name='adminaddunits'),
+    path('units/add/', app.views.adminaddunits, name='adminaddunits'),
     path('mrts/', app.views.adminm, name='adminmrts'),
     path('mrts/add', app.views.addmrt, name='adminaddmrt'),
     path('profile/', app.views.profile, name = 'profile'),
@@ -40,13 +40,12 @@ urlpatterns = [
     path('payment/', app.views.payment, name = "payment"),
     path('listings/book/<str:id>/', app.views.book),
     path('user_bookings/', app.views.user_bookings, name = 'user_bookings'),
-     path('user_bookings/edit/<str:id>/', app.views.user_editbookings),
-     path('user_bookings/view/<str:id>/', app.views.user_viewbookings),
-     path('refund/', app.views.refund,name='adminrefund'),
+    path('user_bookings/edit/<str:id>/', app.views.user_editbookings),
+    path('user_bookings/view/<str:id>/', app.views.user_viewbookings),
+    path('refund/', app.views.refund,name='adminrefund'),
 
     path('user_posts/', app.views.user_posts, name = 'posts'),
     path('post_units/', app.views.useraddunits, name='useraddunits'),
     path('user_posts/view/<str:id>/', app.views.viewposts),
-    path('user_posts/edit/<str:id>/', app.views.editposts),
-
+    path('user_posts/edit/<str:id>/', app.views.editposts)
 ]

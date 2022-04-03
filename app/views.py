@@ -131,6 +131,7 @@ def listings(request):
     result_dict['num_bedrooms'] = [('1', 'No'), ('2', 'No'), ('3', 'No'), ('4', 'No')]
     result_dict['num_bathrooms'] = [('1', 'No'), ('2', 'No'), ('3', 'No')]
     result_dict['nearest_mrt_dist'] = [("< 100 m", 'No'), ("100 - 250 m", 'No'), ("250 m - 1 km", 'No'), ("1 - 2 km", 'No'), ("> 2 km", 'No')]
+    result_dict['search_by_address'] = ''
 
     if request.method == "POST":
         result = ""
@@ -375,21 +376,58 @@ def listings(request):
                 if result:
                     result += " INTERSECT "
                 result += "({})".format(temp)
-	
-        with connection.cursor() as cursor:
-            if result:
-                result = "SELECT * FROM ({}) temp ORDER BY temp.hdb_id".format(result)
-                cursor.execute(result)
-            else:
-                cursor.execute("SELECT * FROM hdb_listings")
-            listings = cursor.fetchall()
+
+        search_by_address = request.POST.get('search_by_address')
+        result_dict["search_by_address"] = search_by_address
+        address_exists = False
+        address_correct = False
+
+        def get_coordinates(address):
+            response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + address, params = {"key": api_key})
+            resp_json_payload = response.json()
+            return resp_json_payload['results'][0]['geometry']['location']["lat"], resp_json_payload['results'][0]['geometry']['location']["lng"]
+
+        if search_by_address:
+            try:
+                address_lat, address_long = get_coordinates(search_by_address)
+                address_exists = True
+
+                if address_lat <= 1.472 and address_lat >= 1.158 and address_long <= 104.1 and address_long >= 103.6:
+                    address_correct = True
+                else:
+                    messages.error(request, "The address is not a Singapore address. Please input a Singapore address and reapply the filter")
+                    
+            except:
+                messages.error(request, "The address is not recognized by Google Maps. Please input a valid address and reapply the filter")
+
+        if not address_exists or not address_correct:
+            with connection.cursor() as cursor:
+                if result:
+                    result = "SELECT *, '-' FROM ({}) temp ORDER BY temp.hdb_id".format(result)
+                    cursor.execute(result)
+                    
+                else:
+                    cursor.execute("SELECT *, '-' FROM hdb_listings")
+                    
+                listings = cursor.fetchall()
+                
+        else:
+            with connection.cursor() as cursor:
+                if result:
+                    result = """SELECT *, ROUND(get_distance(temp.hdb_lat, temp.hdb_long, {}, {}), 2) dist FROM ({}) temp ORDER BY dist""".format(address_lat, address_long, result)
+                    cursor.execute(result)
+                    
+                else:
+                    cursor.execute("SELECT *, ROUND(get_distance(hdb_listings.hdb_lat, hdb_listings.hdb_long, {}, {}), 2) dist FROM hdb_listings ORDER BY dist".format(address_lat, address_long))
+                    
+                listings = cursor.fetchall()
 
         result_dict['listings'] = listings
 
         return render(request, 'app/listings.html', result_dict)
 
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM hdb_listings")
+        cursor.execute("SELECT *, '-' FROM hdb_listings")
         listings = cursor.fetchall()
 
     result_dict['listings'] = listings
@@ -624,9 +662,10 @@ def editbookings(request, id):
         return redirect('adminbookings')
 
 @login_required(login_url = 'login')
-def addunits(request):
+def adminaddunits(request):
     """Shows the main page"""
     context = {}
+    email = request.user.username
     status = ''
     def get_coordinates(address):
     
@@ -673,9 +712,9 @@ def addunits(request):
             if customer == None:
                 ##TODO: date validation
                 try:
-                    cursor.execute("INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES (%s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
-                            , [request.POST['hdb_address'].upper(), request.POST['hdb_unit_number'], request.POST['hdb_type'],
-                            request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'],
+                    cursor.execute("INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,posted_by,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
+                            , [request.POST['hdb_address'].upper(), request.POST['hdb_unit_number'], request.POST['hdb_type'], 
+                            request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'], email,
                             request.POST['contact_person_name'] ,request.POST['contact_person_mobile'] ,get_coordinates(request.POST['hdb_address'])[0],get_coordinates(request.POST['hdb_address'])[1]])
                     
                     messages.success(request, '%s %s has been successfully added!'% (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number']))
@@ -712,10 +751,170 @@ def addunits(request):
 
             else:
                 status = '%s %s already exists' % (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number'])
+        context['status'] = status
+    return render(request, "app/adminunitsadd.html", context)
+
+@login_required(login_url = 'login')
+def user_posts(request):
+    status = ''
+    email = request.user.username
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_units hu1 WHERE posted_by = %s ORDER BY hu1.hdb_id", [email])
+        units = cursor.fetchall()
+
+    result_dict = {'records': units}
+    result_dict['status'] = status
+    
+    return render(request,'app/user_posts.html',result_dict)
+
+@login_required(login_url = 'login')
+def useraddunits(request):
+    """Shows the main page"""
+    context = {}
+    email = request.user.username
+    status = ''
+    def get_coordinates(address):
+    
+        response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + address, params = {"key": api_key})
+        resp_json_payload = response.json()
+        return resp_json_payload['results'][0]['geometry']['location']["lat"], resp_json_payload['results'][0]['geometry']['location']["lng"]
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM towns")
+        towns = cursor.fetchall()
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_types_info")
+        types = cursor.fetchall()
+        
+    context['hdb_types'] = types
+    context['towns'] = towns
+    context['towns_default'] = ''
+    context['type'] = ''
+    context['address'] = ''
+    context['unit'] =''
+    context['size'] =''
+    context['price'] = ''
+    context['name'] = ''
+    context['number'] = ''
+    context['ans'] = ''
+
+    if request.POST:
+        context['towns_default'] = request.POST.get('town')
+        context['address'] = request.POST['hdb_address'].upper()
+        context['unit'] = request.POST.get('hdb_unit_number')
+        context['size'] = request.POST.get('size')
+        context['price'] = request.POST.get('price_per_day')
+        context['name'] = request.POST.get('contact_person_name')
+        context['number'] = request.POST.get('contact_person_mobile')
+        context['type'] = request.POST.get('hdb_type')
+        context['ans'] = request.POST.get('multistorey_carpark')
+
+        ## Check if customerid is already in the table
+        with connection.cursor() as cursor:
+
+            cursor.execute("SELECT * FROM hdb_units WHERE hdb_address = %s and hdb_unit_number = %s", [request.POST['hdb_address'],request.POST['hdb_unit_number']])
+            customer = cursor.fetchone()
+            ## No customer with same id
+            if customer == None:
+                ##TODO: date validation
+                try:
+                    cursor.execute("INSERT INTO hdb_units(hdb_address,hdb_unit_number,hdb_type,size,price_per_day,town,multistorey_carpark,posted_by,contact_person_name,contact_person_mobile,hdb_lat,hdb_long) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s)"
+                            , [request.POST['hdb_address'].upper(), request.POST['hdb_unit_number'], request.POST['hdb_type'], 
+                            request.POST['size'] , request.POST['price_per_day'], request.POST['town'], request.POST['multistorey_carpark'], email,
+                            request.POST['contact_person_name'] ,request.POST['contact_person_mobile'] ,get_coordinates(request.POST['hdb_address'])[0],get_coordinates(request.POST['hdb_address'])[1]])
+                    
+                    messages.success(request, '%s %s has been successfully added!'% (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number']))
+                    return redirect('posts')
+                   
+                except Exception as e:
+                    message = str(e)
+                    if 'violates check constraint "hdb_units_check"' in message:
+                        if request.POST['hdb_type'] == "2-Room/2-Room Flexi":
+                            status = 'The size of a 2-Room/2-Room Flexi should be between 35 and 38 or size between 45 and 47'
+                        elif request.POST['hdb_type'] == '3-Room':
+                            status = 'The size of a 3-Room should be between 60 and 68'
+                        elif request.POST['hdb_type'] == '4-Room':
+                            status = 'The size of a 4-Room should be between 85 and 93'
+                        elif request.POST['hdb_type'] == '5-Room':
+                            status = 'The size of a 5-Room should be between 107 and 113'
+                        elif request.POST['hdb_type'] == '3-Gen':
+                            status = 'The size of a 3-Gen should be between 115 and 118'
+                    elif 'violates check constraint "hdb_units_contact_person_mobile_check"' in message:
+                        status = 'Please input a valid Singapore Number'
+
+                    elif 'violates check constraint "hdb_units_hdb_lat_check"' in message:
+                        status = 'Please input a valid Singapore Address'
+                    elif 'violates check constraint "hdb_units_hdb_unit_number_check"' in message:
+                        status = 'Please input unit number in this format:"#_-_" '
+                    elif message == 'list index out of range':
+                        status = 'Please input a valid Singapore Address'
+                    elif 'violates unique constraint "hdb_units_hdb_address_hdb_unit_number_key"' in message:
+                        status = '%s %s already exists' % (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number'])
+
+                    
+                    else:
+                        status = message
+
+            else:
+                status = '%s %s already exists' % (request.POST['hdb_address'].upper(),request.POST['hdb_unit_number'])
 
     context['status'] = status
  
-    return render(request, "app/adminunitsadd.html", context)
+    return render(request, "app/useraddunits.html", context)
+
+def viewposts(request,id):
+    ## Use raw query to get a customer
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_units WHERE hdb_id = %s", [id])
+        unit = cursor.fetchone()
+	
+    result_dict = {'unit': unit}
+
+    return render(request,'app/viewposts.html',result_dict)
+
+def editposts(request, id):
+    """Shows the main page"""
+
+    # dictionary for initial data with
+    # field names as keys
+    context ={}
+    
+    # fetch the object related to passed id
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM hdb_units WHERE hdb_id = %s", [id])
+        obj = cursor.fetchone()
+
+    status = ''
+    # save the data from the form
+
+    if request.POST:
+        ##TODO: date validation
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("UPDATE hdb_units SET contact_person_name = %s, contact_person_mobile = %s,can_book = %s WHERE hdb_id = %s"
+                    , [request.POST['contact_person'], request.POST['contact_number'],request.POST['can_book'], id ])
+                status = 'Customer edited successfully!'
+                
+            except Exception as e:
+                message = str(e)
+		
+                if 'violates check constraint "hdb_units_contact_person_mobile_check"' in message:
+                    status = 'Unsuccessful , Please enter a valid Singapore Mobile Number'
+                elif 'violates check constraint "hdb_units_can_book_check"' in message:
+                    status = 'Please input Yes or No for Can Book?'
+                
+                else:
+                    status = message
+
+            cursor.execute("SELECT * FROM hdb_units WHERE hdb_id = %s", [id])
+            obj = cursor.fetchone()
+		
+    context["obj"] = obj
+    context["status"] = status
+ 
+    return render(request, "app/editposts.html", context)
+
+
 
 @login_required(login_url = 'login')
 def profile(request):
@@ -801,6 +1000,7 @@ def change_password(request):
 def user_bookings(request):
     status =''
     email = request.user.username
+
     #current_date = date.today()
     #format_date = current_date.strftime("%B %d, %Y")
     curr_date = date.today()
@@ -823,11 +1023,13 @@ def user_bookings(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
 		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id AND b.end_date < CURRENT_TIMESTAMP AND booked_by = %s ORDER BY b.booking_id", [email])
+
         past_bookings = cursor.fetchall()
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
 		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id AND b.start_date > CURRENT_TIMESTAMP AND booked_by = %s ORDER BY b.booking_id", [email])
+
         upcoming_bookings = cursor.fetchall()	
 	
     context = {}
@@ -1310,4 +1512,3 @@ def editposts(request, id):
  
     return render(request, "app/editposts.html", context)
 
-                        
