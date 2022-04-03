@@ -1149,10 +1149,10 @@ def userrefund(request):
     status= ''
     email = request.user.username
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM refunds WHERE refund_status = 'Under Review' AND email_address = %s", [email])
+        cursor.execute("SELECT * FROM refunds WHERE refund_status = 'Under Review' AND booked_by = %s", [email])
         under_review_refunds = cursor.fetchall()
 
-        cursor.execute("SELECT * FROM refunds WHERE refund_status = 'Completed' AND email_address = %s", [email])
+        cursor.execute("SELECT * FROM refunds WHERE refund_status = 'Completed' AND booked_by = %s", [email])
         completed_refunds = cursor.fetchall()
 
     booking_dict = {'under_review_refunds': under_review_refunds, 'completed_refunds': completed_refunds}
