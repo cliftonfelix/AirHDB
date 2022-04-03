@@ -30,8 +30,6 @@
       <thead>
         <th>Booking ID</th>
 	<th>HDB ID</th>
-	<th>Address</th>
-	<th>Unit Number</th>
         <th>Booked By</th>
         <th>Start Date</th>
         <th>End Date</th>
@@ -52,15 +50,13 @@
         <td> {{ refund.6 }} </td>
         <td> {{ refund.7 }} </td>
   	<td> {{ refund.8 }} </td>
-  	<td> {{ refund.9 }} </td>
-	<td> {{ refund.10 }} </td>
 	<td> {{ refund.1 }} </td>
         <td>
             
             <form method="POST" style="display: inline;">
             {% csrf_token %}
             <input type="hidden" name="id" value="{{refund.0}}"/>
-            <button onclick="return confirm('Are you sure to refund booking id {{refund.0}}?');" type="submit" name="action" value="delete">Completed</button> 
+            <button onclick="return confirm('Are you sure to refund booking id {{refund.0}}?');" type="submit" name="action" value="complete">Completed</button> 
           </form></td>
 
       </tr>
@@ -75,8 +71,6 @@
       <thead>
         <th>Booking ID</th>
 	<th>HDB ID</th>
-	<th>Address</th>
-	<th>Unit Number</th>
         <th>Booked By</th>
         <th>Start Date</th>
         <th>End Date</th>
@@ -96,8 +90,6 @@
         <td> {{ refund.6 }} </td>
         <td> {{ refund.7 }} </td>
   	<td> {{ refund.8 }} </td>
-  	<td> {{ refund.9 }} </td>
-	<td> {{ refund.10 }} </td>
 	<td> {{ refund.1 }} </td>
       </tr>
       {% endfor %}
