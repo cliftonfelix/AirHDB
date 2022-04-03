@@ -450,21 +450,21 @@ def adminu(request):
 @login_required(login_url = 'login')
 def adminb(request):
     status = ''
-    curr_date = date.today()
-    if request.POST:
-        if request.POST['action'] == 'delete':
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [request.POST['id']])
-                start_date = cursor.fetchone()
-
-            if ((start_date[0] - curr_date).days >= 2):
-                with connection.cursor() as cursor:
-                    
-                    cursor.execute("INSERT INTO refunds (booking_id,hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price) SELECT * from bookings b where b.booking_id = %s ", [request.POST['id']])
-                    cursor.execute("DELETE FROM bookings WHERE booking_id = %s", [request.POST['id']])
-                    status = 'Refund for booking ID %s has been added to the refund table',(request.POST['id'])
-            else:
-                status = 'Refund for booking ID %s will not be given. Cancelation of booking within 48 hour window before the scheduled booking date will not be refunded',(request.POST['id'])
+##    curr_date = date.today()
+##    if request.POST:
+##        if request.POST['action'] == 'delete':
+##            with connection.cursor() as cursor:
+##                cursor.execute("SELECT start_date FROM bookings WHERE booking_id = %s", [request.POST['id']])
+##                start_date = cursor.fetchone()
+##
+##            if ((start_date[0] - curr_date).days >= 2):
+##                with connection.cursor() as cursor:
+##                    
+##                    cursor.execute("INSERT INTO refunds (booking_id,hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price) SELECT * from bookings b where b.booking_id = %s ", [request.POST['id']])
+##                    cursor.execute("DELETE FROM bookings WHERE booking_id = %s", [request.POST['id']])
+##                    status = 'Refund for booking ID %s has been added to the refund table',(request.POST['id'])
+##            else:
+##                status = 'Refund for booking ID %s will not be given. Cancelation of booking within 48 hour window before the scheduled booking date will not be refunded',(request.POST['id'])
 
 
     with connection.cursor() as cursor:
@@ -632,7 +632,7 @@ def editbookings(request, id):
                 try:
                     cursor.execute("UPDATE bookings SET start_date = %s, end_date = %s WHERE booking_id = %s"
                                 , [request.POST['start_date'], request.POST['end_date'], id ])
-                    status = 'Booking ID %s dates edited successfully!',(id)
+                    status = 'Booking ID %s dates edited successfully!' % (id)
                 
                 except Exception as e:
                     message = str(e)
@@ -1012,13 +1012,13 @@ def user_bookings(request):
 
             if ((start_date[0] - curr_date).days >= 2):
                 with connection.cursor() as cursor:
-                    
-                    cursor.execute("INSERT INTO refunds (booking_id,hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price) SELECT * from bookings b where b.booking_id = %s ", [request.POST['id']])
+                    cursor.execute("INSERT INTO refunds (booking_id) VALUES (%s)", [request.POST['id']])
+##                    cursor.execute("INSERT INTO refunds (booking_id,hdb_id, booked_by, start_date, end_date, credit_card_type, credit_card_number, total_price) SELECT * from bookings b where b.booking_id = %s ", [request.POST['id']])
                     cursor.execute("DELETE FROM bookings WHERE booking_id = %s", [request.POST['id']])
-                    status = 'You will be refunded for booking ID %s' % (request.POST['id'])
+                    status = 'Your refund request for booking ID %s is submitted' % (request.POST['id'])
         
             else:
-                status = 'You will not be refunded for booking ID %s. Cancelation of booking within 48 hour window before the scheduled booking date will not be refunded'% (request.POST['id'])
+                status = 'Your booking with ID %s can not be refunded. Cancelation of booking within 48 hour window before the scheduled booking date will not be refunded'% (request.POST['id'])
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
@@ -1100,44 +1100,46 @@ def book(request, id):
     return render(request, "app/book.html", context)
 
 
-@login_required(login_url = 'login')
-def cancelbooking(request):
-    if request.POST:
-        if request.POST['action'] == 'delete':
-            with connection.cursor() as cursor:
-                cursor.execute("INSERT INTO refund(SELECT * from bookings b where b.booking_id = %s)", [request.POST['id']])
-                cursor.execute("DELETE FROM bookings WHERE booking_id = %s"% [request.POST['id']])
-                
-
- 
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.booked_by, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
-		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id ORDER BY b.booking_id")
-        bookings = cursor.fetchall()
-
-    booking_dict = {'bookings':bookings}
-
-    return render(request,'app/adminbookings.html',booking_dict)
-
+##@login_required(login_url = 'login')
+##def cancelbooking(request):
+##    if request.POST:
+##        if request.POST['action'] == 'delete':
+##            with connection.cursor() as cursor:
+##                cursor.execute("INSERT INTO refund(SELECT * from bookings b where b.booking_id = %s)", [request.POST['id']])
+##                cursor.execute("DELETE FROM bookings WHERE booking_id = %s"% [request.POST['id']])
+##                
+##
+## 
+##    with connection.cursor() as cursor:
+##        cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.booked_by, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
+##		       FROM bookings b, hdb_units h WHERE b.hdb_id = h.hdb_id ORDER BY b.booking_id")
+##        bookings = cursor.fetchall()
+##
+##    booking_dict = {'bookings':bookings}
+##
+##    return render(request,'app/adminbookings.html',booking_dict)
+##
 @login_required(login_url = 'login')
 def refund(request):
     status= ''
     
     if request.POST:
-        if request.POST['action'] == 'delete':
+        if request.POST['action'] == 'completed':
             with connection.cursor() as cursor:
+                cursor.execute("UPDATE refunds SET refund_status = 'Completed' WHERE booking_id = %s", [request.POST['id']])
                 
-                cursor.execute("DELETE FROM refunds WHERE booking_id = %s", [request.POST['id']])
                 status = 'Booking ID %s has been successfully refunded!'% (request.POST['id'])
                 
 
  
     with connection.cursor() as cursor:
-        cursor.execute("SELECT b.booking_id, b.hdb_id, h.hdb_address, h.hdb_unit_number, b.booked_by, b.start_date, b.end_date, b.credit_card_type, b.credit_card_number, b.total_price\
-		       FROM refunds b, hdb_units h WHERE b.hdb_id = h.hdb_id ORDER BY b.booking_id")
-        refunds = cursor.fetchall()
+        cursor.execute("SELECT * FROM refunds_details WHERE refund_status = 'Under Review'")
+        under_review_refunds = cursor.fetchall()
 
-    booking_dict = {'refunds':refunds}
+        cursor.execute("SELECT * FROM refunds_details WHERE refund_status = 'Completed'")
+        completed_refunds = cursor.fetchall()
+
+    booking_dict = {'under_review_refunds': under_review_refunds, 'completed_refunds': completed_refunds}
     booking_dict['status'] =status
 
     return render(request,'app/refund.html',booking_dict)
@@ -1263,7 +1265,7 @@ def user_editbookings(request, id):
                     try:
                         cursor.execute("UPDATE bookings SET start_date = %s, end_date = %s WHERE booking_id = %s"
                                     , [request.POST['start_date'], request.POST['end_date'], id ])
-                        status = 'Booking ID %s dates edited successfully!',(id)
+                        status = 'Booking ID %s dates edited successfully!'%(id)
                     
                     except Exception as e:
                         message = str(e)
