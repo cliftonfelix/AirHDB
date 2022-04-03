@@ -1144,10 +1144,21 @@ def refund(request):
 
     return render(request,'app/refund.html',booking_dict)
 
+@login_required(login_url = 'login')
+def userrefund(request):
+    status= ''
+    email = request.user.username
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM refunds WHERE refund_status = 'Under Review' AND email_address = %s", [email])
+        under_review_refunds = cursor.fetchall()
 
+        cursor.execute("SELECT * FROM refunds WHERE refund_status = 'Completed' AND email_address = %s", [email])
+        completed_refunds = cursor.fetchall()
 
+    booking_dict = {'under_review_refunds': under_review_refunds, 'completed_refunds': completed_refunds}
+    booking_dict['status'] =status
 
-
+    return render(request,'app/userrefund.html',booking_dict)
 
 @login_required(login_url = 'login')
 def payment(request):
@@ -1436,6 +1447,7 @@ def useraddunits(request):
  
     return render(request, "app/useraddunits.html", context)
 
+@login_required(login_url = 'login')
 def viewposts(request,id):
 
     email = request.user.username
@@ -1462,6 +1474,7 @@ def viewposts(request,id):
 
     return render(request,'app/viewposts.html',result_dict)
 
+@login_required(login_url = 'login')
 def editposts(request, id):
     """Shows the main page"""
 
