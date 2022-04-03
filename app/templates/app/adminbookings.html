@@ -53,12 +53,13 @@
           <!--need to change the primary key once clifton adds the id for booking-->
           <td><a href="view/{{booking.0}}"><button>View</button></a> | 
               <a href="edit/{{booking.0}}"><button>Edit</button></a>
-              | 
+<!--               | 
               <form method="POST" style="display: inline;">
               {% csrf_token %}
               <input type="hidden" name="id" value="{{booking.0}}"/>
               <button onclick="return confirm('Are you sure you want to cancel booking id {{booking.0}}?');" type="submit" name="action" value="delete">Cancel</button> 
-            </form></td>
+            </form> -->
+            </td>
         </tr>
         {% endfor %}
         </table>
