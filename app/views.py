@@ -580,7 +580,7 @@ def editunits(request, id):
             try:
                 cursor.execute("UPDATE hdb_units SET contact_person_name = %s, contact_person_mobile = %s,can_book = %s WHERE hdb_id = %s"
                     , [request.POST['contact_person'], request.POST['contact_number'],request.POST['can_book'], id ])
-                status = 'Customer edited successfully!'
+                status = 'Unit ID %s edited successfully!' %(id)
                 
             except Exception as e:
                 message = str(e)
