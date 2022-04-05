@@ -91,6 +91,12 @@ CREATE TABLE IF NOT EXISTS bookings (
 	-- sample data from Mockaroo also doesnt include mastercard with starting numbers 2221 to 2720.
 );
 
+-- This refunds table might not be a good design
+-- The good design will be to add a column in bookings table to show if the booking is refunded or not
+-- and inside this refunds table, we only store the booking_id and refund_status, and the booking details will still be inside the bookings table.
+-- Then, we create a view table to do inner join.
+-- But, since we implemented this refund system at last minute to make it more similar with the real application, 
+-- we don't have enough time to change the schema and modify the codes. So, for now, we leave it like this.
 CREATE TABLE IF NOT EXISTS refunds (
 	booking_id INT NOT NULL PRIMARY KEY,
 	refund_status VARCHAR(256) NOT NULL DEFAULT 'Under Review' CHECK(refund_status = 'Under Review' OR
