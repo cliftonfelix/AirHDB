@@ -8,12 +8,12 @@ DROP TABLE IF EXISTS mrt_stations;
 DROP TABLE IF EXISTS hdb_types_info;
 
 CREATE TABLE IF NOT EXISTS towns (
-	town VARCHAR(256) NOT NULL PRIMARY KEY,
+	town VARCHAR(256) PRIMARY KEY,
 	region VARCHAR(256) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS mrt_stations (
-	mrt_name VARCHAR(256) NOT NULL PRIMARY KEY,
+	mrt_name VARCHAR(256) PRIMARY KEY,
 	mrt_lat NUMERIC NOT NULL CHECK (mrt_lat BETWEEN 1.158 AND 1.472),
 	mrt_long NUMERIC NOT NULL CHECK (mrt_long BETWEEN 103.6 AND 104.1)
 );
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS hdb_units (
-	hdb_id SERIAL NOT NULL PRIMARY KEY,
+	hdb_id SERIAL PRIMARY KEY,
 	hdb_address VARCHAR(256) NOT NULL,
 	hdb_unit_number VARCHAR(256) NOT NULL CHECK (hdb_unit_number LIKE '#_%-_%'), -- More constraint?
 	hdb_type VARCHAR(256) NOT NULL REFERENCES hdb_types_info(hdb_type),
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS hdb_units (
 );
 
 CREATE TABLE IF NOT EXISTS bookings (
-	booking_id SERIAL NOT NULL PRIMARY KEY,
+	booking_id SERIAL PRIMARY KEY,
 	hdb_id INT NOT NULL REFERENCES hdb_units(hdb_id),
 	booked_by VARCHAR(256) NOT NULL CHECK (booked_by LIKE '%_@_%._%') REFERENCES users(email_address),
 	start_date DATE NOT NULL CHECK (start_date >= '2022-04-11'), -- Initial start date 11 April
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS bookings (
 -- But, since we implemented this refund system at last minute to make it more similar with the real application, 
 -- we don't have enough time to change the schema and modify the codes. So, for now, we leave it like this.
 CREATE TABLE IF NOT EXISTS refunds (
-	booking_id INT NOT NULL PRIMARY KEY,
+	booking_id INT PRIMARY KEY,
 	refund_status VARCHAR(256) NOT NULL DEFAULT 'Under Review' CHECK(refund_status = 'Under Review' OR
 									 refund_status = 'Completed'),
 	hdb_id INT NOT NULL REFERENCES hdb_units(hdb_id),
